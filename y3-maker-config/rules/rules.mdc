@@ -1,0 +1,163 @@
+---
+alwaysApply: true
+---
+# Y3 项目规则
+
+Y3 游戏编辑器地图工程，使用 **y3-lualib** 框架。
+
+> 本文件为核心规则索引，详细规则见各主题文件。
+
+## 📁 规则文件索引
+
+| 文件 | 用途 |
+|------|------|
+| `rules.mdc` | 核心规则索引（本文件） |
+| `memory.mdc` | 记忆系统规则 |
+| `api-safety.mdc` | API 安全规则、常见 API 错误 |
+| `mcp-rules.mdc` | MCP 调用规则、热更保存流程 |
+| `ui-rules.mdc` | UI 开发规则、坐标系、官方组件 |
+| `auto-test.mdc` | 自动化测试**执行纪律**（仅测试时激活，Gate 准入已迁至 y3-game-spec） |
+| `doc-consistency.mdc` | **文档一致性规则**：策划案↔执行案↔测试案↔测试报告 四者追溯链校验 |
+| `spec-config.json` | **流程文档配置**：自定义文档路径、文件命名、HTML 报告设置（位于当前配置目录根） |
+
+## 🚀 首次会话环境检查
+
+```
+1. 检查 env_setup_done 是否存在（位于当前配置目录根）
+   ├─ 不存在 → 检查 y3-lualib（步骤 2）
+   └─ 存在 → 检查文件内容是否包含 "AutoSave: DISABLED"
+              ├─ 包含 → ✅ 跳过环境检查
+              └─ 不包含 → 执行「关闭自动保存」补丁（步骤 1.5）
+
+1.5 关闭自动保存补丁（旧版本升级）
+   调用 y3editor.modify_editor_config(config_type="close_auto_save")
+   然后追加 "AutoSave: DISABLED" 到 env_setup_done 文件
+   → 完成后继续处理用户请求
+
+2. 检查 y3-lualib（任一路径存在即可）
+   - maps/EntryMap/script/y3/init.lua
+   - global_script/y3/init.lua
+   ├─ 存在 → ✅ 跳过
+   └─ 不存在 → 激活 y3-env-setup
+```
+
+> ⚠️ **版本兼容**：旧版本 env_setup_done 没有 AutoSave 标记，会触发一次性补丁操作。
+
+## 🎯 技能路由
+
+### 用户可见入口（唯一推荐入口）
+
+| 用户需求 | 技能 | 说明 |
+|----------|------|------|
+| 任何游戏开发 / 优化 / 迭代需求 | **`y3-game-spec`** ⭐ | **全流程编排器**，内部自动识别并路由到下列子技能 |
+
+> `y3-game-spec` 支持两种模式：
+> - **Full Mode**（从零制作）：完整策划→制作→测试闭环
+> - **Patch Mode**（专业向）：现有工程局部迭代
+
+### 内部实现子技能（由 y3-game-spec 路由调用）
+
+| 子技能 | 职责 | 调用来源 |
+|--------|------|---------|
+| `y3-obj-edit` | 物编 CRUD（单位/技能/Buff/物品/投射物） | y3-game-spec Phase 1 |
+| `y3-ui-pipeline` | UI 完整工作流（JSON + 节点树） | y3-game-spec Phase 2 |
+| `y3-ui-generator` | UI JSON 生成（HTML → Y3 JSON），不单独暴露给用户 | y3-ui-pipeline 内部 |
+| `y3-lua-pipeline` | 所有 Lua 代码（游戏逻辑 + UI 交互） | y3-game-spec Phase 3/4 |
+| `y3-lua-review` | Lua 代码审查 | y3-game-spec Phase 5 |
+| `y3-auto-test` | 自动化测试执行 | y3-game-spec Phase 6 |
+| `y3-gen-terrain-from-image` | 图片转地形（可选增强） | Phase 2 前置，如用户提供参考图 |
+
+> ⚠️ **关键原则**：
+> 1. 终端用户一般只感知 `y3-game-spec` 一个入口
+> 2. 专业用户（L3）可直接调用单个子技能（如 "帮我只审查一下 Lua"），不强制走 y3-game-spec
+> 3. 所有 Lua 代码必须通过 `y3-lua-pipeline`，所有 UI 必须通过 `y3-ui-pipeline`，不可绕过
+
+## 🔒 Lua 开发强制规则
+
+**所有 Lua 代码（游戏逻辑 + UI 交互）必须通过 `y3-lua-pipeline` 编写。**
+
+1. 禁止绕过 `y3-lua-pipeline`，禁止使用已废弃的 `y3-ui-official`
+2. y3 层 API 和事件的使用，必须严格参照 `y3-lua-pipeline/SKILL.md` 及其 `references/`
+3. 未在参考文档中声明的 API 视为非法，禁止使用（y3 源码验证除外，需标注来源）
+4. Skill 内置的强制门禁和交付报告，是 Lua 任务的执行标准，不可跳过
+
+## � 增量更新流程（强制）
+
+当用户请求对**现有功能进行修改/优化/扩展**时，必须激活 `y3-game-spec` 并走 **Patch Mode** 流程。
+
+> ⚠️ **禁止行为**：
+> - 禁止用户说"开始实现"就直接写代码，必须先输出方案并获得确认
+> - 禁止跳过"用户确认"步骤
+> - 即使用户催促，也要坚持先方案后实现
+
+> 💡 **例外情况**：
+> - Bug 修复（明确的错误修正）可直接实现
+> - 用户明确说"不用确认直接做"时可跳过
+
+## �🔍 开发前检查（强制）
+
+| 任务类型 | 必须先阅读 |
+|---------|-----------|
+| Lua 代码 | `lua-issues/` + `references/` |
+| UI 开发 | `knowledge/UI系统/03-官方组件.md` |
+| 物编操作 | 物编知识 + 模板文件 |
+
+## ⚠️ 核心禁令
+
+| 禁止 | 正确做法 |
+|------|----------|
+| 臆造 API | 查阅 `y3/` 源码验证 |
+| 手写大型 JSON | 使用脚本生成 |
+| Lua 实现引擎功能 | 使用物编配置 |
+| 手写技能栏/Buff/物品栏 | 使用官方组件 type:17/18/20 |
+| UI 坐标用左上角思维 | **Y3 原点在左下角** |
+| 物编/UI 生成后直接保存 | **必须先热更再保存** |
+| 测试清理时未经确认就删文件 | **必须先过 Gate 3 与用户确认清理范围** |
+| 有现成脚本还手写 | 先查 `skills/*/scripts/` 目录 |
+| M×N 格子/列表需求用手动 layout | **必须识别为 GridView/ScrollView，并向用户确认实现方式** |
+
+> 详细禁令说明见 `api-safety.mdc`、`ui-rules.mdc`、`mcp-rules.mdc`
+
+## 🎮 Y3 引擎速查
+
+### 玩家编号
+
+| 编号 | 用途 |
+|------|------|
+| 1-12 | 普通玩家 |
+| 31 | 中立敌对（怪物） |
+| 32 | 中立友好（NPC） |
+
+### 键盘常量
+
+```lua
+-- ✅ 正确
+y3.const.KeyboardKey['KEY_1']
+
+-- ❌ 错误
+y3.const.KeyboardKey['1']
+```
+
+## 📚 知识库
+
+| 文档 | 说明 |
+|------|------|
+| `knowledge/` | Y3 引擎知识库 |
+| `skills/*/SKILL.md` | 技能详细指南 |
+| `skills/*/references/` | API 速查和代码片段 |
+| `memory/lua-issues/` | 错题本（API 和 Trace） |
+
+## 🖱️ UI 控件交互
+
+**使用 y3runtime 直接事件触发：**
+
+```
+1. 获取控件树 → helper.get_ui_canvas（可选，已知路径时跳过）
+2. 触发点击 → y3runtime.trigger_ui_touch_event_by_path（需游戏运行）
+```
+
+> 详细流程见 `skills/y3-auto-test/SKILL.md`
+
+---
+
+*最后更新: 2026-04-23*
