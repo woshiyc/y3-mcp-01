@@ -72,7 +72,7 @@ TERRAIN_COST = {
     2:  3.0,   # 丘陵：较难
     4:  8.0,   # 山地：很难
     6:  20.0,  # 高山：近乎不可通行（但不完全封闭）
-    -1: 1e9,   # 水域：不可通行
+    -1: float('inf'),  # 水域：完全不可通行（inf+inf=inf，Dijkstra 不会穿越）
 }
 
 # 纹理组 → 地貌语义（用于节点候选区偏好判断）
@@ -112,12 +112,12 @@ def load_texture_grid(path: str, H: int, W: int) -> np.ndarray:
 def build_cost_map(height_grid: np.ndarray, water_mask: np.ndarray) -> np.ndarray:
     """构建地形移动成本矩阵。"""
     H, W = height_grid.shape
-    cost = np.ones((H, W), dtype=np.float32)
+    cost = np.ones((H, W), dtype=np.float64)
     for z in range(H):
         for x in range(W):
             h = int(height_grid[z, x])
             cost[z, x] = TERRAIN_COST.get(h, 1.0)
-    cost[water_mask] = 1e9
+    cost[water_mask] = np.inf  # 水域完全不可通行：inf+inf=inf，Dijkstra/A* 均不穿越
     return cost
 
 
@@ -164,7 +164,7 @@ def find_capital(height_grid: np.ndarray, water_mask: np.ndarray,
 def compute_distance_map(capital: tuple, cost_map: np.ndarray) -> np.ndarray:
     """从首都出发，用 Dijkstra 计算所有格子的加权距离。"""
     H, W = cost_map.shape
-    dist = np.full((H, W), np.inf, dtype=np.float32)
+    dist = np.full((H, W), np.inf, dtype=np.float64)
     cx, cz = capital
     dist[cz, cx] = 0.0
 

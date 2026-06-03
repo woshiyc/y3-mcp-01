@@ -201,11 +201,18 @@ def main():
     write_grid_csv(grid, args.width, args.height,
                    os.path.join(args.output_dir, "cluster_grid.csv"))
 
+    # Step 7: 同时输出 labels_grid.npy（供 --cluster-texture-config 模式使用）
+    npy_path = os.path.join(args.output_dir, "labels_grid.npy")
+    np.save(npy_path, grid.astype(np.int32))
+    print(f"\n[Step 7] 输出 labels_grid.npy ...")
+    print(f"  labels_grid.npy: {npy_path}")
+
     print("\n✅ Phase 2 下采样完成！")
     if linear_clusters:
         print(f"   线性特征保护: {stats['linear_protected']} 格子 ({stats['linear_protected_pct']}%)")
     print(f"   → cluster_preview_grid.png  (网格分辨率预览)")
     print(f"   → cluster_grid.csv  (每格簇编号)")
+    print(f"   → labels_grid.npy   (per-pixel 聚类标签，供 --cluster-texture-config 使用)")
 
 
 if __name__ == "__main__":

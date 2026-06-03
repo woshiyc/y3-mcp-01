@@ -1,0 +1,2090 @@
+[
+  {
+    "cluster_id": 2,
+    "bgr": [
+      156,
+      67,
+      20
+    ],
+    "rgb": [
+      20,
+      67,
+      156
+    ],
+    "hsv_opencv": [
+      221.8782958984375,
+      223.28488159179688,
+      126.20946502685547
+    ],
+    "hsv_human": {
+      "h": 443.8,
+      "s": 87.6,
+      "v": 49.5
+    },
+    "count": 999003,
+    "percentage": 23.8,
+    "internal_complexity": {
+      "fine_cluster_count": 4,
+      "fine_cluster_entropy": 1.68,
+      "dominant_fine_ratio": 0.426,
+      "fine_clusters": [
+        {
+          "fine_id": 1,
+          "rgb": [
+            21,
+            67,
+            156
+          ],
+          "pct": 42.6
+        },
+        {
+          "fine_id": 23,
+          "rgb": [
+            19,
+            66,
+            156
+          ],
+          "pct": 34.1
+        },
+        {
+          "fine_id": 7,
+          "rgb": [
+            20,
+            68,
+            156
+          ],
+          "pct": 20.8
+        },
+        {
+          "fine_id": 48,
+          "rgb": [
+            11,
+            57,
+            160
+          ],
+          "pct": 1.6
+        },
+        {
+          "fine_id": 11,
+          "rgb": [
+            28,
+            74,
+            157
+          ],
+          "pct": 1.0
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 1.9,
+      "rgb_range_mean": 70.7,
+      "laplacian_var": 36.3
+    },
+    "spatial_shape": {
+      "compactness": 0.248,
+      "elongation": 1.24,
+      "num_components": 50,
+      "largest_area_ratio": 0.249
+    },
+    "border_neighbors": [
+      0,
+      3,
+      6,
+      8,
+      10,
+      11,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 5,
+    "bgr": [
+      60,
+      154,
+      128
+    ],
+    "rgb": [
+      128,
+      154,
+      60
+    ],
+    "hsv_opencv": [
+      76.40805053710938,
+      155.25067138671875,
+      123.68868255615234
+    ],
+    "hsv_human": {
+      "h": 152.8,
+      "s": 60.9,
+      "v": 48.5
+    },
+    "count": 734898,
+    "percentage": 17.5,
+    "internal_complexity": {
+      "fine_cluster_count": 4,
+      "fine_cluster_entropy": 1.61,
+      "dominant_fine_ratio": 0.523,
+      "fine_clusters": [
+        {
+          "fine_id": 5,
+          "rgb": [
+            128,
+            154,
+            60
+          ],
+          "pct": 52.3
+        },
+        {
+          "fine_id": 18,
+          "rgb": [
+            128,
+            153,
+            61
+          ],
+          "pct": 29.8
+        },
+        {
+          "fine_id": 36,
+          "rgb": [
+            129,
+            155,
+            58
+          ],
+          "pct": 13.8
+        },
+        {
+          "fine_id": 43,
+          "rgb": [
+            131,
+            158,
+            65
+          ],
+          "pct": 3.9
+        },
+        {
+          "fine_id": 0,
+          "rgb": [
+            90,
+            124,
+            47
+          ],
+          "pct": 0.1
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 2.9,
+      "rgb_range_mean": 61.3,
+      "laplacian_var": 87.6
+    },
+    "spatial_shape": {
+      "compactness": 0.299,
+      "elongation": 1.8,
+      "num_components": 678,
+      "largest_area_ratio": 0.081
+    },
+    "border_neighbors": [
+      0,
+      1,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      17,
+      19
+    ]
+  },
+  {
+    "cluster_id": 1,
+    "bgr": [
+      48,
+      123,
+      90
+    ],
+    "rgb": [
+      90,
+      123,
+      48
+    ],
+    "hsv_opencv": [
+      86.70722198486328,
+      156.01806640625,
+      99.39768981933594
+    ],
+    "hsv_human": {
+      "h": 173.4,
+      "s": 61.2,
+      "v": 39.0
+    },
+    "count": 664912,
+    "percentage": 15.9,
+    "internal_complexity": {
+      "fine_cluster_count": 2,
+      "fine_cluster_entropy": 1.06,
+      "dominant_fine_ratio": 0.616,
+      "fine_clusters": [
+        {
+          "fine_id": 26,
+          "rgb": [
+            90,
+            123,
+            48
+          ],
+          "pct": 61.6
+        },
+        {
+          "fine_id": 0,
+          "rgb": [
+            90,
+            124,
+            47
+          ],
+          "pct": 37.3
+        },
+        {
+          "fine_id": 22,
+          "rgb": [
+            77,
+            110,
+            46
+          ],
+          "pct": 0.3
+        },
+        {
+          "fine_id": 18,
+          "rgb": [
+            128,
+            153,
+            61
+          ],
+          "pct": 0.2
+        },
+        {
+          "fine_id": 8,
+          "rgb": [
+            77,
+            110,
+            44
+          ],
+          "pct": 0.2
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 2.2,
+      "rgb_range_mean": 46.0,
+      "laplacian_var": 53.6
+    },
+    "spatial_shape": {
+      "compactness": 0.568,
+      "elongation": 1.32,
+      "num_components": 3608,
+      "largest_area_ratio": 0.065
+    },
+    "border_neighbors": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      17,
+      19
+    ]
+  },
+  {
+    "cluster_id": 14,
+    "bgr": [
+      80,
+      188,
+      150
+    ],
+    "rgb": [
+      150,
+      188,
+      80
+    ],
+    "hsv_opencv": [
+      80.52886199951172,
+      144.9679718017578,
+      150.86129760742188
+    ],
+    "hsv_human": {
+      "h": 161.1,
+      "s": 56.9,
+      "v": 59.2
+    },
+    "count": 539604,
+    "percentage": 12.9,
+    "internal_complexity": {
+      "fine_cluster_count": 3,
+      "fine_cluster_entropy": 1.58,
+      "dominant_fine_ratio": 0.415,
+      "fine_clusters": [
+        {
+          "fine_id": 35,
+          "rgb": [
+            150,
+            187,
+            79
+          ],
+          "pct": 41.5
+        },
+        {
+          "fine_id": 20,
+          "rgb": [
+            151,
+            188,
+            81
+          ],
+          "pct": 39.6
+        },
+        {
+          "fine_id": 2,
+          "rgb": [
+            150,
+            188,
+            83
+          ],
+          "pct": 17.9
+        },
+        {
+          "fine_id": 43,
+          "rgb": [
+            131,
+            158,
+            65
+          ],
+          "pct": 0.5
+        },
+        {
+          "fine_id": 36,
+          "rgb": [
+            129,
+            155,
+            58
+          ],
+          "pct": 0.4
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 2.2,
+      "rgb_range_mean": 68.3,
+      "laplacian_var": 49.7
+    },
+    "spatial_shape": {
+      "compactness": 0.359,
+      "elongation": 1.39,
+      "num_components": 8216,
+      "largest_area_ratio": 0.025
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      15,
+      16,
+      17,
+      19
+    ]
+  },
+  {
+    "cluster_id": 3,
+    "bgr": [
+      83,
+      188,
+      151
+    ],
+    "rgb": [
+      151,
+      188,
+      83
+    ],
+    "hsv_opencv": [
+      81.28485107421875,
+      141.7620849609375,
+      150.88258361816406
+    ],
+    "hsv_human": {
+      "h": 162.6,
+      "s": 55.6,
+      "v": 59.2
+    },
+    "count": 352515,
+    "percentage": 8.4,
+    "internal_complexity": {
+      "fine_cluster_count": 3,
+      "fine_cluster_entropy": 1.22,
+      "dominant_fine_ratio": 0.682,
+      "fine_clusters": [
+        {
+          "fine_id": 2,
+          "rgb": [
+            150,
+            188,
+            83
+          ],
+          "pct": 68.2
+        },
+        {
+          "fine_id": 20,
+          "rgb": [
+            151,
+            188,
+            81
+          ],
+          "pct": 17.9
+        },
+        {
+          "fine_id": 19,
+          "rgb": [
+            151,
+            187,
+            87
+          ],
+          "pct": 13.8
+        },
+        {
+          "fine_id": 43,
+          "rgb": [
+            131,
+            158,
+            65
+          ],
+          "pct": 0.0
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 2.1,
+      "rgb_range_mean": 61.3,
+      "laplacian_var": 44.9
+    },
+    "spatial_shape": {
+      "compactness": 0.545,
+      "elongation": 1.65,
+      "num_components": 8920,
+      "largest_area_ratio": 0.028
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      19
+    ]
+  },
+  {
+    "cluster_id": 9,
+    "bgr": [
+      45,
+      110,
+      77
+    ],
+    "rgb": [
+      77,
+      110,
+      45
+    ],
+    "hsv_opencv": [
+      90.06204223632812,
+      149.5887908935547,
+      88.31867218017578
+    ],
+    "hsv_human": {
+      "h": 180.1,
+      "s": 58.7,
+      "v": 34.6
+    },
+    "count": 346753,
+    "percentage": 8.3,
+    "internal_complexity": {
+      "fine_cluster_count": 3,
+      "fine_cluster_entropy": 1.37,
+      "dominant_fine_ratio": 0.544,
+      "fine_clusters": [
+        {
+          "fine_id": 22,
+          "rgb": [
+            77,
+            110,
+            46
+          ],
+          "pct": 54.4
+        },
+        {
+          "fine_id": 8,
+          "rgb": [
+            77,
+            110,
+            44
+          ],
+          "pct": 38.4
+        },
+        {
+          "fine_id": 44,
+          "rgb": [
+            78,
+            108,
+            47
+          ],
+          "pct": 5.8
+        },
+        {
+          "fine_id": 28,
+          "rgb": [
+            79,
+            109,
+            54
+          ],
+          "pct": 0.5
+        },
+        {
+          "fine_id": 26,
+          "rgb": [
+            90,
+            123,
+            48
+          ],
+          "pct": 0.3
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 2.0,
+      "rgb_range_mean": 62.3,
+      "laplacian_var": 21.9
+    },
+    "spatial_shape": {
+      "compactness": 0.357,
+      "elongation": 2.16,
+      "num_components": 1518,
+      "largest_area_ratio": 0.109
+    },
+    "border_neighbors": [
+      0,
+      1,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      19
+    ]
+  },
+  {
+    "cluster_id": 7,
+    "bgr": [
+      43,
+      76,
+      96
+    ],
+    "rgb": [
+      96,
+      76,
+      43
+    ],
+    "hsv_opencv": [
+      36.96296310424805,
+      140.4308624267578,
+      77.24576568603516
+    ],
+    "hsv_human": {
+      "h": 73.9,
+      "s": 55.1,
+      "v": 30.3
+    },
+    "count": 144369,
+    "percentage": 3.4,
+    "internal_complexity": {
+      "fine_cluster_count": 2,
+      "fine_cluster_entropy": 1.06,
+      "dominant_fine_ratio": 0.562,
+      "fine_clusters": [
+        {
+          "fine_id": 41,
+          "rgb": [
+            96,
+            76,
+            42
+          ],
+          "pct": 56.2
+        },
+        {
+          "fine_id": 12,
+          "rgb": [
+            96,
+            76,
+            44
+          ],
+          "pct": 42.9
+        },
+        {
+          "fine_id": 46,
+          "rgb": [
+            104,
+            99,
+            50
+          ],
+          "pct": 0.8
+        },
+        {
+          "fine_id": 4,
+          "rgb": [
+            129,
+            101,
+            59
+          ],
+          "pct": 0.1
+        },
+        {
+          "fine_id": 32,
+          "rgb": [
+            130,
+            101,
+            57
+          ],
+          "pct": 0.0
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 2.9,
+      "rgb_range_mean": 56.3,
+      "laplacian_var": 88.4
+    },
+    "spatial_shape": {
+      "compactness": 0.828,
+      "elongation": 2.5,
+      "num_components": 460,
+      "largest_area_ratio": 0.106
+    },
+    "border_neighbors": [
+      1,
+      3,
+      4,
+      5,
+      9,
+      10,
+      13,
+      14
+    ]
+  },
+  {
+    "cluster_id": 4,
+    "bgr": [
+      58,
+      101,
+      129
+    ],
+    "rgb": [
+      129,
+      101,
+      58
+    ],
+    "hsv_opencv": [
+      36.2964973449707,
+      139.90525817871094,
+      103.93576049804688
+    ],
+    "hsv_human": {
+      "h": 72.6,
+      "s": 54.9,
+      "v": 40.8
+    },
+    "count": 117208,
+    "percentage": 2.8,
+    "internal_complexity": {
+      "fine_cluster_count": 3,
+      "fine_cluster_entropy": 1.06,
+      "dominant_fine_ratio": 0.583,
+      "fine_clusters": [
+        {
+          "fine_id": 4,
+          "rgb": [
+            129,
+            101,
+            59
+          ],
+          "pct": 58.3
+        },
+        {
+          "fine_id": 32,
+          "rgb": [
+            130,
+            101,
+            57
+          ],
+          "pct": 40.6
+        },
+        {
+          "fine_id": 46,
+          "rgb": [
+            104,
+            99,
+            50
+          ],
+          "pct": 1.1
+        },
+        {
+          "fine_id": 41,
+          "rgb": [
+            96,
+            76,
+            42
+          ],
+          "pct": 0.1
+        },
+        {
+          "fine_id": 12,
+          "rgb": [
+            96,
+            76,
+            44
+          ],
+          "pct": 0.0
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 3.4,
+      "rgb_range_mean": 56.7,
+      "laplacian_var": 108.7
+    },
+    "spatial_shape": {
+      "compactness": 0.232,
+      "elongation": 1.87,
+      "num_components": 35,
+      "largest_area_ratio": 0.142
+    },
+    "border_neighbors": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      10,
+      13,
+      14,
+      17,
+      19
+    ]
+  },
+  {
+    "cluster_id": 13,
+    "bgr": [
+      36,
+      95,
+      63
+    ],
+    "rgb": [
+      63,
+      95,
+      36
+    ],
+    "hsv_opencv": [
+      92.82861328125,
+      158.95858764648438,
+      76.54924774169922
+    ],
+    "hsv_human": {
+      "h": 185.7,
+      "s": 62.3,
+      "v": 30.0
+    },
+    "count": 111151,
+    "percentage": 2.7,
+    "internal_complexity": {
+      "fine_cluster_count": 3,
+      "fine_cluster_entropy": 0.71,
+      "dominant_fine_ratio": 0.877,
+      "fine_clusters": [
+        {
+          "fine_id": 17,
+          "rgb": [
+            63,
+            95,
+            36
+          ],
+          "pct": 87.7
+        },
+        {
+          "fine_id": 30,
+          "rgb": [
+            64,
+            97,
+            32
+          ],
+          "pct": 8.4
+        },
+        {
+          "fine_id": 8,
+          "rgb": [
+            77,
+            110,
+            44
+          ],
+          "pct": 2.4
+        },
+        {
+          "fine_id": 22,
+          "rgb": [
+            77,
+            110,
+            46
+          ],
+          "pct": 1.0
+        },
+        {
+          "fine_id": 0,
+          "rgb": [
+            90,
+            124,
+            47
+          ],
+          "pct": 0.3
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 3.2,
+      "rgb_range_mean": 59.3,
+      "laplacian_var": 78.2
+    },
+    "spatial_shape": {
+      "compactness": 0.843,
+      "elongation": 2.36,
+      "num_components": 828,
+      "largest_area_ratio": 0.159
+    },
+    "border_neighbors": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 0,
+    "bgr": [
+      184,
+      158,
+      75
+    ],
+    "rgb": [
+      75,
+      158,
+      184
+    ],
+    "hsv_opencv": [
+      194.56802368164062,
+      149.9086151123047,
+      147.563720703125
+    ],
+    "hsv_human": {
+      "h": 389.1,
+      "s": 58.8,
+      "v": 57.9
+    },
+    "count": 49667,
+    "percentage": 1.2,
+    "internal_complexity": {
+      "fine_cluster_count": 5,
+      "fine_cluster_entropy": 1.76,
+      "dominant_fine_ratio": 0.453,
+      "fine_clusters": [
+        {
+          "fine_id": 39,
+          "rgb": [
+            74,
+            159,
+            186
+          ],
+          "pct": 45.3
+        },
+        {
+          "fine_id": 6,
+          "rgb": [
+            80,
+            162,
+            184
+          ],
+          "pct": 35.6
+        },
+        {
+          "fine_id": 33,
+          "rgb": [
+            63,
+            149,
+            183
+          ],
+          "pct": 12.1
+        },
+        {
+          "fine_id": 37,
+          "rgb": [
+            67,
+            111,
+            160
+          ],
+          "pct": 4.3
+        },
+        {
+          "fine_id": 38,
+          "rgb": [
+            93,
+            169,
+            186
+          ],
+          "pct": 2.7
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 7.6,
+      "rgb_range_mean": 80.7,
+      "laplacian_var": 660.9
+    },
+    "spatial_shape": {
+      "compactness": 0.226,
+      "elongation": 3.15,
+      "num_components": 2318,
+      "largest_area_ratio": 0.071
+    },
+    "border_neighbors": [
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 8,
+    "bgr": [
+      186,
+      170,
+      100
+    ],
+    "rgb": [
+      100,
+      170,
+      186
+    ],
+    "hsv_opencv": [
+      191.17535400390625,
+      116.82728576660156,
+      149.0625762939453
+    ],
+    "hsv_human": {
+      "h": 382.4,
+      "s": 45.8,
+      "v": 58.5
+    },
+    "count": 34507,
+    "percentage": 0.8,
+    "internal_complexity": {
+      "fine_cluster_count": 4,
+      "fine_cluster_entropy": 1.56,
+      "dominant_fine_ratio": 0.602,
+      "fine_clusters": [
+        {
+          "fine_id": 10,
+          "rgb": [
+            104,
+            175,
+            190
+          ],
+          "pct": 60.2
+        },
+        {
+          "fine_id": 38,
+          "rgb": [
+            93,
+            169,
+            186
+          ],
+          "pct": 23.7
+        },
+        {
+          "fine_id": 45,
+          "rgb": [
+            104,
+            172,
+            172
+          ],
+          "pct": 7.7
+        },
+        {
+          "fine_id": 25,
+          "rgb": [
+            87,
+            128,
+            160
+          ],
+          "pct": 7.5
+        },
+        {
+          "fine_id": 3,
+          "rgb": [
+            106,
+            145,
+            160
+          ],
+          "pct": 1.0
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 10.9,
+      "rgb_range_mean": 102.0,
+      "laplacian_var": 1600.5
+    },
+    "spatial_shape": {
+      "compactness": 0.188,
+      "elongation": 2.77,
+      "num_components": 4504,
+      "largest_area_ratio": 0.137
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 19,
+    "bgr": [
+      93,
+      188,
+      154
+    ],
+    "rgb": [
+      154,
+      188,
+      93
+    ],
+    "hsv_opencv": [
+      81.50425720214844,
+      128.17822265625,
+      150.86788940429688
+    ],
+    "hsv_human": {
+      "h": 163.0,
+      "s": 50.3,
+      "v": 59.2
+    },
+    "count": 34663,
+    "percentage": 0.8,
+    "internal_complexity": {
+      "fine_cluster_count": 3,
+      "fine_cluster_entropy": 1.41,
+      "dominant_fine_ratio": 0.504,
+      "fine_clusters": [
+        {
+          "fine_id": 40,
+          "rgb": [
+            155,
+            188,
+            94
+          ],
+          "pct": 50.4
+        },
+        {
+          "fine_id": 19,
+          "rgb": [
+            151,
+            187,
+            87
+          ],
+          "pct": 38.0
+        },
+        {
+          "fine_id": 13,
+          "rgb": [
+            164,
+            193,
+            108
+          ],
+          "pct": 11.5
+        },
+        {
+          "fine_id": 31,
+          "rgb": [
+            135,
+            177,
+            110
+          ],
+          "pct": 0.1
+        },
+        {
+          "fine_id": 28,
+          "rgb": [
+            79,
+            109,
+            54
+          ],
+          "pct": 0.1
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 8.6,
+      "rgb_range_mean": 79.7,
+      "laplacian_var": 957.5
+    },
+    "spatial_shape": {
+      "compactness": 0.881,
+      "elongation": 4.29,
+      "num_components": 7757,
+      "largest_area_ratio": 0.003
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ]
+  },
+  {
+    "cluster_id": 15,
+    "bgr": [
+      170,
+      119,
+      52
+    ],
+    "rgb": [
+      52,
+      119,
+      170
+    ],
+    "hsv_opencv": [
+      206.37806701660156,
+      176.6086883544922,
+      136.2754364013672
+    ],
+    "hsv_human": {
+      "h": 412.8,
+      "s": 69.3,
+      "v": 53.4
+    },
+    "count": 11855,
+    "percentage": 0.3,
+    "internal_complexity": {
+      "fine_cluster_count": 4,
+      "fine_cluster_entropy": 1.65,
+      "dominant_fine_ratio": 0.454,
+      "fine_clusters": [
+        {
+          "fine_id": 15,
+          "rgb": [
+            47,
+            106,
+            166
+          ],
+          "pct": 45.4
+        },
+        {
+          "fine_id": 33,
+          "rgb": [
+            63,
+            149,
+            183
+          ],
+          "pct": 37.4
+        },
+        {
+          "fine_id": 37,
+          "rgb": [
+            67,
+            111,
+            160
+          ],
+          "pct": 10.8
+        },
+        {
+          "fine_id": 11,
+          "rgb": [
+            28,
+            74,
+            157
+          ],
+          "pct": 6.3
+        },
+        {
+          "fine_id": 39,
+          "rgb": [
+            74,
+            159,
+            186
+          ],
+          "pct": 0.0
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 15.4,
+      "rgb_range_mean": 93.3,
+      "laplacian_var": 2502.8
+    },
+    "spatial_shape": {
+      "compactness": 0.471,
+      "elongation": 2.96,
+      "num_components": 4737,
+      "largest_area_ratio": 0.092
+    },
+    "border_neighbors": [
+      0,
+      2,
+      3,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 16,
+    "bgr": [
+      119,
+      195,
+      167
+    ],
+    "rgb": [
+      167,
+      195,
+      119
+    ],
+    "hsv_opencv": [
+      82.91427612304688,
+      98.96662139892578,
+      156.63363647460938
+    ],
+    "hsv_human": {
+      "h": 165.8,
+      "s": 38.8,
+      "v": 61.4
+    },
+    "count": 11176,
+    "percentage": 0.3,
+    "internal_complexity": {
+      "fine_cluster_count": 4,
+      "fine_cluster_entropy": 1.78,
+      "dominant_fine_ratio": 0.399,
+      "fine_clusters": [
+        {
+          "fine_id": 42,
+          "rgb": [
+            175,
+            199,
+            126
+          ],
+          "pct": 39.9
+        },
+        {
+          "fine_id": 13,
+          "rgb": [
+            164,
+            193,
+            108
+          ],
+          "pct": 34.1
+        },
+        {
+          "fine_id": 31,
+          "rgb": [
+            135,
+            177,
+            110
+          ],
+          "pct": 19.4
+        },
+        {
+          "fine_id": 9,
+          "rgb": [
+            167,
+            192,
+            137
+          ],
+          "pct": 6.6
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 14.6,
+      "rgb_range_mean": 106.3,
+      "laplacian_var": 2912.3
+    },
+    "spatial_shape": {
+      "compactness": 0.811,
+      "elongation": 1.2,
+      "num_components": 7447,
+      "largest_area_ratio": 0.003
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15,
+      17,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 6,
+    "bgr": [
+      133,
+      184,
+      150
+    ],
+    "rgb": [
+      150,
+      184,
+      133
+    ],
+    "hsv_opencv": [
+      99.69020080566406,
+      69.78746795654297,
+      147.2621612548828
+    ],
+    "hsv_human": {
+      "h": 199.4,
+      "s": 27.4,
+      "v": 57.7
+    },
+    "count": 8954,
+    "percentage": 0.2,
+    "internal_complexity": {
+      "fine_cluster_count": 4,
+      "fine_cluster_entropy": 1.95,
+      "dominant_fine_ratio": 0.353,
+      "fine_clusters": [
+        {
+          "fine_id": 9,
+          "rgb": [
+            167,
+            192,
+            137
+          ],
+          "pct": 35.3
+        },
+        {
+          "fine_id": 21,
+          "rgb": [
+            159,
+            184,
+            147
+          ],
+          "pct": 26.4
+        },
+        {
+          "fine_id": 47,
+          "rgb": [
+            129,
+            176,
+            125
+          ],
+          "pct": 25.7
+        },
+        {
+          "fine_id": 31,
+          "rgb": [
+            135,
+            177,
+            110
+          ],
+          "pct": 12.3
+        },
+        {
+          "fine_id": 24,
+          "rgb": [
+            120,
+            174,
+            138
+          ],
+          "pct": 0.2
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 16.4,
+      "rgb_range_mean": 129.0,
+      "laplacian_var": 3127.3
+    },
+    "spatial_shape": {
+      "compactness": 0.802,
+      "elongation": 2.41,
+      "num_components": 6552,
+      "largest_area_ratio": 0.024
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 10,
+    "bgr": [
+      49,
+      100,
+      94
+    ],
+    "rgb": [
+      94,
+      100,
+      49
+    ],
+    "hsv_opencv": [
+      66.41368865966797,
+      130.68702697753906,
+      81.34619903564453
+    ],
+    "hsv_human": {
+      "h": 132.8,
+      "s": 51.2,
+      "v": 31.9
+    },
+    "count": 8707,
+    "percentage": 0.2,
+    "internal_complexity": {
+      "fine_cluster_count": 3,
+      "fine_cluster_entropy": 1.23,
+      "dominant_fine_ratio": 0.562,
+      "fine_clusters": [
+        {
+          "fine_id": 14,
+          "rgb": [
+            93,
+            103,
+            49
+          ],
+          "pct": 56.2
+        },
+        {
+          "fine_id": 46,
+          "rgb": [
+            104,
+            99,
+            50
+          ],
+          "pct": 40.0
+        },
+        {
+          "fine_id": 28,
+          "rgb": [
+            79,
+            109,
+            54
+          ],
+          "pct": 2.7
+        },
+        {
+          "fine_id": 31,
+          "rgb": [
+            135,
+            177,
+            110
+          ],
+          "pct": 0.5
+        },
+        {
+          "fine_id": 44,
+          "rgb": [
+            78,
+            108,
+            47
+          ],
+          "pct": 0.3
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 9.2,
+      "rgb_range_mean": 87.0,
+      "laplacian_var": 1074.1
+    },
+    "spatial_shape": {
+      "compactness": 0.17,
+      "elongation": 3.23,
+      "num_components": 1199,
+      "largest_area_ratio": 0.015
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      19
+    ]
+  },
+  {
+    "cluster_id": 12,
+    "bgr": [
+      155,
+      173,
+      111
+    ],
+    "rgb": [
+      111,
+      173,
+      155
+    ],
+    "hsv_opencv": [
+      162.19052124023438,
+      90.58373260498047,
+      138.78382873535156
+    ],
+    "hsv_human": {
+      "h": 324.4,
+      "s": 35.5,
+      "v": 54.4
+    },
+    "count": 7243,
+    "percentage": 0.2,
+    "internal_complexity": {
+      "fine_cluster_count": 4,
+      "fine_cluster_entropy": 1.65,
+      "dominant_fine_ratio": 0.497,
+      "fine_clusters": [
+        {
+          "fine_id": 16,
+          "rgb": [
+            112,
+            172,
+            155
+          ],
+          "pct": 49.7
+        },
+        {
+          "fine_id": 45,
+          "rgb": [
+            104,
+            172,
+            172
+          ],
+          "pct": 27.3
+        },
+        {
+          "fine_id": 24,
+          "rgb": [
+            120,
+            174,
+            138
+          ],
+          "pct": 20.6
+        },
+        {
+          "fine_id": 49,
+          "rgb": [
+            133,
+            166,
+            153
+          ],
+          "pct": 1.1
+        },
+        {
+          "fine_id": 3,
+          "rgb": [
+            106,
+            145,
+            160
+          ],
+          "pct": 0.8
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 11.3,
+      "rgb_range_mean": 112.7,
+      "laplacian_var": 887.5
+    },
+    "spatial_shape": {
+      "compactness": 0.694,
+      "elongation": 2.96,
+      "num_components": 3826,
+      "largest_area_ratio": 0.046
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 11,
+    "bgr": [
+      146,
+      173,
+      136
+    ],
+    "rgb": [
+      136,
+      173,
+      146
+    ],
+    "hsv_opencv": [
+      135.61996459960938,
+      54.6275634765625,
+      138.65748596191406
+    ],
+    "hsv_human": {
+      "h": 271.2,
+      "s": 21.4,
+      "v": 54.4
+    },
+    "count": 6189,
+    "percentage": 0.1,
+    "internal_complexity": {
+      "fine_cluster_count": 5,
+      "fine_cluster_entropy": 2.06,
+      "dominant_fine_ratio": 0.366,
+      "fine_clusters": [
+        {
+          "fine_id": 27,
+          "rgb": [
+            145,
+            176,
+            149
+          ],
+          "pct": 36.6
+        },
+        {
+          "fine_id": 49,
+          "rgb": [
+            133,
+            166,
+            153
+          ],
+          "pct": 26.6
+        },
+        {
+          "fine_id": 24,
+          "rgb": [
+            120,
+            174,
+            138
+          ],
+          "pct": 21.9
+        },
+        {
+          "fine_id": 47,
+          "rgb": [
+            129,
+            176,
+            125
+          ],
+          "pct": 10.1
+        },
+        {
+          "fine_id": 21,
+          "rgb": [
+            159,
+            184,
+            147
+          ],
+          "pct": 4.8
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 14.7,
+      "rgb_range_mean": 138.0,
+      "laplacian_var": 2516.2
+    },
+    "spatial_shape": {
+      "compactness": 1.524,
+      "elongation": 1.44,
+      "num_components": 4987,
+      "largest_area_ratio": 0.003
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 17,
+    "bgr": [
+      155,
+      148,
+      113
+    ],
+    "rgb": [
+      113,
+      148,
+      155
+    ],
+    "hsv_opencv": [
+      188.69024658203125,
+      71.2642822265625,
+      125.42720031738281
+    ],
+    "hsv_human": {
+      "h": 377.4,
+      "s": 27.9,
+      "v": 49.2
+    },
+    "count": 5146,
+    "percentage": 0.1,
+    "internal_complexity": {
+      "fine_cluster_count": 6,
+      "fine_cluster_entropy": 1.64,
+      "dominant_fine_ratio": 0.439,
+      "fine_clusters": [
+        {
+          "fine_id": 3,
+          "rgb": [
+            106,
+            145,
+            160
+          ],
+          "pct": 43.9
+        },
+        {
+          "fine_id": 29,
+          "rgb": [
+            121,
+            154,
+            157
+          ],
+          "pct": 43.0
+        },
+        {
+          "fine_id": 49,
+          "rgb": [
+            133,
+            166,
+            153
+          ],
+          "pct": 8.1
+        },
+        {
+          "fine_id": 16,
+          "rgb": [
+            112,
+            172,
+            155
+          ],
+          "pct": 2.1
+        },
+        {
+          "fine_id": 25,
+          "rgb": [
+            87,
+            128,
+            160
+          ],
+          "pct": 1.7
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 14.8,
+      "rgb_range_mean": 149.3,
+      "laplacian_var": 3041.5
+    },
+    "spatial_shape": {
+      "compactness": 2.364,
+      "elongation": 1.75,
+      "num_components": 4043,
+      "largest_area_ratio": 0.003
+    },
+    "border_neighbors": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15,
+      16,
+      18,
+      19
+    ]
+  },
+  {
+    "cluster_id": 18,
+    "bgr": [
+      112,
+      44,
+      12
+    ],
+    "rgb": [
+      12,
+      44,
+      112
+    ],
+    "hsv_opencv": [
+      220.6943359375,
+      226.24758911132812,
+      90.22076416015625
+    ],
+    "hsv_human": {
+      "h": 441.4,
+      "s": 88.7,
+      "v": 35.4
+    },
+    "count": 5784,
+    "percentage": 0.1,
+    "internal_complexity": {
+      "fine_cluster_count": 1,
+      "fine_cluster_entropy": 0.14,
+      "dominant_fine_ratio": 0.986,
+      "fine_clusters": [
+        {
+          "fine_id": 34,
+          "rgb": [
+            12,
+            44,
+            112
+          ],
+          "pct": 98.6
+        },
+        {
+          "fine_id": 11,
+          "rgb": [
+            28,
+            74,
+            157
+          ],
+          "pct": 0.5
+        },
+        {
+          "fine_id": 48,
+          "rgb": [
+            11,
+            57,
+            160
+          ],
+          "pct": 0.4
+        },
+        {
+          "fine_id": 7,
+          "rgb": [
+            20,
+            68,
+            156
+          ],
+          "pct": 0.2
+        },
+        {
+          "fine_id": 15,
+          "rgb": [
+            47,
+            106,
+            166
+          ],
+          "pct": 0.1
+        }
+      ]
+    },
+    "color_stats": {
+      "rgb_std_mean": 3.2,
+      "rgb_range_mean": 44.3,
+      "laplacian_var": 41.3
+    },
+    "spatial_shape": {
+      "compactness": 0.005,
+      "elongation": 1.34,
+      "num_components": 51,
+      "largest_area_ratio": 0.293
+    },
+    "border_neighbors": [
+      0,
+      2,
+      6,
+      8,
+      11,
+      12,
+      13,
+      15,
+      16,
+      17,
+      19
+    ]
+  }
+]

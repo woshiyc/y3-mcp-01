@@ -259,28 +259,43 @@ def build_height_grid_from_config(continent_map, water_mask, height_config):
 
 
 def load_slope_cells(boundary_report_path, slope_decisions_path):
-    """从边界报告和斜坡决策文件中提取需要铺斜坡的格子集合。
+    """从斜坡决策文件中提取需要铺斜坡的格子集合。
+
+    支持两种格式：
+    A. cv_slope_auto.py (像素级) 输出：{"mode":"pixel_level","slope_cells":[{"x":...,"z":...}]}
+    B. 旧版边界报告格式：{"decisions":[{"boundary_id":...,"traversable":...,"cells_override":[...]}]}
 
     Args:
-        boundary_report_path: height_boundary_report.json 路径
+        boundary_report_path: height_boundary_report.json 路径（格式B时使用，格式A可传None）
         slope_decisions_path: slope_decision.json 路径
 
     Returns:
         slope_cells: set of (x, z)，需要标记为 slope 类型的低侧格子
     """
-    with open(boundary_report_path, "r", encoding="utf-8") as f:
-        report = json.load(f)
     with open(slope_decisions_path, "r", encoding="utf-8") as f:
         decisions_raw = json.load(f)
 
-    # 支持两种格式：{"decisions": [...]} 或直接 [...]
+    # 格式A：像素级输出（cv_slope_auto.py 新版）
+    if isinstance(decisions_raw, dict) and decisions_raw.get("mode") == "pixel_level":
+        slope_cells = set()
+        for c in decisions_raw.get("slope_cells", []):
+            slope_cells.add((c["x"], c["z"]))
+        return slope_cells
+
+    # 格式B：边界报告格式（旧版 AI 手动决策或 cv_slope_auto.py 旧版）
+    if boundary_report_path and os.path.exists(boundary_report_path):
+        with open(boundary_report_path, "r", encoding="utf-8") as f:
+            report = json.load(f)
+    else:
+        report = {"boundaries": []}
+
     if isinstance(decisions_raw, dict):
         decisions_list = decisions_raw.get("decisions", [])
     else:
         decisions_list = decisions_raw
 
     traversable_ids = set()
-    override_cells = {}  # boundary_id → list of {x, z}（可选的精确覆盖）
+    override_cells = {}
     for d in decisions_list:
         bid = d.get("boundary_id") if isinstance(d, dict) else None
         if bid is None:
@@ -295,10 +310,7 @@ def load_slope_cells(boundary_report_path, slope_decisions_path):
         bid = b["id"]
         if bid not in traversable_ids:
             continue
-        if bid in override_cells:
-            cells = override_cells[bid]
-        else:
-            cells = b.get("low_cells", [])
+        cells = override_cells.get(bid, b.get("low_cells", []))
         for c in cells:
             slope_cells.add((c["x"], c["z"]))
 
@@ -306,7 +318,8 @@ def load_slope_cells(boundary_report_path, slope_decisions_path):
 
 
 def generate_csvs(water_mask, continent_map, full_texture_config, cliff_config, default_texture,
-                  output_dir, height_grid=None, slope_cells=None, water_type_grid=None):
+                  output_dir, height_grid=None, slope_cells=None, water_type_grid=None,
+                  labels_grid=None, cluster_texture_config=None):
     """生成 terrain_grid.csv(v1) 和 texture_grid.csv(v1)
 
     CSV 格式: "type,height,cliff_tex_id"
@@ -372,7 +385,12 @@ def generate_csvs(water_mask, continent_map, full_texture_config, cliff_config, 
                 else:
                     h = int(height_grid[z, x]) if height_grid is not None else 0
                     cid = int(continent_map[z, x])
-                    tex = full_texture_config.get(cid, default_texture)
+                    # 纹理优先级：per-cluster > per-continent > default
+                    if cluster_texture_config is not None and labels_grid is not None:
+                        cluster_id = int(labels_grid[z, x])
+                        tex = cluster_texture_config.get(cluster_id, default_texture)
+                    else:
+                        tex = full_texture_config.get(cid, default_texture)
                     if (x, z) in slope_cells:
                         t_row.append(f"slope,{h},{ctid}")
                         slope_count += 1
@@ -428,6 +446,10 @@ def main():
                         help='纹理配置 JSON (按大陆ID), 如 \'{"1": 147, "2": 170}\' — 与 --group-texture-config 二选一')
     parser.add_argument("--group-texture-config", default=None,
                         help='纹理配置 JSON (按组ID), 如 \'{"1": 147, "2": 170}\' — 与 --texture-config 二选一')
+    parser.add_argument("--cluster-texture-config", default=None,
+                        help='纹理配置 JSON (按聚类ID), 如 \'{"0": 194, "3": 165}\' — 直接按像素聚类分配纹理')
+    parser.add_argument("--labels-grid", default=None,
+                        help="labels_grid.npy 路径（grid分辨率聚类标签，配合 --cluster-texture-config 使用）")
     parser.add_argument("--continent-summary", default=None,
                         help="continent_summary.json 路径 (--group-texture-config 或 --group-only 模式必需)")
     parser.add_argument("--group-only", action="store_true",
@@ -438,6 +460,8 @@ def main():
                         help="兜底纹理 ID (默认 147)")
     parser.add_argument("--cliff-mapping", default="",
                         help='悬崖材质映射, 格式 "continent_id:cliff_tex_id,...", 如 "1:0,2:1,3:9"')
+    parser.add_argument("--height-grid", default=None,
+                        help="height_grid.npy 路径（直接加载每格高度，优先于 --group-height-config）")
     parser.add_argument("--group-height-config", default=None,
                         help='高度配置 JSON (按组ID), 如 \'{"1":0,"2":2,"3":4}\' — 与 --group-texture-config 联合使用')
     parser.add_argument("--boundary-report", default=None,
@@ -541,8 +565,24 @@ def main():
         print(f"  模式: 按大陆ID分配纹理")
         print(f"  纹理配置: {texture_config}")
 
+    elif args.cluster_texture_config:
+        # 模式 C: 按聚类 ID 分配（per-pixel，需要 labels_grid.npy）
+        if not args.labels_grid:
+            print("[ERROR] --cluster-texture-config 需要同时提供 --labels-grid")
+            sys.exit(1)
+        try:
+            raw_cluster = json.loads(args.cluster_texture_config)
+            cluster_tex = {int(k): int(v) for k, v in raw_cluster.items()}
+        except (json.JSONDecodeError, ValueError) as e:
+            print(f"[ERROR] cluster-texture-config JSON 解析失败: {e}")
+            sys.exit(1)
+        print(f"  模式: 按聚类ID分配纹理（per-pixel）")
+        print(f"  聚类纹理配置: {cluster_tex}")
+        # texture_config 和 full_config 在 cluster 模式下不用大陆映射，设空
+        texture_config = {}
+        full_config = {}
     else:
-        print("[ERROR] 必须提供 --texture-config 或 --group-texture-config 之一")
+        print("[ERROR] 必须提供 --texture-config、--group-texture-config 或 --cluster-texture-config 之一")
         sys.exit(1)
 
     # 解析悬崖材质映射
@@ -568,7 +608,19 @@ def main():
 
     # ── 高度配置 ──
     height_grid = None
-    if args.group_height_config:
+    if args.height_grid:
+        print(f"\n[Step 2b] 加载 height_grid.npy ...")
+        if not os.path.exists(args.height_grid):
+            print(f"[WARN] height-grid 不存在: {args.height_grid}")
+        else:
+            loaded = np.load(args.height_grid).astype(np.int32)
+            # 水域格(-1)在 generate_csvs 中由 water_mask 控制，此处设0
+            loaded[loaded < 0] = 0
+            height_grid = loaded
+            uvals, ucnts = np.unique(height_grid, return_counts=True)
+            for v, c in zip(uvals, ucnts):
+                print(f"    h={v}: {c} 格 ({c*100//height_grid.size}%)")
+    elif args.group_height_config:
         print(f"\n[Step 2b] 解析高度配置 ...")
         try:
             raw_h = json.loads(args.group_height_config)
@@ -600,18 +652,14 @@ def main():
 
     # ── 斜坡决策 ──
     slope_cells = None
-    if args.slope_decisions and args.boundary_report:
+    if args.slope_decisions:
         print(f"\n[Step 2c] 加载斜坡决策 ...")
-        if not os.path.exists(args.boundary_report):
-            print(f"[ERROR] boundary-report 不存在: {args.boundary_report}")
-            sys.exit(1)
         if not os.path.exists(args.slope_decisions):
             print(f"[ERROR] slope-decisions 不存在: {args.slope_decisions}")
             sys.exit(1)
+        # load_slope_cells 自动识别格式：像素级格式不需要 boundary_report
         slope_cells = load_slope_cells(args.boundary_report, args.slope_decisions)
         print(f"  斜坡格子数: {len(slope_cells)}")
-    elif args.slope_decisions and not args.boundary_report:
-        print("[WARN] --slope-decisions 需要同时提供 --boundary-report，斜坡信息将被忽略")
 
     # ── 水域类型网格 ──
     water_type_grid = None
@@ -626,12 +674,29 @@ def main():
                 if cnt:
                     print(f"  {name}: {cnt} 格")
 
+    # ── Cluster 纹理模式 ──
+    labels_grid = None
+    cluster_tex_config = None
+    if args.cluster_texture_config and args.labels_grid:
+        print(f"\n[Step 2e] 加载 labels_grid.npy ...")
+        labels_grid = np.load(args.labels_grid).astype(np.int32)
+        try:
+            raw_ct = json.loads(args.cluster_texture_config)
+            cluster_tex_config = {int(k): int(v) for k, v in raw_ct.items()}
+        except Exception as e:
+            print(f"[ERROR] cluster-texture-config 解析失败: {e}")
+            sys.exit(1)
+        unique_tex = sorted(set(cluster_tex_config.values()))
+        print(f"  聚类→纹理映射: {cluster_tex_config}")
+        print(f"  纹理种类: {len(unique_tex)} 种 {unique_tex}")
+
     # 生成 CSV
     print(f"\n[Step 3] 生成 CSV ...")
     terrain_path, texture_path, water_count, land_count = generate_csvs(
         water_mask, continent_map, full_config, cliff_config, args.default_texture,
         args.output_dir, height_grid=height_grid, slope_cells=slope_cells,
-        water_type_grid=water_type_grid)
+        water_type_grid=water_type_grid,
+        labels_grid=labels_grid, cluster_texture_config=cluster_tex_config)
 
     # 统计
     total = H * W
