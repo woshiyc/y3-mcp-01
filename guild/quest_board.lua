@@ -50,7 +50,7 @@ end
 function M.get_pool(quest_id)
     local quest = QuestData.get(quest_id)
     if not quest then return {} end
-    return quest.registered_ids
+    return quest.registered_ids or {}
 end
 
 return M

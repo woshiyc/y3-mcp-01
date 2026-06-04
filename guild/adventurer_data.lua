@@ -154,4 +154,10 @@ function M.reset_idle(id)
     if adv then adv.idle_days = 0 end
 end
 
+--- 重置所有冒险者数据（仅用于测试隔离）
+function M.reset()
+    _adventurers = {}
+    _next_id = 1
+end
+
 return M

@@ -78,6 +78,7 @@ end
 
 local function run_quest_board_tests()
     log.info("=== Task 3: Quest Board Tests ===")
+    AdvData.reset()  -- 清除前面测试创建的冒险者，避免状态污染
 
     -- 准备：3个冒险者
     local adv_high     = AdvData.create("Alice",  "warrior", "C")  -- rank=4, loyalty=60
