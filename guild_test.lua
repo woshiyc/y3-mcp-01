@@ -4,6 +4,7 @@ local AdvData = require 'guild.adventurer_data'
 local QuestData = require 'guild.quest_data'
 local QuestBoard = require 'guild.quest_board'
 local Dispatch = require 'guild.quest_dispatch'
+local Execution = require 'guild.quest_execution'
 
 local function assert_eq(label, a, b)
     if a ~= b then
@@ -172,6 +173,16 @@ local function run_dispatch_tests()
     log.info("=== Task 4 Tests Done ===")
 end
 
+local function run_execution_tests()
+    log.info("=== Task 5: Execution Tests ===")
+    -- 执行模块主要依赖游戏运行时（单位创建、事件监听），此处只记录手动验证项
+    log.info("[MANUAL] Task 5: 需要在游戏中验证以下行为：")
+    log.info("  - 派遣后，冒险者单位出现在地图上并向目标移动")
+    log.info("  - 按 R 键召回，单位消失，任务以 abort 结算")
+    log.info("  - 单位全部死亡时，触发 wipe 结算")
+    log.info("=== Task 5 Tests Done ===")
+end
+
 -- 绑定快捷键 T = 运行测试
 y3.game:event('游戏-初始化', function()
     y3.player.with_local(function(p)
@@ -182,6 +193,15 @@ y3.game:event('游戏-初始化', function()
                 run_quest_data_tests()
                 run_quest_board_tests()
                 run_dispatch_tests()
+                run_execution_tests()
+            end
+            if key == 'R' then
+                -- 召回第一个 DISPATCHED 任务（调试用）
+                local dispatched = QuestData.get_by_status(QuestData.STATUS.DISPATCHED)
+                if dispatched[1] then
+                    Execution.recall(dispatched[1].id)
+                    log.info("[DEBUG] 召回任务: " .. dispatched[1].id)
+                end
             end
         end)
     end)
