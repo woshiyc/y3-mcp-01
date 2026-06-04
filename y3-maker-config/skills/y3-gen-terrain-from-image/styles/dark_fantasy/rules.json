@@ -1,0 +1,107 @@
+{
+  "style_id": "dark_fantasy",
+  "style_name": "暗黑奇幻",
+  "description": "Majesty风格暗黑奇幻地图，水域广布，北部危险，压抑阴暗",
+
+  "color_protocol_ref": "../../references/color_protocol_v1.json",
+  "model_catalog": "model_catalog.json",
+
+  "element_rules": {
+    "forest_dense": {
+      "max_height": 2,
+      "min_height": 0,
+      "forbidden_heights": [4, 6],
+      "near_water_exception": false,
+      "density_near_water": "dense",
+      "density_flat":       "dense",
+      "density_hill":       "medium",
+      "style_note": "暗黑压抑的高密度密林，聚集在危险区和地图边缘"
+    },
+    "forest_medium": {
+      "max_height": 2,
+      "min_height": 0,
+      "forbidden_heights": [4, 6],
+      "near_water_exception": false,
+      "density_near_water": "dense",
+      "density_flat":       "medium",
+      "density_hill":       "sparse",
+      "style_note": "标准中密度森林，平原和水边分布"
+    },
+    "forest_sparse": {
+      "max_height": 4,
+      "min_height": 0,
+      "forbidden_heights": [6],
+      "near_water_exception": false,
+      "density_near_water": "medium",
+      "density_flat":       "sparse",
+      "density_hill":       "sparse",
+      "style_note": "稀疏灌木，过渡区域和道路旁分布"
+    },
+    "rock_cluster": {
+      "max_height": 6,
+      "min_height": 2,
+      "forbidden_heights": [],
+      "near_water_exception": true,
+      "density_near_water": "medium",
+      "density_flat":       "medium",
+      "density_hill":       "dense",
+      "style_note": "山石集中在丘陵和山地，水边平地也可出现（岸边礁石）"
+    }
+  },
+
+  "programmatic_rules": {
+    "border_seal": {
+      "enabled": true,
+      "element_type": "forest_dense",
+      "border_cells": 10,
+      "density": "dense",
+      "description": "距地图边缘10格内非水域格，自动填充高密度密林（地图封边）"
+    },
+    "water_edge_vegetation": {
+      "enabled": true,
+      "element_type": "forest_sparse",
+      "edge_cells": 4,
+      "density": "medium",
+      "description": "距水域边缘4格内的陆地，自动填充稀疏植被（水边自然过渡）"
+    },
+    "danger_zone_surround": {
+      "enabled": true,
+      "trigger_node_types": ["monster_lair", "dungeon_entrance"],
+      "element_type": "forest_dense",
+      "surround_cells": 8,
+      "density": "dense",
+      "description": "巢穴和地牢周围8格，自动填充压抑密林（危险区氛围）"
+    },
+    "road_clearance": {
+      "enabled": true,
+      "road_buffer_cells": 2,
+      "forbidden_elements": ["forest_dense", "forest_medium"],
+      "description": "道路两侧2格内不放密林（保持道路视野通畅）"
+    }
+  },
+
+  "layout_density_guide": {
+    "water_edge":    "high",
+    "mountain_base": "medium_high",
+    "mountain_top":  "low_rock_only",
+    "plain_open":    "medium_low",
+    "road_side":     "low",
+    "map_edge":      "high_dense",
+    "danger_zone":   "high_oppressive",
+    "node_vicinity": "low_clear"
+  },
+
+  "terrain_rules": {
+    "water_types": {
+      "deep_water":    "广阔不可通行水域，占主体",
+      "shallow_water": "可涉水河道，配合桥梁",
+      "plain_water":   "浅滩积水"
+    },
+    "height_semantics": {
+      "h0": "主战场平原，保持开阔",
+      "h2": "低丘过渡，植被减少",
+      "h4": "山地，以岩石为主",
+      "h6": "山峰，无植被"
+    }
+  }
+}

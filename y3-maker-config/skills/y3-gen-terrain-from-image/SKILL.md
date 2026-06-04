@@ -976,3 +976,125 @@ y3-gen-terrain-from-image/
 - **植被坐标系**：与地形坐标系不同，`terrain_vegetation_draw_block` 内部已处理
 - **CV 依赖**：需要 `opencv-python` + `numpy`，约 45MB，通过 pip 安装
 - **每轮交互**：两轮共约 3~4 次 AI-用户交互
+
+## Round 3：装饰实体层
+
+> **前置条件：** Round 1 和 Round 2 必须已完成（需要 height_grid.npy、water_mask_grid.npy、water_type_grid.npy、spatial_analysis.json）
+
+### Step 3.1：生成灰度上下文图
+
+```bash
+python scripts/gen_gray_context.py output/{run_id} --scale 8
+```
+
+输出：`output/{run_id}/gray_context.png`（2048×2048px，每格=8×8像素）
+
+`--scale` 参数说明：
+- `--scale 1`（默认）：256×256px，1格=1像素，AI精度低
+- `--scale 8`（推荐）：2048×2048px，1格=8×8像素，与源图等分辨率，AI绘制精度最高，缩回256格时整除无误差
+
+### Step 3.2：AI 装饰设计图（GPT Image 2）
+
+使用 `gray_context.png` 作为底图，通过 GPT Image 2 inpainting 生成装饰设计图。
+
+**严格遵守颜色语义协议（references/color_protocol_v1.json）：**
+
+> ⚠️ **颜色精度要求：** 必须使用下表中的精确 RGB 值填充，不允许渐变、抗锯齿、颜色混合或任何偏差。AI 生成时偏色会导致识别失败（实测 AI 偏差通常在 ±30 以内，系统阈值为 90）。
+
+| 元素类型 | 精确 RGB（必须一致） | 形状 | 最小尺寸 |
+|---------|-------------------|------|---------|
+| forest_sparse | R=100 G=210 B=50 | 填满实心色块，无渐变 | 6×6格 |
+| forest_medium | R=20 G=160 B=20 | 填满实心色块，无渐变 | 8×8格 |
+| forest_dense | R=0 G=90 B=0 | 填满实心色块，无渐变 | 10×10格 |
+| rock_cluster | R=0 G=200 B=200 | 填满实心色块，无渐变 | 4×4格 |
+| building_common | R=220 G=160 B=20 | 实心方块，无渐变 | 3×3格 |
+| building_landmark | R=200 G=20 B=120 | 实心方块，无渐变 | 3×3格 |
+| resource_point | R=255 G=210 B=0 | 实心方块，无渐变 | 3×3格 |
+| monster_lair | R=150 G=0 B=200 | 实心方块，无渐变 | 3×3格 |
+| dungeon_entrance | R=70 G=0 B=150 | 实心方块，无渐变 | 3×3格 |
+| road_main | R=220 G=50 B=20 | 纯色细线，无抗锯齿 | 宽2-3格，长≥10格 |
+| bridge | R=0 G=60 B=220 | 实心方块，无渐变 | 3×3格 |
+
+**提示词中必须包含以下强制约束：**
+```
+所有颜色必须使用上表中的精确 RGB 整数值，禁止任何颜色插值、渐变、
+抗锯齿、混色或近似色。背景保持纯灰色（R=G=B=128）。
+```
+
+保存输出为 `output/{run_id}/decoration_design.png`
+
+**强制覆盖游戏节点位置**（Step 3.2完成后执行，防止AI忽略坐标约束）：
+
+```python
+import json, pathlib
+from PIL import Image
+from scripts.gen_gray_context import overlay_candidates
+
+run = pathlib.Path('output/{run_id}')
+spatial = json.loads((run / 'spatial_analysis.json').read_text(encoding='utf-8'))
+img = Image.open(str(run / 'decoration_design.png'))
+
+CANDIDATE_COLORS = {
+    'resource_points':   (255, 210,   0),
+    'monster_lairs':     (150,   0, 200),
+    'dungeon_entrances': ( 70,   0, 150),
+    'bridge_candidates': (  0,  60, 220),
+}
+for key, color in CANDIDATE_COLORS.items():
+    overlay_candidates(img, spatial.get(key, []), color, dot_radius=1)
+
+img.save(str(run / 'decoration_design.png'))
+print("Game node positions enforced")
+```
+
+### Step 3.3：CV 元素提取
+
+```bash
+python scripts/cv_decoration_extract.py output/{run_id} --theme {theme}
+```
+
+可选主题：`grassland`、`autumn`、`desert`、`ice_snow`、`default`
+
+输出：`output/{run_id}/decoration_manifest.json`
+
+检查警告日志：
+- `unknown_pixels.log` — 未识别颜色（距离 > 60）
+- `shape_warnings.log` — 尺寸不足被跳过的元素
+
+### Step 3.4：查看并修改元素清单
+
+读取 `decoration_manifest.json`，按需修改元素：
+
+```python
+import json
+m = json.load(open('output/{run_id}/decoration_manifest.json', encoding='utf-8'))
+print(m['summary'])
+for e in m['elements']:
+    print(e['id'], e['type'], e['grid_pos'])
+```
+
+修改元素（直接编辑 JSON）：
+- `model_group`：改用其他主题模型池
+- `model_ids`：指定具体模型 ID 列表
+- `density`：sparse / medium / dense（仅 area 类型）
+- `radius`：调整覆盖范围（仅 area 类型）
+- `status`：改为 `skipped` 跳过写入
+
+### Step 3.5：MCP 批量写入
+
+```bash
+python scripts/mcp_round3_writer.py output/{run_id}/decoration_manifest.json [--dry-run]
+```
+
+- `--dry-run`：只统计，不实际写入
+- `--batch-size N`：覆盖默认分级批次（road=100, 游戏节点=20, 其他=50）
+- `--url URL`：MCP Server 地址（默认从 mcp_settings.json 读取）
+
+输出：更新后的 `decoration_manifest.json`（status 字段变为 written/failed）
+
+### 注意事项
+
+- Round 2 的 `cv_vegetation_fill.py` 在 Round 3 流程中**不再调用**
+- 游戏节点（resource_point、monster_lair、dungeon_entrance）当前以 `entity_create_block` + 占位模型写入；正式上线前需与策划确认物编实体 ID
+- 超大地图（>512×512格）的装饰设计图需分块生成后手动拼合，再运行 cv_decoration_extract.py
+- 已验证端到端流程（20×20格合成地图，22个单元测试全部通过）

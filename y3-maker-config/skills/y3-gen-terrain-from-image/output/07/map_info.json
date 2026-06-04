@@ -1,7 +1,7 @@
 {
-  "project_path": "E:\\pycode\\y3-map",
-  "map_name": "05_256x256",
-  "map_path": "E:\\pycode\\y3-map\\assets\\05.png",
-  "width": 257,
-  "height": 257
+  "project_path": "E:\\pycode\\y3-map\\y3-maker-config\\skills\\y3-gen-terrain-from-image\\output\\06",
+  "map_name": "dark_fantasy_map",
+  "map_path": "E:\\pycode\\y3-map\\y3-maker-config\\skills\\y3-gen-terrain-from-image\\output\\06",
+  "width": 256,
+  "height": 256
 }

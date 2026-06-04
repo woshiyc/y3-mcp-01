@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "generated_at": "2026-06-04T15:03:08.658987",
+    "grid_size": {
+      "w": 20,
+      "h": 20
+    },
+    "total_elements": 3,
+    "color_protocol_version": "1.0",
+    "theme": "default"
+  },
+  "elements": [
+    {
+      "id": "e_0000",
+      "type": "forest_medium",
+      "shape": "area",
+      "grid_pos": {
+        "x": 5.5,
+        "z": 5.5
+      },
+      "radius": 6.4,
+      "density": "medium",
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201627
+      ],
+      "world_pos": {
+        "x": -8.0,
+        "y": 0.0,
+        "z": -8.0
+      },
+      "source_color": [
+        20,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0001",
+      "type": "building_common",
+      "shape": "point",
+      "grid_pos": {
+        "x": 15.0,
+        "z": 15.0
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 11.0,
+        "y": 0.0,
+        "z": 11.0
+      },
+      "source_color": [
+        220,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0002",
+      "type": "road_main",
+      "shape": "path",
+      "waypoints": [
+        {
+          "x": 2,
+          "z": 13
+        },
+        {
+          "x": 5,
+          "z": 13
+        },
+        {
+          "x": 8,
+          "z": 13
+        },
+        {
+          "x": 11,
+          "z": 13
+        },
+        {
+          "x": 14,
+          "z": 13
+        },
+        {
+          "x": 17,
+          "z": 13
+        }
+      ],
+      "width": 2,
+      "model_ids": [
+        205148
+      ],
+      "source_color": [
+        220,
+        50,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    }
+  ],
+  "summary": {
+    "forest_medium": 1,
+    "building_common": 1,
+    "road_main": 1
+  }
+}

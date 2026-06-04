@@ -1,0 +1,38 @@
+{
+  "groups": [
+    {
+      "group_id": 1,
+      "continent_ids": [
+        1,
+        26,
+        56
+      ],
+      "avg_rgb": [
+        105,
+        116,
+        71
+      ],
+      "total_area": 41956
+    },
+    {
+      "group_id": 2,
+      "continent_ids": [
+        42
+      ],
+      "avg_rgb": [
+        127,
+        156,
+        134
+      ],
+      "total_area": 8
+    }
+  ],
+  "fragments": [
+    39,
+    41,
+    5,
+    11,
+    24,
+    44
+  ]
+}
