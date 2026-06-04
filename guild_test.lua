@@ -1,6 +1,7 @@
 -- guild_test.lua
 -- 调试快捷键绑定 & 单元测试入口
 local AdvData = require 'guild.adventurer_data'
+local QuestData = require 'guild.quest_data'
 
 local function assert_eq(label, a, b)
     if a ~= b then
@@ -44,12 +45,45 @@ local function run_adventurer_tests()
     log.info("=== Task 1 Tests Done ===")
 end
 
+local function run_quest_data_tests()
+    log.info("=== Task 2: Quest Data Tests ===")
+
+    local q = QuestData.create("讨伐哥布林", 2, QuestData.TYPE.HUNT, 3)
+    assert_eq("quest.rank", q.rank, 2)
+    assert_eq("quest.status", q.status, QuestData.STATUS.PENDING)
+    assert_eq("quest.reward_base E", q.reward_base, 150)
+
+    -- 发布任务
+    QuestData.post(q.id, 1.25)
+    local q2 = QuestData.get(q.id)
+    assert_eq("post status", q2.status, QuestData.STATUS.POSTED)
+    assert_eq("total_reward 1.25x E", QuestData.total_reward(q.id), 187) -- floor(150*1.25)
+
+    -- 无效倍率不生效（0.9 不在有效集合中）
+    local q3 = QuestData.create("测试任务", 1, QuestData.TYPE.STRATEGIC, nil)
+    QuestData.post(q3.id, 0.9)
+    assert_eq("invalid mult rejected", QuestData.get(q3.id).status, QuestData.STATUS.PENDING)
+
+    -- get_by_status
+    local posted_list = QuestData.get_by_status(QuestData.STATUS.POSTED)
+    local found = false
+    for _, pq in ipairs(posted_list) do
+        if pq.id == q.id then found = true end
+    end
+    assert_eq("get_by_status POSTED", found, true)
+
+    log.info("=== Task 2 Tests Done ===")
+end
+
 -- 绑定快捷键 T = 运行测试
 y3.game:event('游戏-初始化', function()
     y3.player.with_local(function(p)
         -- 按 T 键触发测试
         y3.game:event('按键-按下', function(_, key)
-            if key == 'T' then run_adventurer_tests() end
+            if key == 'T' then
+                run_adventurer_tests()
+                run_quest_data_tests()
+            end
         end)
     end)
 end)
