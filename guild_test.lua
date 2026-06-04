@@ -6,6 +6,7 @@ local QuestBoard = require 'guild.quest_board'
 local Dispatch = require 'guild.quest_dispatch'
 local Execution = require 'guild.quest_execution'
 local Settlement = require 'guild.quest_settlement'
+local EventCards = require 'guild.event_cards'
 
 local function assert_eq(label, a, b)
     if a ~= b then
@@ -234,6 +235,42 @@ local function run_settlement_tests()
     log.info("=== Task 6 Tests Done ===")
 end
 
+local function run_event_card_tests()
+    log.info("=== Task 8: Event Card Tests ===")
+
+    -- draw_cards 返回空池的任务类型（如 strategic）
+    local cards_none = EventCards.draw_cards("strategic")
+    assert_eq("no cards for unknown type", #cards_none, 0)
+
+    -- draw_cards 对 hunt 类型返回 0~2 张
+    local cards_hunt = EventCards.draw_cards("hunt")
+    local ok_range = (cards_hunt ~= nil and #cards_hunt >= 0 and #cards_hunt <= 2)
+    assert_eq("hunt cards in range [0,2]", ok_range, true)
+
+    -- draw_cards 不重复（抽2张时两张不同）
+    -- 多次采样验证无重复（hunt 有2张卡，抽2张时必须各不同）
+    local seen_duplicates = false
+    for _ = 1, 20 do
+        local sample = EventCards.draw_cards("hunt")
+        if #sample == 2 and sample[1].id == sample[2].id then
+            seen_duplicates = true
+            break
+        end
+    end
+    assert_eq("no duplicate cards in draw", seen_duplicates, false)
+
+    -- 卡牌结构完整性
+    local explore_cards = EventCards.draw_cards("explore")
+    if #explore_cards > 0 then
+        local card = explore_cards[1]
+        assert_eq("card has id", type(card.id) == "string", true)
+        assert_eq("card has text", type(card.text) == "string", true)
+        assert_eq("card has options", type(card.options) == "table", true)
+    end
+
+    log.info("=== Task 8 Tests Done ===")
+end
+
 -- 绑定快捷键 T = 运行测试
 y3.game:event('游戏-初始化', function()
     y3.player.with_local(function(p)
@@ -246,6 +283,7 @@ y3.game:event('游戏-初始化', function()
                 run_dispatch_tests()
                 run_execution_tests()
                 run_settlement_tests()
+                run_event_card_tests()
             end
             if key == 'R' then
                 -- 召回第一个 DISPATCHED 任务（调试用）

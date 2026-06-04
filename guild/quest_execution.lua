@@ -2,6 +2,7 @@
 -- 任务执行模块：创建地图单位、监控死亡、处理召回、清理资源
 local AdvData    = require 'guild.adventurer_data'
 local QuestData  = require 'guild.quest_data'
+local EventCards = require 'guild.event_cards'
 
 local M = {}
 
@@ -90,7 +91,22 @@ function M.start(quest_id, target_point, on_complete, on_event_card)
         -- 实际到达后调用: M.mark_success(quest_id)
     end)
 
-    -- card_timer 由 Task 8 的事件卡系统写入 ctx.card_timer
+    -- 事件卡抽取和定时触发（Task 8）
+    local cards = EventCards.draw_cards(quest.quest_type)
+    local card_index = 1
+
+    -- 每30秒检查是否触发下一张事件卡（存储句柄，_finish 时 cancel）
+    if #cards > 0 then
+        ctx.card_timer = y3.timer.loop(30, function()
+            if not _executions[quest_id] then return end
+            if card_index > #cards then return end
+            local card = cards[card_index]
+            card_index = card_index + 1
+            if on_event_card then
+                on_event_card(quest_id, card)
+            end
+        end)
+    end
 end
 
 --- 玩家主动召回（结果为 abort，按轻度失败结算）
