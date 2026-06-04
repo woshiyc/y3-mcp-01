@@ -2,6 +2,7 @@
 -- 调试快捷键绑定 & 单元测试入口
 local AdvData = require 'guild.adventurer_data'
 local QuestData = require 'guild.quest_data'
+local QuestBoard = require 'guild.quest_board'
 
 local function assert_eq(label, a, b)
     if a ~= b then
@@ -75,6 +76,45 @@ local function run_quest_data_tests()
     log.info("=== Task 2 Tests Done ===")
 end
 
+local function run_quest_board_tests()
+    log.info("=== Task 3: Quest Board Tests ===")
+
+    -- 准备：3个冒险者
+    local adv_high     = AdvData.create("Alice",  "warrior", "C")  -- rank=4, loyalty=60
+    local adv_low      = AdvData.create("Bob",    "mage",    "D")  -- rank=3, loyalty=60
+    local adv_wavering = AdvData.create("Carol",  "ranger",  "B")  -- rank=5, loyalty=60
+    AdvData.change_loyalty(adv_wavering.id, -45)                    -- loyalty→15（动摇）
+
+    -- 任务：D级(3)，倍率1.0
+    local q = QuestData.create("D级讨伐", 3, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q.id, 1.0)
+
+    local pool = QuestBoard.collect_registrations(q.id)
+    -- Alice(C≥D, loyal=60, min=0.75, 1.0≥0.75) → 报名
+    -- Bob  (D≥D, loyal=60, min=0.75, 1.0≥0.75) → 报名
+    -- Carol(B≥D, loyal=15, min=1.5,  1.0<1.5)  → 不报名
+    assert_eq("pool size at 1.0x", #pool, 2)
+
+    -- 换成1.5x，Carol也报名
+    q.bounty_mult = 1.5
+    local pool2 = QuestBoard.collect_registrations(q.id)
+    assert_eq("pool size at 1.5x (Carol joins)", #pool2, 3)
+
+    -- F级冒险者不可接D级任务（等级不够）
+    local adv_f = AdvData.create("Newbie", "warrior", "F")  -- rank=1
+    q.bounty_mult = 1.5
+    local pool3 = QuestBoard.collect_registrations(q.id)
+    assert_eq("F-rank excluded from D quest", #pool3, 3)  -- Newbie 仍不在
+
+    -- 在任务中的冒险者不报名
+    adv_high.is_on_quest = true
+    local pool4 = QuestBoard.collect_registrations(q.id)
+    assert_eq("on-quest adv excluded", #pool4, 2)
+    adv_high.is_on_quest = false  -- 恢复
+
+    log.info("=== Task 3 Tests Done ===")
+end
+
 -- 绑定快捷键 T = 运行测试
 y3.game:event('游戏-初始化', function()
     y3.player.with_local(function(p)
@@ -83,6 +123,7 @@ y3.game:event('游戏-初始化', function()
             if key == 'T' then
                 run_adventurer_tests()
                 run_quest_data_tests()
+                run_quest_board_tests()
             end
         end)
     end)
