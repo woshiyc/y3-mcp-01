@@ -284,6 +284,12 @@ y3.game:event('游戏-初始化', function()
                 run_execution_tests()
                 run_settlement_tests()
                 run_event_card_tests()
+                log.info("=== All Guild System Tests Complete ===")
+                log.info("[MANUAL] 在游戏中验证:")
+                log.info("  1. 游戏启动 → 日志: [Guild] 冒险者公会任务系统已初始化")
+                log.info("  2. 调用 GuildManager.post_quest(...) 发布任务")
+                log.info("  3. 调用 GuildManager.dispatch_quest(...) 派遣")
+                log.info("  4. 按 R 键召回 → 结算日志出现")
             end
             if key == 'R' then
                 -- 召回第一个 DISPATCHED 任务（调试用）

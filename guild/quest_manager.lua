@@ -92,6 +92,9 @@ function M._on_settlement(quest_id, result)
         msg = msg .. " (" .. #result.lost_adv_ids .. "名冒险者永久失去)"
     end
     player:display_message(msg, 5)
+    -- 显示结算面板（如 quest_ui 已加载）
+    local ok, quest_ui = pcall(require, 'guild.quest_ui')
+    if ok then quest_ui.show_settlement(result) end
     log.info("[Guild] 结算完成: " .. msg)
 end
 
