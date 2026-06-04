@@ -1153,6 +1153,8 @@ function M.settle(quest_id, outcome)
                 result.loyalty_changes[adv.id] = -20
             end
         end
+        -- TODO(follow-up): 若旁观成员忠诚度跌至0，按 spec 3.2 通用规则应触发离队检查
+        -- 当前版本不处理，后续迭代补充
         QuestData.set_status(quest_id, QuestData.STATUS.FAILED)
     end
 
