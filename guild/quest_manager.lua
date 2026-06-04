@@ -55,6 +55,10 @@ function M.dispatch_quest(quest_id, selected_ids, equip_ids, target_point)
     Execution.start(quest_id, target_point, function(qid, outcome)
         local result = Settlement.settle(qid, outcome)
         M._on_settlement(qid, result)
+    end, function(qid, card)
+        -- 事件卡回调：记录日志，UI 层可在此扩展弹出选项卡
+        log.info("[Guild] 事件卡触发: " .. card.id .. " — " .. card.text)
+        -- TODO(Task 9): 通过 quest_ui 弹出选项卡，让玩家做选择
     end)
 
     log.info("[Guild] 任务已派遣: " .. quest_id)
