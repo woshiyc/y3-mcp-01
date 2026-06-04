@@ -8,8 +8,8 @@ M.RANK_INT = { F=1, E=2, D=3, C=4, B=5, A=6, S=7 }
 M.INT_RANK = { [1]="F", [2]="E", [3]="D", [4]="C", [5]="B", [6]="A", [7]="S" }
 
 -- 升级所需经验
-M.XP_TO_NEXT = { [1]=300, [2]=800, [3]=2000, [4]=5000, [5]=12000, [6]=nil }
--- rank 6(A) 无法升到 7(S)，S 级需随机触发
+M.XP_TO_NEXT = { [1]=300, [2]=800, [3]=2000, [4]=5000, [5]=12000 }
+-- rank 6(A)→7(S) 升级仅通过随机事件触发，不通过经验
 
 -- 存储所有冒险者的全局表
 local _adventurers = {} ---@type table<string, AdventurerData>
@@ -23,10 +23,12 @@ local _next_id = 1
 function M.create(name, profession, rank_str)
     local id = "adv_" .. string.format("%03d", _next_id)
     _next_id = _next_id + 1
+    local rank_val = M.RANK_INT[rank_str or "F"]
+    assert(rank_val, "invalid rank_str: " .. tostring(rank_str))
     local adv = {
         id = id,
         name = name,
-        rank = M.RANK_INT[rank_str or "F"],
+        rank = rank_val,
         xp = 0,
         loyalty = 60,
         profession = profession,
@@ -81,7 +83,7 @@ end
 function M.check_departure(id)
     local adv = _adventurers[id]
     if not adv then return false end
-    if adv.loyalty <= 0 then return true end
+    if adv.loyalty == 0 then return true end   -- loyalty=0 必然离队
     if M.is_wavering(id) then
         -- 动摇状态下 30% 概率离队（仅失败路径触发）
         return math.random(100) <= 30
@@ -105,14 +107,16 @@ function M.add_xp(id, xp_amount)
     if adv.rank >= 6 then return false end -- A 级以上不可普通升级
 
     adv.xp = adv.xp + xp_amount
-    local required = M.XP_TO_NEXT[adv.rank]
-    if required and adv.xp >= required then
+    local rank_up = false
+    while true do
+        local required = M.XP_TO_NEXT[adv.rank]
+        if not required or adv.xp < required then break end
         adv.xp = adv.xp - required
         adv.rank = adv.rank + 1
-        -- 随机解锁一个技能（技能池由外部注入，此处只记录升级事件）
-        return true
+        rank_up = true
+        if adv.rank >= 6 then break end -- 升到 A 级后停止（S 级不可经验触发）
     end
-    return false
+    return rank_up
 end
 
 --- 计算任务经验倍率
@@ -136,12 +140,10 @@ function M.tick_idle_penalty()
     for _, adv in pairs(_adventurers) do
         if not adv.is_on_quest then
             adv.idle_days = adv.idle_days + 1
-            -- idle_days 在 tick 后变为 1 表示刚满1天，扣除
-            if adv.idle_days >= 1 then
-                M.change_loyalty(adv.id, -3)
-            end
+            -- 每满1游戏日扣3忠诚度（从第1天结束开始计）
+            M.change_loyalty(adv.id, -3)
         end
-        -- 注意：is_on_quest=true 时不操作 idle_days，由 reset_idle 在结算时重置
+        -- is_on_quest=true 时不操作 idle_days，由 reset_idle 在结算时重置
     end
 end
 
