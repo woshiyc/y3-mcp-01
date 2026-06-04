@@ -3,6 +3,7 @@
 local AdvData = require 'guild.adventurer_data'
 local QuestData = require 'guild.quest_data'
 local QuestBoard = require 'guild.quest_board'
+local Dispatch = require 'guild.quest_dispatch'
 
 local function assert_eq(label, a, b)
     if a ~= b then
@@ -116,6 +117,61 @@ local function run_quest_board_tests()
     log.info("=== Task 3 Tests Done ===")
 end
 
+local function run_dispatch_tests()
+    log.info("=== Task 4: Dispatch Tests ===")
+    AdvData.reset()
+
+    -- 平均等级计算
+    local a1 = AdvData.create("D1", "warrior", "D")  -- rank=3
+    local a2 = AdvData.create("B1", "mage",    "B")  -- rank=5
+    local a3 = AdvData.create("C1", "ranger",  "C")  -- rank=4
+    -- 平均 = (3+5+4)/3 = 4.0 → round → 4 (C)
+    local avg = Dispatch.calc_party_avg_rank({a1.id, a2.id, a3.id})
+    assert_eq("party avg {D,B,C}=C", avg, 4)
+
+    -- 基础失败概率
+    local p1 = Dispatch.calc_base_fail_prob(3, 3)  -- diff=0
+    assert_eq("base_fail diff=0 heavy", p1.heavy, 0.10)
+    assert_eq("base_fail diff=0 wipe",  p1.wipe,  0.01)
+
+    local p2 = Dispatch.calc_base_fail_prob(5, 3)  -- diff=2
+    assert_eq("base_fail diff=2 heavy", p2.heavy, 0.50)
+
+    local p3 = Dispatch.calc_base_fail_prob(6, 3)  -- diff>=3
+    assert_eq("base_fail diff=3 heavy", p3.heavy, 0.80)
+
+    -- 装备修正
+    assert_eq("equip_delta +1 tier", Dispatch.calc_equip_delta(4, 3), -0.10)
+    assert_eq("equip_delta same",    Dispatch.calc_equip_delta(3, 3),  0.00)
+    assert_eq("equip_delta -1 tier", Dispatch.calc_equip_delta(2, 3),  0.05)
+    assert_eq("equip_delta -2 tier", Dispatch.calc_equip_delta(1, 3),  0.15)
+
+    -- 最终概率（钳制到0.95）
+    local p4 = Dispatch.calc_final_fail_prob(6, {a1.id}, 0)
+    -- diff=6-3=3→heavy=0.80, equip_delta(0,6)=0.15, final=0.95
+    assert_eq("final prob clamped to 0.95", p4.heavy, 0.95)
+
+    -- 派遣流程
+    local q = QuestData.create("测试派遣", 3, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q.id, 1.0)
+    -- 手动设置报名池
+    q.registered_ids = {a1.id, a2.id}
+
+    local ok = Dispatch.dispatch(q.id, {a1.id}, {})
+    assert_eq("dispatch success", ok, true)
+    assert_eq("quest status dispatched", q.status, QuestData.STATUS.DISPATCHED)
+    assert_eq("adv on quest", AdvData.get(a1.id).is_on_quest, true)
+
+    -- 不在报名池中的冒险者不可派遣
+    local q2 = QuestData.create("第二个任务", 2, QuestData.TYPE.EXPLORE, nil)
+    QuestData.post(q2.id, 1.0)
+    q2.registered_ids = {a2.id}
+    local ok2 = Dispatch.dispatch(q2.id, {a3.id}, {})  -- a3 不在报名池
+    assert_eq("dispatch fails for non-pool member", ok2, false)
+
+    log.info("=== Task 4 Tests Done ===")
+end
+
 -- 绑定快捷键 T = 运行测试
 y3.game:event('游戏-初始化', function()
     y3.player.with_local(function(p)
@@ -125,6 +181,7 @@ y3.game:event('游戏-初始化', function()
                 run_adventurer_tests()
                 run_quest_data_tests()
                 run_quest_board_tests()
+                run_dispatch_tests()
             end
         end)
     end)
