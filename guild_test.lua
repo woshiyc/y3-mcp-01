@@ -5,6 +5,7 @@ local QuestData = require 'guild.quest_data'
 local QuestBoard = require 'guild.quest_board'
 local Dispatch = require 'guild.quest_dispatch'
 local Execution = require 'guild.quest_execution'
+local Settlement = require 'guild.quest_settlement'
 
 local function assert_eq(label, a, b)
     if a ~= b then
@@ -183,6 +184,56 @@ local function run_execution_tests()
     log.info("=== Task 5 Tests Done ===")
 end
 
+local function run_settlement_tests()
+    log.info("=== Task 6: Settlement Tests ===")
+    AdvData.reset()
+
+    -- 测试1: 成功结算
+    local adv1 = AdvData.create("Hero", "warrior", "D")  -- rank=3
+    local q1 = QuestData.create("成功测试", 3, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q1.id, 1.25)  -- reward_base=400, mult=1.25 → total=500
+    q1.dispatched_ids = {adv1.id}
+    q1.equipment_ids  = {}
+    adv1.is_on_quest = true
+
+    local r1 = Settlement.settle(q1.id, "success")
+    assert_eq("success gold", r1.gold_reward, 500)  -- floor(400*1.25)=500
+    assert_eq("success no lost adv", #r1.lost_adv_ids, 0)
+    assert_eq("success loyalty gain", r1.loyalty_changes[adv1.id], 10)
+    assert_eq("success adv freed", AdvData.get(adv1.id).is_on_quest, false)
+    assert_eq("success status", q1.status, QuestData.STATUS.SUCCEEDED)
+
+    -- 测试2: 专属奖励（任务类型匹配专长）
+    local adv_spec = AdvData.create("Specialist", "ranger", "D")
+    adv_spec.specialties = {"hunt"}  -- 专长讨伐
+    local q_spec = QuestData.create("专长测试", 3, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q_spec.id, 1.0)  -- mult=1.0 → loyalty+5
+    q_spec.dispatched_ids = {adv_spec.id}
+    q_spec.equipment_ids = {}
+    adv_spec.is_on_quest = true
+
+    local r_spec = Settlement.settle(q_spec.id, "success")
+    -- loyalty: 1.0x → +5, specialty → +5 = total +10
+    assert_eq("specialty bonus total", r_spec.loyalty_changes[adv_spec.id], 10)
+
+    -- 测试3: 全灭结算
+    local adv2 = AdvData.create("Martyr", "ranger", "C")
+    local bystander = AdvData.create("Watcher", "warrior", "F")
+    local q2 = QuestData.create("全灭测试", 3, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q2.id, 1.0)
+    q2.dispatched_ids = {adv2.id}
+    q2.equipment_ids  = {"eq_001"}
+    adv2.is_on_quest = true
+
+    local r2 = Settlement.settle(q2.id, "wipe")
+    assert_eq("wipe adv lost count", #r2.lost_adv_ids, 1)
+    assert_eq("wipe equip lost count", #r2.lost_equip_ids, 1)
+    assert_eq("wipe adv removed", AdvData.get(adv2.id), nil)
+    assert_eq("wipe bystander morale -20", r2.loyalty_changes[bystander.id], -20)
+
+    log.info("=== Task 6 Tests Done ===")
+end
+
 -- 绑定快捷键 T = 运行测试
 y3.game:event('游戏-初始化', function()
     y3.player.with_local(function(p)
@@ -194,6 +245,7 @@ y3.game:event('游戏-初始化', function()
                 run_quest_board_tests()
                 run_dispatch_tests()
                 run_execution_tests()
+                run_settlement_tests()
             end
             if key == 'R' then
                 -- 召回第一个 DISPATCHED 任务（调试用）
