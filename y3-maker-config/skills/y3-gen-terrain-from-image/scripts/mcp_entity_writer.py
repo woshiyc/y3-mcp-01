@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import sys, io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 """
 mcp_entity_writer.py
 批量装饰物实体写入脚本 — 读取 decoration_entities.json，通过 HTTP 直接调用 MCP Server 的 entity_create_block。

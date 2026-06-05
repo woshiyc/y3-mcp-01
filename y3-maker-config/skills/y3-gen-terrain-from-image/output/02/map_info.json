@@ -1,0 +1,8 @@
+{
+  "project_path": "",
+  "map_name": "Custom_02",
+  "map_path": "",
+  "width": 256,
+  "height": 256,
+  "_note": "手动创建，跳过 MCP 探活。写入时需连接 Y3 Editor MCP 并用 get_map_info 验证实际尺寸。"
+}

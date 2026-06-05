@@ -1,0 +1,162 @@
+{
+  "style_id": "temperate_fantasy",
+  "style_name": "温带奇幻",
+  "description": "Majesty类温带奇幻策略地图，草地明亮开阔，含雪峰、火山、腐化区、内陆水道",
+
+  "color_protocol_ref": "../../references/color_protocol_v1.json",
+  "model_catalog": "model_catalog.json",
+
+  "element_rules": {
+    "forest_dense": {
+      "max_height": 2,
+      "min_height": 0,
+      "forbidden_heights": [4, 6],
+      "near_water_exception": false,
+      "density_near_water": "dense",
+      "density_flat":       "medium",
+      "density_hill":       "medium",
+      "style_note": "中密度阔叶林，分布在平原和水边，非压抑感"
+    },
+    "forest_medium": {
+      "max_height": 2,
+      "min_height": 0,
+      "forbidden_heights": [4, 6],
+      "near_water_exception": false,
+      "density_near_water": "medium",
+      "density_flat":       "medium",
+      "density_hill":       "sparse",
+      "style_note": "标准中密度森林，平原和丘陵分布"
+    },
+    "forest_sparse": {
+      "max_height": 4,
+      "min_height": 0,
+      "forbidden_heights": [6],
+      "near_water_exception": false,
+      "density_near_water": "sparse",
+      "density_flat":       "sparse",
+      "density_hill":       "sparse",
+      "style_note": "稀疏灌木，丘陵和道路旁过渡区"
+    },
+    "rock_cluster": {
+      "max_height": 6,
+      "min_height": 4,
+      "forbidden_heights": [],
+      "near_water_exception": false,
+      "density_near_water": "sparse",
+      "density_flat":       "sparse",
+      "density_hill":       "dense",
+      "style_note": "山石集中在山地（h=4+），平地不出现礁石"
+    }
+  },
+
+  "programmatic_rules": {
+    "border_seal": {
+      "enabled": true,
+      "element_type": "forest_dense",
+      "border_cells": 8,
+      "density": "medium",
+      "description": "距地图边缘8格内非水域格，填充中密度森林（地图封边）"
+    },
+    "water_edge_vegetation": {
+      "enabled": true,
+      "element_type": "forest_sparse",
+      "edge_cells": 3,
+      "density": "sparse",
+      "description": "距水域边缘3格内的陆地，填充稀疏植被（水边自然过渡）"
+    },
+    "danger_zone_surround": {
+      "enabled": true,
+      "trigger_node_types": ["monster_lair", "dungeon_entrance"],
+      "element_type": "forest_dense",
+      "surround_cells": 6,
+      "density": "medium",
+      "description": "巢穴和地牢周围6格，填充中密度林（危险区氛围，非压抑）"
+    },
+    "road_clearance": {
+      "enabled": true,
+      "road_buffer_cells": 2,
+      "forbidden_elements": ["forest_dense", "forest_medium"],
+      "description": "道路两侧2格内不放密林（保持道路视野通畅）"
+    }
+  },
+
+  "layout_density_guide": {
+    "water_edge":    "medium",
+    "mountain_base": "medium",
+    "mountain_top":  "rock_only",
+    "plain_open":    "low_medium",
+    "road_side":     "low",
+    "map_edge":      "medium_dense",
+    "danger_zone":   "medium_oppressive",
+    "node_vicinity": "low_clear"
+  },
+
+  "terrain_rules": {
+    "water_types": {
+      "deep_water":    "围绕大陆的广阔深海，不可通行",
+      "shallow_water": "内陆水道、海湾浅滩，配合桥梁",
+      "plain_water":   "极浅积水洼地（如有）"
+    },
+    "height_semantics": {
+      "h0": "草地平原、沼泽低地，主战场",
+      "h2": "丘陵草坡，植被减少",
+      "h4": "山地、火山体、腐化荒地，以岩石为主",
+      "h6": "雪山峰顶，无植被"
+    }
+  },
+
+  "cv_hints": {
+    "description": "CV 聚类和水域识别的风格感知参数，基于 source.png 实际色彩校准",
+    "recommended_k": 20,
+    "complexity_rating": "high",
+    "complexity_reason": "包含多种相近色：深棕火山 vs 腐化紫 vs 深水；雪峰白 vs 河岸米黄；沼泽暗绿 vs 橄榄丘陵，K=15 会混淆",
+    "water_color_hints": {
+      "deep_water_rgb_range":    {"min": [10,  30, 100], "max": [65,  95, 180]},
+      "shallow_water_rgb_range": {"min": [50, 140, 185], "max": [135, 215, 245]},
+      "plain_water_rgb_range":   {"min": [30,  80,  80], "max": [90,  155, 145]}
+    },
+    "dominant_water_type": "deep_water",
+    "water_coverage_expected": "20%~40%",
+    "cluster_analysis_notes": "深棕火山(RGB≈60,45,35)是h=4高地，不是水域；腐化紫(RGB≈100,50,140)是陆地h=4，与深水颜色差异足够大但需注意；雪峰白(RGB≈220,220,230)是h=6陆地，非水域；河岸米黄(RGB≈220,200,150)是陆地过渡区，非水域"
+  },
+
+  "height_map_prompt": {
+    "description": "Stage -1.1 用：生成高度灰度图的提示词模板，纯灰度编码地形高度，无纹理无装饰",
+    "template": "Top-down orthographic grayscale height map, {map_theme}. Pure grayscale only, NO colors, NO textures, NO decorations, NO trees, NO buildings. Strict brightness protocol: deep ocean=20, coastal river channels=55, shallow inland pools=80, plains h0=120, hills h2=155, mountain h4=190, snow peaks h6=230. Sharp clean edges between zones, flat solid fills, absolutely NO gradients within any zone. The terrain outline must be clear and readable. 2048x2048px, PNG",
+    "negative_prompt": "color, RGB tint, texture, trees, buildings, roads, icons, labels, gradients, noise, blur, shadows, lighting effects, 3D render",
+    "style_notes": "温带奇幻地形参考布局：大陆被蓝黑色深海环绕（亮度20），内陆有浅色水道（亮度55），大片草原（亮度120），西北有山地（亮度190），北部有雪峰（亮度230），中部可有腐化区或特殊地形（亮度155~190）",
+    "brightness_protocol": {
+      "deep_water":    20,
+      "shallow_water": 55,
+      "plain_water":   80,
+      "land_h0":       120,
+      "land_h2":       155,
+      "land_h4":       190,
+      "land_h6":       230
+    },
+    "required_spec": "2048×2048 px，PNG，纯灰度，无任何彩色通道，俯视正交，图片四边=地图四边",
+    "placeholder_guide": {
+      "{map_theme}": "地形主题描述，例如 'continent with central plains, northwestern mountains, northern snow peaks, surrounding ocean'"
+    }
+  },
+
+  "terrain_image_prompt": {
+    "description": "供用户复制到 Midjourney/DALL-E/SD 生成地形图的提示词模板",
+    "template": "Top-down orthographic fantasy strategy map, temperate style, {map_theme}, vast deep blue ocean (RGB 25,55,135) surrounding the continent, light blue river channels (RGB 80,170,210), bright green plains (RGB 130,185,95), olive hills (RGB 100,130,60), brown mountains (RGB 130,90,55), dark volcanic peaks with orange lava veins, corrupted purple wasteland zone, snow-capped mountain tops (RGB 220,220,230), sandy river banks (RGB 220,200,150), dark yellow-green swamp (RGB 90,120,70), NO text NO labels NO icons NO compass NO grid lines NO border frame, seamless edge-to-edge coverage, flat matte colors, 2048x2048px",
+    "negative_prompt": "isometric, perspective, 3D render, text, watermark, UI elements, compass rose, grid, border, vignette, logo, tree icons, building icons",
+    "style_notes": "整体色调明亮温和；草地绿色鲜明；山地有火山（深棕+橙岩浆）、腐化区（暗紫）、雪峰（白灰）区分；水域蓝色鲜明饱和；内陆有浅蓝水道",
+    "required_spec": "2048×2048 px，PNG 格式，俯视正交投影，图片四边=地图四边，无白边无文字",
+    "placeholder_guide": {
+      "{map_theme}": "主地图主题描述，例如 'with snow mountains in the north, volcanic peaks in the northwest, corrupted purple swamp in the center'"
+    }
+  },
+
+  "decoration_image_prompt_template": {
+    "description": "Stage -1.3 用：分块装饰图提示词模板。以地形原图对应裁切块为 img2img 参考，仅叠加装饰物，不改变地形。AI 按块坐标填充占位符后展示给用户。",
+    "base_prompt": "Top-down fantasy map decoration layer, this is block row={block_row} col={block_col} of a 4×4 grid (1024×1024px each), temperate fantasy style. Use the terrain image crop for this block as img2img reference — do NOT change any terrain (water, land, mountains stay exactly the same). Add decoration elements ONLY on top of the terrain, using solid color fills with EXACT RGB values from the protocol. NO gradients, NO anti-aliasing, NO color blending. Terrain area description for this block: {block_terrain_desc}",
+    "img2img_instruction": "参考底图 = 地形原图裁切，裁切范围：x={col_start}~{col_end}px, y={row_start}~{row_end}px（基于2048×2048原图）。保留地形原貌，仅在陆地区域叠加装饰色块。",
+    "color_protocol_reminder": "EXACT RGB values (no deviation allowed): forest_sparse=(100,210,50) forest_medium=(20,160,20) forest_dense=(0,90,0) rock_cluster=(0,200,200) road_main=(220,50,20) bridge=(0,60,220) building_common=(220,160,20) building_landmark=(200,20,120). 注意：游戏节点颜色（resource_point/monster_lair/dungeon_entrance）由程序自动叠加，不需要 AI 绘制。",
+    "output_spec": "1024×1024 px，PNG，装饰色块为精确纯色填充，背景保留地形原图颜色",
+    "naming_rule": "用户保存时命名为 decoration_block_{block_row}_{block_col}.png，放入同一目录"
+  }
+}

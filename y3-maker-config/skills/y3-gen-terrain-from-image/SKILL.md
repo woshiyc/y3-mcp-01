@@ -5,55 +5,236 @@ description: 从 2D 平面地图图片生成 Y3 编辑器地形。当用户上�
 
 # Y3 地形图片生成（y3-gen-terrain-from-image）
 
-用户提供**地形图**（高度图可选），通过 **前置处理 → CV聚类 → AI语义标注 → 生成 CSV → MCP 写入** 流程，还原为 Y3 编辑器中的真实地形。
+## 📐 前置知识：地图规格与分辨率约定
+
+在开始任何生成流程之前，必须了解以下基础规格，所有脚本参数、提示词和识别逻辑都基于此设计。
+
+| 参数 | 值 | 说明 |
+|------|-----|------|
+| **地图类型** | Y3 大型地图 | 编辑器选项中的"大型" |
+| **地图格子数** | 256 × 256 | 地形网格单元数量 |
+| **单元格大小** | 50 × 50 cm | 游戏世界中每格的实际尺寸 |
+| **地图实际尺寸** | 128 × 128 m | 256格 × 50cm = 12800cm = 128m |
+| **默认镜头可见范围** | 25 × 25 格 | 游戏运行时玩家视野范围 |
+| **原图 / 高度图分辨率** | 2048 × 2048 px | 源图固定尺寸，每格对应 8×8 像素 |
+| **装饰图生成方式** | 分块生成 | GPT Image 2 单次最大输出限制 |
+| **装饰图分块规格** | 每块 1024 × 1024 px | 对应地图 128 × 128 格区域 |
+| **装饰图分块数量** | 4 × 4 = 16 块 | 拼合后覆盖完整 2048 × 2048 |
+
+### 装饰图分块说明
+
+GPT Image 2 单次生成分辨率有限，装饰图需分 16 块生成后拼合：
+
+```
+┌────┬────┬────┬────┐  每块 1024×1024 px
+│ 00 │ 01 │ 02 │ 03 │  对应地图格子：每块 128×128 格
+├────┼────┼────┼────┤
+│ 10 │ 11 │ 12 │ 13 │  格子坐标范围：
+├────┼────┼────┼────┤    块(row,col) → 格x: col×128 ~ (col+1)×128
+│ 20 │ 21 │ 22 │ 23 │                  格z: row×128 ~ (row+1)×128
+├────┼────┼────┼────┤
+│ 30 │ 31 │ 32 │ 33 │  生成时裁切对应区域的地形原图作为底图
+└────┴────┴────┴────┘
+```
+
+节点坐标由 Round 3 Step 3.2 程序化强制叠加，无需在提示词中指定。  
+所有块生成完毕后，用 `cv_decoration_extract.py` 拼合后整体提取。
+
+---
+
+通过 **Stage -1图片准备（高度灰度图→地形原图→装饰图）→ CV聚类 → AI纹理标注 → 生成CSV → MCP写入** 流程，将地图还原为 Y3 编辑器中的真实地形。
+
+---
+
+## Stage -1：图片准备（三张图全部确认后才能进入 Stage 0）
+
+> ⛔ **所有图片（高度灰度图、地形原图、16 张装饰图）必须全部生成并由用户逐一确认符合要求，才能进入 Stage 0。**
+> 任何图片不满足要求，返回对应步骤修改提示词，重新让用户生成。
+>
+> **三张图的依赖关系与核心约定：**
+> - 高度灰度图：定义地形骨架（水域/陆地边界 + 海拔高度），纯灰度，无纹理，无装饰
+> - 地形原图：以高度灰度图为参考底图（img2img），**仅进行纹理染色**，不改变地形布局
+> - 装饰图（16块）：以地形原图裁切块为参考底图（img2img），**仅叠加植被/森林/建筑等装饰物**，不改变地形
+
+### -1.1 风格选择 + 高度灰度图提示词
+
+扫描 `styles/` 目录，读取每个子目录下 `rules.json` 的 `style_id`/`style_name`/`description`，展示可用风格：
+
+| 风格 ID | 名称 | 描述 |
+|---------|------|------|
+| `dark_fantasy` | 暗黑奇幻 | Majesty 风格，水域广布，北部危险，压抑阴暗 |
+| `temperate_fantasy` | 温带奇幻 | 草地明亮，含雪峰/火山/腐化区 |
+
+用户选定 `<style_id>` 后，加载 `styles/<style_id>/rules.json`，询问地图主题描述（`{map_theme}`）。
+
+**读取 `height_map_prompt` 字段，展示高度灰度图提示词：**
+
+```
+【<style_name>】高度灰度图提示词（复制到 Midjourney / DALL-E / SD 等，建议用 text2img）：
+
+正向提示词：
+[height_map_prompt.template 填充 {map_theme} 后的完整内容]
+
+反向提示词：
+[height_map_prompt.negative_prompt]
+
+亮度协议（生成时必须严格遵守）：
+  深水（≥3格宽）     → 亮度 20  （近黑）
+  浅水（1-2格宽河道）→ 亮度 55
+  平面水（积水洼地） → 亮度 80
+  陆地 h=0（平原）   → 亮度 120
+  陆地 h=2（丘陵）   → 亮度 155
+  陆地 h=4（山地）   → 亮度 190
+  陆地 h=6（雪峰）   → 亮度 230  （近白）
+
+要求规格：2048×2048 px，PNG，纯灰度，无纹理，无装饰，平涂色块，无渐变
+
+生成完毕后，将图片保存到本地，告诉我图片的完整路径。
+```
+
+> ⛔ **禁止 AI 调用任何图片生成 API**，所有图片由用户手动生成。
+
+---
+
+### -1.2 解析高度灰度图 + 地形原图提示词
+
+用户提供高度灰度图路径后，AI 读取该图，按亮度协议识别：
+- 水域区域（亮度 < 100）：深水 / 浅水 / 平面水 分布
+- 陆地各高度区域（120 / 155 / 190 / 230）：平原 / 丘陵 / 山地 / 雪峰分布
+
+AI 简述识别结果（各区域大致占比和分布），然后**读取 `terrain_image_prompt` 字段**，展示地形原图提示词：
+
+```
+【<style_name>】地形原图提示词（建议使用 img2img 模式，参考图 = 高度灰度图）：
+
+正向提示词：
+[terrain_image_prompt.template 填充后的完整内容]
+
+反向提示词：
+[terrain_image_prompt.negative_prompt]
+
+img2img 约定（必须告知 AI 图像工具）：
+  · 以高度灰度图为参考底图
+  · 仅进行纹理染色，不改变任何地形边界
+  · 水域位置、陆地轮廓、山峰位置必须与高度图完全一致
+
+风格说明：[terrain_image_prompt.style_notes]
+要求规格：2048×2048 px，PNG，俯视正交投影，无文字无图标
+
+生成完毕后，将图片保存到本地，告诉我图片的完整路径。
+```
+
+---
+
+### -1.3 解析地形原图 + 装饰图提示词（16 块）
+
+用户提供地形原图路径后，AI 读取该图，分析：
+- 各区域纹理分布（草地 / 山地 / 雪地 / 腐化区等）
+- 水域边界和内陆水道分布
+
+按 Round 3 的 4×4 分块方式（每块覆盖 128×128 格 = 512×512 px），AI 将地形原图在脑中划分为 16 个块区域，**读取 `decoration_image_prompt_template` 字段**，为每个块（row=0~3, col=0~3）填充提示词并一次性展示：
+
+```
+块 (row=0, col=0) 装饰图提示词（img2img 参考 = 地形原图该区域裁切）：
+  · 仅在原图纹理上叠加装饰物，不改变地形
+  · [base_prompt 填充 block_row=0/block_col=0/该块的地形描述]
+  · 颜色协议（必须严格）：
+      forest_sparse=(100,210,50)  forest_medium=(20,160,20)  forest_dense=(0,90,0)
+      rock_cluster=(0,200,200)    road_main=(220,50,20)       bridge=(0,60,220)
+      resource_point=(255,210,0)  monster_lair=(150,0,200)    dungeon_entrance=(70,0,150)
+  输出规格：1024×1024 px，PNG，命名：decoration_block_0_0.png
+
+块 (row=0, col=1) 装饰图提示词：
+  ...（共 16 条）
+```
+
+> ⚠️ **装饰图中不包含游戏节点位置**（资源点/巢穴/地牢）—— 节点由 Round 2 规划完成后，在 Round 3 Step 3.2 程序化强制叠加，无需 AI 绘制。
+
+用户生成 16 张装饰图，命名为 `decoration_block_{row}_{col}.png`，放入同一目录，告知目录路径。
+
+---
+
+### -1.4 确认所有图片（关卡检查）
+
+| 图片类型 | 数量 | 规格要求 |
+|---------|------|---------|
+| 高度灰度图 | 1 张 | 纯灰度，亮度协议正确，2048×2048 px |
+| 地形原图 | 1 张 | 纹理完整，地形与高度图一致，2048×2048 px |
+| 装饰图 | 16 张 | 颜色协议正确，仅装饰叠加无地形改动，各 1024×1024 px |
+
+用户逐一确认所有图片符合要求后，记录路径，进入 Stage 0：
+- `<height_map_path>` — 高度灰度图（Stage 0.5 用于生成 height_grid.npy）
+- `<terrain_path>` — 地形原图（Round 1 CV 聚类输入）
+- `<decoration_dir>` — 装饰图目录（Round 3 直接使用）
+
+**任何图片不满足要求 → 返回对应步骤修改提示词，重新生成该图片。**
+
+---
 
 ## 🔄 整体架构总览
 
 ```
-地形图 ──┬── Stage 0: 前置处理
-高度图 ──┤（可选）
-（可选）  │
-         ├── Round 1: 水域 + 大陆分割 + 纹理 + 高度
-         │     ├─ cv_cluster.py (K≥20) → 粗聚类
-         │     ├─ cv_cluster_analysis.py (K=50) → 增强分析
-         │     ├─ cv_downsample.py → 网格分辨率标签
-         │     ├─ AI 标注水域 + 三类水体分类
-         │     ├─ cv_continent_split.py → 大陆分割
-         │     ├─ cv_water_classify.py → 生成 water_type_grid.npy
-         │     ├─ [方案A] AI 语义高度分配（推荐，无需高度图）
-         │     │     └─ 直接按簇语义→ height_grid.npy
-         │     ├─ [方案B] cv_height_reader.py（需提供高度图）
-         │     │     ├─ cv_height_smooth.py（可选，消除碎片）
-         │     │     └─ cv_height_boundary.py + cv_slope_auto.py
-         │     ├─ [可选] cv_delighting.py → albedo.png（需高度图）
-         │     ├─ AI 分配纹理（模式C：按聚类 / 模式B：按大陆组）
-         │     └─ gen_round1_csv.py → terrain_grid.csv + texture_grid.csv
-         │
-         └── Round 2: 装饰物 + 游戏节点 + 道路 + 植被
-               ├─ cv_subregion_analysis.py → 大陆子区域分析
-               ├─ AI 逐大陆标注
-               ├─ decoration_postprocess.py → decoration_entities.json
-               ├─ cv_postprocess_plan.py → 游戏节点 + 道路规划
-               └─ cv_vegetation_fill.py → 植被填充
+Stage -1 ─── 图片准备（三图全部确认后才能继续）
+              ├─ -1.1 选风格 → 生成高度灰度图提示词 → 用户生成 height_map.png
+              │         亮度协议：深水=20 浅水=55 平水=80 h0=120 h2=155 h4=190 h6=230
+              ├─ -1.2 AI解析高度图 → 生成地形原图提示词（img2img，仅染色不改地形）
+              │         → 用户生成 source_map.png
+              ├─ -1.3 AI解析原图 → 生成16块装饰图提示词（img2img，仅叠加装饰不改地形）
+              │         → 用户生成 decoration_block_r_c.png × 16
+              └─ -1.4 用户确认三类图片全部符合要求 → 记录路径 → 进入 Stage 0
 
-最终 → mcp_batch_writer.py → Y3 编辑器
+Stage 0 ──── 前置检查
+              ├─ MCP 探活 + get_map_info → map_info.json
+              ├─ check_cv_deps.py
+              ├─ 接收路径：height_map_path / terrain_path / decoration_dir
+              └─ cv_height_reader.py（height_map.png）→ height_grid.npy
+
+Round 1 ──── 地形数据生成（以 source_map.png 为输入）
+              ├─ cv_cluster.py K=20 → labels.npy / palette.json
+              ├─ cv_cluster_analysis.py K=50 → palette_enhanced.json
+              ├─ cv_downsample.py → labels_grid.npy
+              ├─ AI 标注水域 + 三类水体分类 → water_type_clusters.json
+              ├─ cv_continent_split.py → water_mask / continent_map
+              ├─ cv_water_classify.py → water_type_grid.npy
+              ├─ AI 分配纹理（模式C：按聚类）
+              └─ gen_round1_csv.py → terrain_grid.csv / texture_grid.csv
+
+Round 2 ──── 节点 + 道路规划（数据生成，不写 MCP）
+              ├─ gen_water_map.py → bridges.json（AI 识别桥梁位置）
+              ├─ cv_postprocess_plan.py → postprocess_plan.json / road_grid.npy
+              ├─ 用户确认规划预览
+              └─ 生成 spatial_analysis.json（节点 + 桥梁汇总，Round 3 前置）
+
+Stage 5 ──── MCP 地形写入（仅地形+纹理）
+              ├─ mcp_batch_writer.py --single-batch 1 → 地形高度 + 水域 + 纹理
+              └─ cv_terrain_preview.py（可选预览）
+
+Round 3 ──── 装饰写入（必选，Stage 5 之后）
+              ├─ cv_stitch_blocks.py stitch → 拼合16张装饰图 → decoration_design.png
+              ├─ Step 3.2 强制叠加节点位置（spatial_analysis.json → 彩色圆点覆盖）
+              ├─ cv_decoration_extract.py → decoration_manifest.json
+              ├─ AI 审查 manifest
+              └─ mcp_round3_writer.py → 写入所有装饰（森林/山石/桥梁/节点/道路/植被）
 ```
 
-### CSV 产出表
+### CSV / JSON 产出表
 
-| 文件 | Round 1 (final) | Round 2 (final) |
-|------|----------------|-----------------|
-| terrain_grid.csv | 深水/浅水/平面水 + 斜坡(slope,h) + 陆地(ground,h) | 不变 |
-| texture_grid.csv | 大陆纹理（按聚类ID精细分配） | 不变 |
-| decoration_grid.csv | 不存在 | 桥梁+树木 |
+| 文件 | 产出阶段 | 说明 |
+|------|---------|------|
+| terrain_grid.csv | Round 1 | 深水/浅水/平面水 + 斜坡(slope,h) + 陆地(ground,h) |
+| texture_grid.csv | Round 1 | 纹理 ID（按聚类ID精细分配） |
+| postprocess_plan.json | Round 2 | 游戏节点坐标 + 道路格子 |
+| bridges.json | Round 2 | 桥梁位置 + 朝向 |
+| spatial_analysis.json | Round 2 | 节点+桥梁汇总（Round 3 前置） |
+| decoration_manifest.json | Round 3 | 装饰布局（mcp_round3_writer.py 写入） |
 
 ### Mask / Grid 体系
 
 | 文件 | 分辨率 | 类型 | 产出步骤 |
 |------|--------|------|----------|
-| height_grid.npy | 网格 | int32 | 方案A语义分配 或 方案B Step 0.5 |
-| height_full.npy | 原图 | int32 | 方案B Step 0.5（可选） |
-| albedo.png | 原图 | 图片 | Step 0.6（可选，需高度图） |
+| height_grid.npy | 网格 | int32 | Stage 0.5（cv_height_reader.py 解析高度灰度图） |
+| height_full.npy | 原图 | int32 | Stage 0.5（副产出） |
+| albedo.png | 原图 | 图片 | Step 0.6（可选，去光影） |
 | water_mask_full.npy | 原图 | bool | Round 1 Step 1.3 |
 | water_mask_grid.npy | 网格 | bool | Round 1 Step 1.3 |
 | water_type_grid.npy | 网格 | int8 | Round 1 Step 1.3b |
@@ -71,8 +252,8 @@ description: 从 2D 平面地图图片生成 Y3 编辑器地形。当用户上�
 | 1 | **AI 看 RGB 判断颜色** | palette.json 中有 `rgb` 字段，AI **必须**使用 `rgb` 字段判断颜色，**禁止**自行从 `bgr` 字段转换 |
 | 2 | **CV 只做特征聚类** | CV 做颜色/明度等特征聚类，但不做任何语义判断（不标注水/陆地），所有语义判断由 AI 完成 |
 | 3 | **cliff_tex_id 全部默认 0** | cliff_tex_id 统一为 0 |
-| 4 | **高度优先语义分配** | 推荐方案A：AI 按色彩语义（草地→h=0，丘陵→h=2，山地/火山→h=4，雪山→h=6）直接分配；方案B（高度图灰度法）只在同一色相区域内有效，跨色相比较明度无意义（见 y3-terrain-basics.md） |
-| 5 | **albedo 替代原图** | Step 0.6 de-lighting 后，所有 CV 步骤使用 albedo.png；无高度图时跳过，直接用原图 |
+| 4 | **高度来自高度灰度图** | Stage -1.1 生成的高度灰度图使用固定亮度协议（h0=120/h2=155/h4=190/h6=230），由 cv_height_reader.py 解析为 height_grid.npy，不再依赖 AI 语义推断 |
+| 5 | **albedo 替代原图** | Step 0.6 de-lighting 后，所有 CV 步骤使用 albedo.png；跳过 Step 0.6 时直接用地形原图 |
 | 6 | **纹理有两种分配模式** | 模式B（按大陆组，avg_rgb接近时只能1种纹理）；**模式C（推荐，按聚类ID，每个簇独立纹理，需 labels_grid.npy）** |
 | 7 | **Y3 三类水体必须区分** | 深水（挖2层，不可通行）/ 浅水（挖1层，可通行，有悬崖边）/ 平面水（不挖，铺在地面）。**引擎 spread_water_type 规则**：刷水后 DFS 感染所有相连水格统一类型，深水/浅水不能直接相邻否则互相覆盖 |
 | 8 | **cliff 在 Y3 中专指裂缝** | `cliff` = terrain_height=-40 的地形空洞（不可通行），**不是悬崖或山峰**。山峰是 ground 高地 + 装饰摆件，通过 terrain_set_crack_block 写入 |
@@ -88,7 +269,7 @@ description: 从 2D 平面地图图片生成 Y3 编辑器地形。当用户上�
 | 3 | ⛔ **禁止跳过 CV 聚类直接生成 CSV** | 必须先运行对应轮次的 CV 脚本 |
 | 4 | ⛔ **禁止跳过 CSV 直接调 MCP** | 必须读 CSV 逐格调 MCP |
 | 5 | ⛔ **禁止跳过 CV 依赖检测** | 没有 opencv/numpy 就不能继续 |
-| 6 | ⛔ **禁止跳过用户确认直接生成** | 每轮的 AI 语义分配都需用户确认 |
+| 6 | ⛔ **禁止跳过用户确认直接写入 MCP** | Round 2 规划结果必须经用户确认后才能进入 Stage 5 写入 |
 | 7 | ⛔ **禁止猜测地图尺寸** | 必须从 get_map_info 获取 |
 | 8 | ⛔ **MCP 连接失败时禁止继续任何后续步骤** | 必须提示用户连接 y3editor MCP 后重试，不得用 read_map_size.py 替代 |
 | 9 | ⛔ **禁止将所有水域统一写为 deep_water** | 必须跑 cv_water_classify.py 生成 water_type_grid.npy，gen_round1_csv.py 必须传 --water-type-grid，否则引擎 spread_water_type 会把浅水全部感染为深水 |
@@ -139,27 +320,24 @@ python scripts/check_cv_deps.py
 | `{"status": "ok", ...}` | ✅ **静默继续**，不输出任何信息给用户 |
 | `{"status": "missing", "install_failed": true, ...}` | ⚠️ 提示用户："自动安装 `<missing>` 失败，请手动执行 `pip install <missing>` 后告诉我'重新检查'。" |
 
-### 0.3 接收图片 + 确认高度方案
+### 0.3 确认图片路径 + 规划参数
 
-> "请提供以下信息：
+Stage -1 已完成三类图片准备，此处确认路径和规划参数：
+
+> "请确认以下路径（来自 Stage -1）：
 >
-> **图片路径（必须）：**
-> 1. **地形图**（terrain_map）：彩色地图，图片边界与地图边界 1:1 对应
+> **当前风格**：`<style_id>`
 >
-> **可选输入：**
-> 2. **高度图**（height_map）：灰度深度图，与地形图空间对齐（若不提供，使用方案A语义高度）
-> 3. **首都/出生区位置**：如 `center`（默认）、`32,48`（具体格坐标）等
-> 4. **节点数量偏好**：如 `resource=5,lair=8,dungeon=2,ruin=6`"
+> **图片路径：**
+> 1. **高度灰度图路径**（height_map）：Stage -1.1 生成的灰度图
+> 2. **地形原图路径**（terrain_map）：Stage -1.2 生成的彩色地图
+> 3. **装饰图目录**（decoration_dir）：Stage -1.3 生成的16张图所在目录
+>
+> **规划参数（可选）：**
+> 4. **首都/出生区位置**：如 `center`（默认）、`32,48`（具体格坐标）等
+> 5. **节点数量偏好**：如 `resource=5,lair=8,dungeon=2,ruin=6`"
 
-**处理逻辑**：
-
-| 情况 | 高度方案 | AI 行为 |
-|------|---------|---------|
-| 提供高度图 | **方案B** | 跑 cv_height_reader.py，注意灰度法只在同色相内有效 |
-| 无高度图 | **方案A（推荐）** | Step 1.4b 完成聚类后，AI 按色彩语义直接分配 height_grid |
-| 高度图效果异常（暗色高地被误判为低地） | **切换方案A** | 放弃高度图，改用语义分配 |
-
-记录：`<terrain_path>`、`<height_path>`（可选，方案B用）、`<height_method>`（A或B）、`<capital>`（默认 `center`）、`<node_counts>`（默认空）。
+记录：`<height_map_path>`、`<terrain_path>`、`<decoration_dir>`、`<capital>`（默认 `center`）、`<node_counts>`（默认空）、`<style_id>`。
 
 ### 0.4 创建工作输出目录
 
@@ -173,31 +351,33 @@ python scripts/check_cv_deps.py
 
 > ⚠️ AI **禁止**自行选择其他工作目录（如 `terrain_gen_work/`），必须使用 `<skill_dir>/output/`。
 
-### 0.5【方案B】高度图读取（可选，仅当用户提供高度图时执行）
+### 0.5 高度图读取（必须执行）
 
-> ⚠️ **方案B局限性**：灰度法假设"亮=高、暗=低"，但此假设**只在同一色相区域内有效**。
-> 深棕色火山（暗）在灰度图里可能与深水一样黑，导致火山被误判为低地。
-> 若发现此类问题，应切换到**方案A（语义高度）**。
+高度灰度图使用固定亮度协议（Stage -1.1 约定），阈值可直接推导：
 
-灰度范围与阈值说明：先检查高度图实际灰度范围，再按四等分设置阈值：
+| 分界 | 阈值 | 说明 |
+|------|------|------|
+| 水域 / h=0 | 100 | 亮度<100为水域（20/55/80），≥100为陆地 |
+| h=0 / h=2 | 137 | (120+155)/2 |
+| h=2 / h=4 | 172 | (155+190)/2 |
+| h=4 / h=6 | 210 | (190+230)/2 |
 
 ```bash
-python scripts/cv_height_reader.py <height_path> \
+python scripts/cv_height_reader.py <height_map_path> \
   --output-dir <dir> \
   --grid-size <W>x<H> \
-  --thresholds <t1>,<t2>,<t3> \
+  --thresholds 137,172,210 \
   --height-values 0,2,4,6
 ```
 
-> `<t1>,<t2>,<t3>` 按灰度范围 [min,max] 四等分计算。  
-> 例：灰度范围 [8,123]，四等分阈值约为 36,65,94。  
-> **禁止直接使用默认阈值 64,128,192**，必须先 `python -c "import cv2,numpy as np; img=cv2.imread('<path>',0); print(img.min(),img.max())"` 确认范围。
+> ⚠️ 水域区域（亮度 20/55/80）会被读为 h=0，这是正常的 —— 水域的实际高度由 Round 1 的 water_mask 独立控制，gen_round1_csv.py 会以 water_mask 为准覆盖。
+> ⚠️ 若高度图存在大量孤立碎片，运行 Step 0.5b 平滑处理。
 
 输出：`height_full.npy`、`height_grid.npy`、`height_grid_preview.png`
 
-查看预览图，若 h=4/h=6 分布为 0（阈值设置导致高地消失），必须重新计算阈值。
+查看预览图确认 h=4/h=6 区域与原图山峰/雪峰位置一致。
 
-### 0.5b【方案B可选】高度网格平滑
+### 0.5b【可选】高度网格平滑
 
 仅当高度图产生大量孤立小区域（碎片化）时运行：
 
@@ -213,7 +393,7 @@ python scripts/cv_height_smooth.py \
 
 ### 0.6【可选，需高度图】De-lighting — 去光影提取纹理贴图
 
-> 仅当同时有地形图和高度图时才能运行。无高度图则跳过，后续 CV 步骤直接使用原图。
+> 可选步骤。若地形原图存在明显光照阴影影响纹理识别，可运行去光影处理。后续 CV 步骤改用 albedo.png；否则跳过，直接使用 terrain_path 原图。
 
 ```bash
 python scripts/cv_delighting.py <terrain_path> <height_path> \
@@ -237,9 +417,13 @@ python scripts/cv_delighting.py <terrain_path> <height_path> \
 
 ### Step 1.1：CV 色相聚类
 
-> **输入图片**：优先使用 Step 0.6 输出的 `albedo.png`；无高度图时直接使用 `<terrain_path>` 原图。
+> **输入图片**：优先使用 Step 0.6 输出的 `albedo.png`（若已运行去光影）；否则直接使用 `<terrain_path>` 地形原图。
 
 **K 值选择**：
+
+> 💡 **风格感知（优先）**：先读取 `styles/<style_id>/rules.json` 的 `cv_hints.recommended_k`，以该值为准。
+> 当前 `dark_fantasy` 风格推荐 **K=20**（原因：`cv_hints.complexity_reason`）。
+> 仅当 cv_hints 未定义时，参考下表手动选择。
 
 | 地图类型 | 推荐 K | 原因 |
 |---------|--------|------|
@@ -250,14 +434,8 @@ python scripts/cv_delighting.py <terrain_path> <height_path> \
 > ⚠️ 若某些语义区域颜色相近（如火山深棕与腐化深紫 rgb 差距 <20），K=15 会将其归入同一簇导致无法独立分配纹理/高度，必须提高 K 值。
 
 ```bash
-# 无 albedo（无高度图，推荐）
+# 使用地形原图（默认）；若已运行 Step 0.6，改用 <dir>/albedo.png
 python scripts/cv_cluster.py <terrain_path> \
-  --k 20 \
-  --hsv-weights 2.0,1.0,0.8 \
-  --output-dir <dir>
-
-# 有 albedo（有高度图）
-python scripts/cv_cluster.py <dir>/albedo.png \
   --k 20 \
   --hsv-weights 2.0,1.0,0.8 \
   --output-dir <dir>
@@ -283,7 +461,7 @@ python scripts/cv_downsample.py <dir>/labels.npy \
 
 ### Step 1.1b：双重聚类交叉分析（增强水域识别）
 
-在粗聚类(K=15)基础上，新增细聚类(K=50)并做交叉分析，为每个粗簇补充内部纹理复杂度、颜色统计、空间形态等多维特征，帮助 AI 精确区分水域与深色陆地。
+在粗聚类(K=20)基础上，新增细聚类(K=50)并做交叉分析，为每个粗簇补充内部纹理复杂度、颜色统计、空间形态等多维特征，帮助 AI 精确区分水域与深色陆地。
 
 ```bash
 python scripts/cv_cluster_analysis.py <dir>/cropped.png \
@@ -306,6 +484,11 @@ python scripts/cv_cluster_analysis.py <dir>/cropped.png \
 ### Step 1.2：AI 标注水域簇 + 同步完成三类水体分类
 
 AI 看 `cluster_preview.png` + `palette_enhanced.json`（**使用 `rgb` 字段判断颜色**）+ 原图，**同步完成两件事**：
+
+> 💡 **风格感知（优先）**：先读取 `styles/<style_id>/rules.json` 的 `cv_hints.water_color_hints`，
+> 以其定义的 `deep_water_rgb_range` / `shallow_water_rgb_range` / `plain_water_rgb_range` 作为水域识别的**第一判据**。
+> RGB 落在范围内的簇优先判定为对应水体类型，再结合 `internal_complexity` / `spatial_shape` 辅助确认。
+> `cv_hints.cluster_analysis_notes` 记录了该风格下易混淆色的说明，识别前必须阅读。
 
 **① 判断水域 vs 陆地**（使用 `internal_complexity` / `color_stats` / `spatial_shape` 辅助）
 
@@ -423,44 +606,6 @@ AI 看 `palette.json` 各簇 RGB + `references/texture-color-map.md`，为每个
 
 **模式 B（按大陆组）**：仅当各大陆颜色差距明显（avg_rgb 距离 > 30）且无需精细纹理时使用。
 
----
-
-**【方案A】语义高度分配（无高度图时必须执行）**
-
-> 方案A的核心原则：按色彩**语义**（地物类型）分配高度，而非按亮度。
-
-**高度分配规则（对照 Y3 地形设定）**：
-
-| 语义 | 典型颜色/簇 | Y3 高度 | 说明 |
-|------|-----------|---------|------|
-| 深水/浅水/平面水 | 蓝色水域簇 | —（由water_mask控制）| 水域不分配陆地高度 |
-| 平原草地、低洼沼泽 | 绿色系簇 | **h=0** | Y3默认基础高度 |
-| 丘陵、山脚过渡带 | 棕褐色系簇 | **h=2** | 1层悬崖高度 |
-| 山地、火山体、冰地 | 深黑褐/灰色系簇 | **h=4** | 2层悬崖，注意深棕火山≠低地 |
-| 雪山峰顶 | 白/极浅灰簇 | **h=6** | 3层悬崖，最高地标 |
-
-> ⚠️ **关键陷阱**：深棕色火山（rgb≈60,50,45）与深水颜色亮度相近，但火山是 h=4 高地，不能因为颜色暗就分配 h=0。Y3地形规则：明度只在同一色相区域内表示高低，跨色相无效。
-
-为每个陆地簇生成 `height_grid.npy`：
-
-```python
-CLUSTER_HEIGHT = {
-  # 草地/低地 → h=0
-  2: 0, 7: 0, 14: 0, 12: 0, 15: 0,
-  # 丘陵 → h=2
-  9: 2, 1: 2, 18: 2,
-  # 山地/火山/冰地 → h=4
-  11: 4, 13: 4, 3: 4,
-  # 雪峰 → h=6
-  10: 6, 8: 6, 19: 6,
-}
-# 对每格：if water_mask[z,x]: h=0 else: h=CLUSTER_HEIGHT[labels_grid[z,x]]
-```
-
-生成 `height_grid.npy` 后查看 `height_grid_preview.png` 确认分布（h=4/h=6 区域应与原图山峰位置一致）。
-
-展示分配结果后**无需询问用户确认，直接继续**。
-
 ### Step 1.4c：纹理面板确保（自动）
 
 AI 收集 Step 1.4b 中分配的所有纹理 ID，调用 MCP 接口 `ensure_terrain_textures` 自动将缺失纹理添加到编辑器面板：
@@ -480,7 +625,7 @@ AI 收集 Step 1.4b 中分配的所有纹理 ID，调用 MCP 接口 `ensure_terr
 
 > ⚠️ **必须在生成 CSV 之前完成此步骤**，否则 MCP 写入纹理时可能静默失败。
 
-### Step 1.5b【可选，仅方案B】高度边界分析
+### Step 1.5b【可选】高度边界分析
 
 仅在使用方案B（高度图）且需要斜坡规划时运行：
 
@@ -568,7 +713,6 @@ python scripts/gen_round1_csv.py \
 > - **cv_slope_auto.py 输出**（像素级）：`{"mode":"pixel_level","slope_cells":[...]}`，**不需要 `--boundary-report`**
 > - **旧版手动决策**：`{"decisions":[{"boundary_id":...,"traversable":...}]}`，需要 `--boundary-report`
 >
-> **无高度图时**：省略 `--height-grid`，改用 `--group-height-config '{"1":0,"2":2,"3":4}'`。
 > **无水体类型分类时**：省略 `--water-type-grid`，全部默认深水。
 
 脚本自动完成：
@@ -670,54 +814,37 @@ AI 展示 `postprocess_preview.png` 给用户，并汇报规划摘要：
 
 ---
 
-### Step 2.3：MCP 写入 — 装饰物 + 游戏节点 + 道路
+### Step 2.3：生成 spatial_analysis.json（Round 3 前置，必须完成）
 
-将规划中的装饰物（树木/山石）和游戏节点（资源/巢穴/地牢/遗迹）写入 Y3：
+> `spatial_analysis.json` 是 Round 3 的唯一前置输入，汇总了节点位置和桥梁候选坐标，供 `gen_gray_context.py` 叠加彩色圆点，以及 Round 3 Step 3.5 强制覆盖游戏节点。
 
-**先处理桥梁**（来自 Step 2.0 的 bridges.json）：
+从 `postprocess_plan.json`（节点）和 `bridges.json`（桥梁）合成：
 
-将桥梁合并到 `decoration_input.json`，然后：
+```python
+import json, pathlib
 
-```bash
-python scripts/decoration_postprocess.py \
-  <dir>/decoration_input.json \
-  <dir>/water_mask_grid.npy \
-  <dir>/decoration_entities.json \
-  --texture-grid <dir>/texture_grid.csv
+run = pathlib.Path('<dir>')
+plan = json.loads((run / 'postprocess_plan.json').read_text(encoding='utf-8'))
+bridges_raw = json.loads((run / 'bridges.json').read_text(encoding='utf-8')) \
+    if (run / 'bridges.json').exists() else []
+
+def nodes_of(type_):
+    return [{'x': n['x'], 'z': n['z']} for n in plan.get('nodes', []) if n['type'] == type_]
+
+spatial = {
+    'resource_points':   nodes_of('resource'),
+    'monster_lairs':     nodes_of('lair'),
+    'dungeon_entrances': nodes_of('dungeon'),
+    'bridge_candidates': [{'x': b['x'], 'z': b['z']} for b in bridges_raw],
+    'capital':           plan.get('capital', {}),
+    'road_grid_path':    str(run / 'road_grid.npy'),
+}
+(run / 'spatial_analysis.json').write_text(
+    json.dumps(spatial, ensure_ascii=False, indent=2), encoding='utf-8')
+print(f"spatial_analysis.json saved — nodes: {sum(len(v) for v in spatial.values() if isinstance(v,list))}")
 ```
 
-**再处理游戏节点**（资源点/巢穴/地牢/遗迹 — 来自 postprocess_plan.json）：
-
-AI 读 `postprocess_plan.json` 中的 `nodes` 数组，为每类节点选择合适的模型 ID（参考 `references/decoration_catalog.json`），生成 entity 列表，调用 `mcp_entity_writer.py` 写入。
-
-**道路**：
-
-道路在 Y3 中通过地面纹理覆盖 + 道路摆件实现。AI 读 `road_grid.npy` 中标记为 `True` 的格子，调用 `terrain_draw_texture_block` 覆盖道路纹理，再放置道路摆件实体。
-
----
-
-### Step 2.4：植被填充（自动，纯规则）
-
-```bash
-python scripts/cv_vegetation_fill.py \
-  --texture-grid <dir>/texture_grid.csv \
-  --water-mask   <dir>/water_mask_grid.npy \
-  --map-info     <dir>/map_info.json \
-  --output-dir   <dir>
-```
-
-脚本按纹理类型自动铺设植被（无需 AI）：
-
-| 纹理组 | 植被效果 |
-|--------|---------|
-| 草地系 | 草丛（密度 0.6~0.7） |
-| 秋色系 | 枯草/落叶草（密度 0.4） |
-| 沙漠系 | 稀疏荒草（密度 0.15） |
-| 岩石/冰雪系 | 无植被 |
-| 沼泽系 | 芦苇（密度 0.5） |
-| 水域边缘格 | 水草（密度 0.3） |
-
-> ⛔ **禁止 AI 自行编写植被生成逻辑**，必须调用 `scripts/cv_vegetation_fill.py`
+输出：`spatial_analysis.json`（Round 3 Step 3.1 / 3.5 读取）
 
 ---
 
@@ -752,7 +879,7 @@ AI **必须**使用 `--single-batch 1` 模式循环调用脚本。每次调用�
 2. 查看 stdout 最后一行的 BATCH_RESULT:
    - status == "in_progress" → 打印进度，继续步骤 1
    - status == "pass_complete" → 打印已完成的 pass，继续步骤 1
-   - status == "all_done" → 退出循环，进入 5.3 装饰物写入
+   - status == "all_done" → 退出循环，地形写入完成，继续 Round 3
    - 命令执行失败（非零退出码）→ 报错停止，等待用户指令
 
 3. ⛔ 禁止在步骤 1 和步骤 2 之间做任何其他操作
@@ -788,67 +915,20 @@ AI **必须**使用 `--single-batch 1` 模式循环调用脚本。每次调用�
 
 > 💡 **备选全量模式**：不传 `--single-batch` 时脚本一口气执行所有 Pass（用户手动运行时使用，AI 不应使用此模式）。
 
-### 5.3 装饰物写入（AI 调用 MCP）— ⛔ 必须执行，禁止跳过
+### 5.3 输出完成摘要 + 地形预览图（可选）
 
-> **⛔ 装饰物写入是 Stage 5 的必要组成部分，不是可选步骤。**
-> 当 `decoration_entities.json` 存在且非空时，AI **必须**在地形+纹理写入完成（`all_done`）后立即执行装饰物写入。
-> 禁止输出"JSON 已生成，可后续写入"然后停止。
-
-**执行流程（AI 严格按此执行）：**
-
-直接调用 `mcp_entity_writer.py` 脚本，它会自动读取 JSON、下载模型、分批调用 MCP：
-
-```bash
-python scripts/mcp_entity_writer.py <dir>/decoration_entities.json --download-models
-```
-
-脚本自动完成：
-- 读取 `decoration_entities.json`（由 `decoration_postprocess.py` 生成的 entity list）
-- 收集所有 `model_id`，自动调用 `download_editor_model_resource` 下载模型资源
-- 分批调用 `entity_create_block`（默认每批 50 个，间隔 1 秒）
-- 输出统计和 `ENTITY_RESULT` JSON
-
-> ⚠️ **禁止 AI 手动复制 JSON 到 use_mcp_tool 参数**。必须使用脚本。
-> ⚠️ 如需调整批次大小：`--batch-size 30`；调整延迟：`--delay 2.0`
-> ⚠️ 先 dry-run 确认：`--dry-run`（只读取统计，不实际写入）
-
-**entity 字段说明：**
-```json
-{
-  "type": 16777216,
-  "pos": [world_x, 0, world_z],
-  "model_id": 201669,
-  "yaw": 90,
-  "pitch": 0,
-  "roll": 0,
-  "scale": [2.5, 2.5, 2.5],
-  "stick_to_ground": true
-}
-```
-
-> ⚠️ **type 必须是 `16777216`**（2^24 = RESOURCE_MODEL），不是 16！
-> ⚠️ **旋转使用 yaw/pitch/roll 独立字段**，不是 rotation 数组！
-> ⚠️ **不要自己生成 entity JSON**，必须使用 `decoration_postprocess.py` 脚本的输出！
-
-**植被类装饰物** → 使用 `terrain_vegetation_draw_block`（⚠️ 植被坐标系与地形格点不同）
-
-### 5.4 输出完成摘要
+地形写入完成后输出摘要，然后进入 Round 3：
 
 ```
 ✅ 地形写入完成（Stage 5）
-  - 总格子数：16384
-  - ground: 8200 格 | deep_water: 3100 格 | slope: 420 格
-  - 纹理覆盖：12000 格
+  - 总格子数：65536
+  - ground: N 格 | deep_water: N 格 | slope: N 格
+  - 纹理覆盖：N 格
 
-✅ 后处理写入完成（Round 2）
-  - 桥梁：2 个
-  - 树木：180 个 | 山石：45 个
-  - 游戏节点：资源点 5 | 巢穴 6 | 地牢 2 | 遗迹 8
-  - 道路：384 格
-  - 植被：2300 格
+→ 下一步：Round 3 装饰图设计层
 ```
 
-### 5.5 生成地形预览图（可选，不需要 MCP）
+可选：生成预览图验证地形效果后再进入 Round 3：
 
 在写入 Y3 前或后，可以随时生成预览图验证地形效果：
 
@@ -912,8 +992,14 @@ y3-gen-terrain-from-image/
 ├── templates/
 │   ├── round1_water_continent_prompt.md    ← Round 1 AI prompt
 │   └── round2_decoration_prompt.md         ← Round 2 AI prompt
+├── styles/
+│   └── dark_fantasy/                       ← 暗黑奇幻风格（Stage -1 选定后加载）
+│       ├── rules.json                      ← 风格规则：cv_hints/terrain_image_prompt/decoration_image_prompt_template/element_rules
+│       ├── model_catalog.json              ← 该风格专属模型目录
+│       └── decoration_logic.py            ← 程序化布局逻辑（封边/水边植被/危险区）
 ├── scripts/
 │   ├── check_cv_deps.py                    ← CV 依赖检测（必须首先运行）
+│   ├── cv_stitch_blocks.py                 ← ⭐ Round 3: 灰度图切分 + 16块装饰图拼合
 │   ├── cv_cluster.py                       ← ⭐ Round 1: 色相 K-means 聚类，推荐 K=20
 │   ├── cv_cluster_analysis.py              ← ⭐ Round 1: 双重聚类交叉分析（K=50细聚类）
 │   ├── cv_downsample.py                    ← ⭐ Round 1: 下采样→labels_grid.npy + cluster_grid.csv
@@ -977,53 +1063,35 @@ y3-gen-terrain-from-image/
 - **CV 依赖**：需要 `opencv-python` + `numpy`，约 45MB，通过 pip 安装
 - **每轮交互**：两轮共约 3~4 次 AI-用户交互
 
-## Round 3：装饰实体层
+## Round 3：装饰写入（必选，Stage 5 之后执行）
 
-> **前置条件：** Round 1 和 Round 2 必须已完成（需要 height_grid.npy、water_mask_grid.npy、water_type_grid.npy、spatial_analysis.json）
+> **前置条件（必须全部满足）：**
+> - Stage -1 已完成：16 张装饰图（`decoration_block_{row}_{col}.png`）已由用户确认，目录路径记录为 `<decoration_dir>`
+> - Stage 5 已完成（地形已写入编辑器）
+> - `height_grid.npy` / `water_mask_grid.npy` / `water_type_grid.npy`（Round 1 产出）
+> - `spatial_analysis.json`（Round 2 Step 2.3 产出，包含节点坐标 + 桥梁候选）
+>
+> **当前风格**：`<style_id>`（来自 Stage -1）
 
-### Step 3.1：生成灰度上下文图
+### Step 3.1：验证并拼合 16 块（自动）
 
 ```bash
-python scripts/gen_gray_context.py output/{run_id} --scale 8
+python scripts/cv_stitch_blocks.py stitch \
+  --input-dir <decoration_dir> \
+  --output <dir>/decoration_design.png \
+  --grid-size 4 \
+  --block-size 1024 \
+  --output-size 2048
 ```
 
-输出：`output/{run_id}/gray_context.png`（2048×2048px，每格=8×8像素）
+脚本自动：
+- 验证 16 张图都存在且为 1024×1024 px，任意缺失则打印列表并以退出码 1 终止
+- 按 4×4 顺序拼合为 4096×4096 px
+- 缩放到 2048×2048 输出（使用最近邻插值，保护精确 RGB 颜色）
 
-`--scale` 参数说明：
-- `--scale 1`（默认）：256×256px，1格=1像素，AI精度低
-- `--scale 8`（推荐）：2048×2048px，1格=8×8像素，与源图等分辨率，AI绘制精度最高，缩回256格时整除无误差
+⛔ 任意块缺失或尺寸错误时，**禁止继续后续步骤**，提示用户返回 Stage -1.3 补充对应块后重跑。
 
-### Step 3.2：AI 装饰设计图（GPT Image 2）
-
-使用 `gray_context.png` 作为底图，通过 GPT Image 2 inpainting 生成装饰设计图。
-
-**严格遵守颜色语义协议（references/color_protocol_v1.json）：**
-
-> ⚠️ **颜色精度要求：** 必须使用下表中的精确 RGB 值填充，不允许渐变、抗锯齿、颜色混合或任何偏差。AI 生成时偏色会导致识别失败（实测 AI 偏差通常在 ±30 以内，系统阈值为 90）。
-
-| 元素类型 | 精确 RGB（必须一致） | 形状 | 最小尺寸 |
-|---------|-------------------|------|---------|
-| forest_sparse | R=100 G=210 B=50 | 填满实心色块，无渐变 | 6×6格 |
-| forest_medium | R=20 G=160 B=20 | 填满实心色块，无渐变 | 8×8格 |
-| forest_dense | R=0 G=90 B=0 | 填满实心色块，无渐变 | 10×10格 |
-| rock_cluster | R=0 G=200 B=200 | 填满实心色块，无渐变 | 4×4格 |
-| building_common | R=220 G=160 B=20 | 实心方块，无渐变 | 3×3格 |
-| building_landmark | R=200 G=20 B=120 | 实心方块，无渐变 | 3×3格 |
-| resource_point | R=255 G=210 B=0 | 实心方块，无渐变 | 3×3格 |
-| monster_lair | R=150 G=0 B=200 | 实心方块，无渐变 | 3×3格 |
-| dungeon_entrance | R=70 G=0 B=150 | 实心方块，无渐变 | 3×3格 |
-| road_main | R=220 G=50 B=20 | 纯色细线，无抗锯齿 | 宽2-3格，长≥10格 |
-| bridge | R=0 G=60 B=220 | 实心方块，无渐变 | 3×3格 |
-
-**提示词中必须包含以下强制约束：**
-```
-所有颜色必须使用上表中的精确 RGB 整数值，禁止任何颜色插值、渐变、
-抗锯齿、混色或近似色。背景保持纯灰色（R=G=B=128）。
-```
-
-保存输出为 `output/{run_id}/decoration_design.png`
-
-**强制覆盖游戏节点位置**（Step 3.2完成后执行，防止AI忽略坐标约束）：
+### Step 3.2：强制叠加游戏节点位置
 
 ```python
 import json, pathlib
@@ -1047,19 +1115,24 @@ img.save(str(run / 'decoration_design.png'))
 print("Game node positions enforced")
 ```
 
-### Step 3.3：CV 元素提取
+### Step 3.3：CV 元素提取（整体提取，基于已拼合的完整图）
 
 ```bash
-python scripts/cv_decoration_extract.py output/{run_id} --theme {theme}
+python scripts/cv_decoration_extract.py output/{run_id} \
+  --theme {theme} \
+  --style <style_id>
 ```
 
-可选主题：`grassland`、`autumn`、`desert`、`ice_snow`、`default`
+> ⚠️ **`--style <style_id>` 必须传入**，否则风格 `element_rules`（高度限制、密度规则）和程序化布局（封边密林、水边植被、危险区围林）不会生效。
+
+可用主题（`--theme`）：`grassland`、`autumn`、`desert`、`ice_snow`、`default`
 
 输出：`output/{run_id}/decoration_manifest.json`
 
 检查警告日志：
-- `unknown_pixels.log` — 未识别颜色（距离 > 60）
+- `unknown_pixels.log` — 未识别颜色（距离 > 90），说明某块颜色偏差过大，需重新生成对应块
 - `shape_warnings.log` — 尺寸不足被跳过的元素
+- `height_warnings.log` — 因高度不符合风格规则被跳过的元素
 
 ### Step 3.4：查看并修改元素清单
 
@@ -1096,5 +1169,5 @@ python scripts/mcp_round3_writer.py output/{run_id}/decoration_manifest.json [--
 
 - Round 2 的 `cv_vegetation_fill.py` 在 Round 3 流程中**不再调用**
 - 游戏节点（resource_point、monster_lair、dungeon_entrance）当前以 `entity_create_block` + 占位模型写入；正式上线前需与策划确认物编实体 ID
-- 超大地图（>512×512格）的装饰设计图需分块生成后手动拼合，再运行 cv_decoration_extract.py
+- 若某块 `unknown_pixels.log` 报错超过 5%，说明该块颜色偏差过大，需重新生成对应块后从 Step 3.4 重跑
 - 已验证端到端流程（20×20格合成地图，22个单元测试全部通过）

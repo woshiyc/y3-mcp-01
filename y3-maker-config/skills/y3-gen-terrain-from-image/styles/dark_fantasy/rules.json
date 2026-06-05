@@ -103,5 +103,60 @@
       "h4": "山地，以岩石为主",
       "h6": "山峰，无植被"
     }
+  },
+
+  "cv_hints": {
+    "description": "CV 聚类和水域识别的风格感知参数，覆盖 SKILL.md 默认值",
+    "recommended_k": 20,
+    "complexity_rating": "high",
+    "complexity_reason": "暗色相近区域多（深棕火山 vs 腐化紫 vs 深水），K=15 会将其归入同一簇导致无法独立分配纹理/高度",
+    "water_color_hints": {
+      "deep_water_rgb_range":    {"min": [10, 30,  90], "max": [50,  90, 180]},
+      "shallow_water_rgb_range": {"min": [40, 120, 160], "max": [110, 200, 240]},
+      "plain_water_rgb_range":   {"min": [20,  60,  60], "max": [80,  130, 120]}
+    },
+    "dominant_water_type": "deep_water",
+    "water_coverage_expected": "30%~50%",
+    "cluster_analysis_notes": "深棕(RGB≈60,50,45)是火山高地h=4，不是水域；腐化紫(RGB≈80,50,100)是陆地，注意与深水区分"
+  },
+
+  "height_map_prompt": {
+    "description": "Stage -1.1 用：生成高度灰度图的提示词模板，纯灰度编码地形高度，无纹理无装饰",
+    "template": "Top-down orthographic grayscale height map, {map_theme}. Pure grayscale only, NO colors, NO textures, NO decorations. Strict brightness protocol: vast deep ocean=20 (30~50% area), coastal channels=55, shallow inland pools=80, dark land plains h0=120, hills h2=155, volcanic mountains h4=190, bare peaks h6=230. Sharp clean edges between zones, flat solid fills, NO gradients. 2048x2048px, PNG",
+    "negative_prompt": "color, RGB tint, texture, trees, buildings, roads, icons, labels, gradients, noise, blur, shadows, lighting effects",
+    "style_notes": "暗黑奇幻布局参考：广阔深海（亮度20，占30~50%），内陆浅水道（亮度55），压抑陆地主体（亮度120），火山山地（亮度190），北部危险区（亮度190~230）",
+    "brightness_protocol": {
+      "deep_water":    20,
+      "shallow_water": 55,
+      "plain_water":   80,
+      "land_h0":       120,
+      "land_h2":       155,
+      "land_h4":       190,
+      "land_h6":       230
+    },
+    "required_spec": "2048×2048 px，PNG，纯灰度，俯视正交，图片四边=地图四边",
+    "placeholder_guide": {
+      "{map_theme}": "地形主题描述，例如 'dark continent with 40% ocean coverage, volcanic northern peaks, corrupted wastelands'"
+    }
+  },
+
+  "terrain_image_prompt": {
+    "description": "供用户复制到 Midjourney/DALL-E/SD 生成地形图的提示词模板",
+    "template": "Top-down orthographic fantasy map, dark fantasy style, {map_theme}, vast deep blue ocean (RGB 25,55,135) covering 30~50% area, shallow turquoise river channels (RGB 70,165,205), dark continent with dense oppressive forest, volcanic mountains in the north, corrupted purple wastelands, NO text NO labels NO icons NO compass NO grid lines NO border frame, seamless edge-to-edge coverage, flat matte colors, 2048x2048px",
+    "negative_prompt": "isometric, perspective, 3D render, text, watermark, UI elements, compass rose, grid, border, vignette, logo",
+    "style_notes": "整体色调压抑偏暗；水域蓝色偏深偏沉；陆地有火山（深棕/黑）、腐化区（暗紫）、密林（深绿）区分；不要有鲜艳高对比色",
+    "required_spec": "2048×2048 px，PNG 格式，俯视正交投影，图片四边=地图四边，无白边无文字",
+    "placeholder_guide": {
+      "{map_theme}": "主地图主题描述，例如 'with volcanic northern peaks and corrupted purple swamp in the east, large central sea'"
+    }
+  },
+
+  "decoration_image_prompt_template": {
+    "description": "Round 3 分块装饰图提示词模板，AI 按块坐标填充占位符后展示给用户",
+    "base_prompt": "Top-down fantasy map decoration overlay, this is block row={block_row} col={block_col} of a 4×4 grid (each block 1024×1024px), dark fantasy style. Rules: solid color fills ONLY, absolutely NO gradients, NO anti-aliasing, NO color blending. Background must be exactly RGB(128,128,128) gray. Place game nodes as solid color filled squares 24×24px at the given pixel positions. Draw forest areas as solid color filled patches (no outlines). Roads as solid color lines 2~3px wide. All colors must be exact integer values from the protocol.",
+    "color_protocol_reminder": "EXACT RGB values (no deviation allowed): forest_sparse=(100,210,50) forest_medium=(20,160,20) forest_dense=(0,90,0) rock_cluster=(0,200,200) resource_point=(255,210,0) monster_lair=(150,0,200) dungeon_entrance=(70,0,150) road_main=(220,50,20) bridge=(0,60,220) building_common=(220,160,20) building_landmark=(200,20,120)",
+    "output_spec": "1024×1024 px，PNG，精确纯色填充，无渐变无抗锯齿，背景严格 RGB(128,128,128)",
+    "node_coord_formula": "块(row,col)内的局部像素坐标 = (网格格坐标 × 8) - (col × 512, row × 512)。例：格坐标(70,32)在块(0,1)中的像素坐标=(70×8-1×512, 32×8-0×512)=(48,256)",
+    "naming_rule": "用户保存时命名为 decoration_block_{block_row}_{block_col}.png，放入同一目录"
   }
 }
