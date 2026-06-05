@@ -233,53 +233,61 @@ local function run_execution_tests()
 end
 
 local function run_settlement_tests()
-    log.info("=== Task 6: Settlement Tests ===")
-    AdvData.reset()
+    log.info("=== Settlement V2 Tests ===")
+    AdvData.reset(); QuestData.reset()
 
-    -- 测试1: 成功结算
-    local adv1 = AdvData.create("Hero", "warrior", "D")  -- rank=3
-    local q1 = QuestData.create("成功测试", 3, QuestData.TYPE.HUNT, nil)
-    QuestData.post(q1.id, 1.25)  -- reward_base=400, mult=1.25 → total=500
-    q1.dispatched_ids = {adv1.id}
-    q1.equipment_ids  = {}
+    -- Test 1: success — gold rewarded, xp added, adv freed, no lost_adv_ids
+    local adv1 = AdvData.create("Hero", "warrior", "C")
     adv1.is_on_quest = true
+    local q1 = QuestData.create("成功任务", 3, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q1.id, 1.0)
+    q1.dispatched_ids = {adv1.id}; q1.equipment_ids = {}
+    QuestData.set_status(q1.id, QuestData.STATUS.DISPATCHED)
 
     local r1 = Settlement.settle(q1.id, "success")
-    assert_eq("success gold", r1.gold_reward, 500)  -- floor(400*1.25)=500
-    assert_eq("success no lost adv", #r1.lost_adv_ids, 0)
-    assert_eq("success loyalty gain", r1.loyalty_changes[adv1.id], 10)
-    assert_eq("success adv freed", AdvData.get(adv1.id).is_on_quest, false)
-    assert_eq("success status", q1.status, QuestData.STATUS.SUCCEEDED)
+    assert_eq("success: outcome", r1.outcome, "success")
+    assert_eq("success: gold > 0", r1.gold_reward > 0, true)
+    assert_eq("success: adv freed", AdvData.get(adv1.id).is_on_quest, false)
+    assert_eq("success: xp added", AdvData.get(adv1.id).xp > 0, true)
+    assert_eq("success: no losses", #r1.lost_adv_ids, 0)
+    assert_eq("success: no loyalty_changes", r1.loyalty_changes, nil)
 
-    -- 测试2: 专属奖励（任务类型匹配专长）
-    local adv_spec = AdvData.create("Specialist", "ranger", "D")
-    adv_spec.specialties = {"hunt"}  -- 专长讨伐
-    local q_spec = QuestData.create("专长测试", 3, QuestData.TYPE.HUNT, nil)
-    QuestData.post(q_spec.id, 1.0)  -- mult=1.0 → loyalty+5
-    q_spec.dispatched_ids = {adv_spec.id}
-    q_spec.equipment_ids = {}
-    adv_spec.is_on_quest = true
-
-    local r_spec = Settlement.settle(q_spec.id, "success")
-    -- loyalty: 1.0x → +5, specialty → +5 = total +10
-    assert_eq("specialty bonus total", r_spec.loyalty_changes[adv_spec.id], 10)
-
-    -- 测试3: 全灭结算
-    local adv2 = AdvData.create("Martyr", "ranger", "C")
-    local bystander = AdvData.create("Watcher", "warrior", "F")
-    local q2 = QuestData.create("全灭测试", 3, QuestData.TYPE.HUNT, nil)
-    QuestData.post(q2.id, 1.0)
-    q2.dispatched_ids = {adv2.id}
-    q2.equipment_ids  = {"eq_001"}
+    -- Test 2: abort — no gold, adv freed
+    AdvData.reset(); QuestData.reset()
+    local adv2 = AdvData.create("Quitter", "ranger", "B")
     adv2.is_on_quest = true
+    local q2 = QuestData.create("放弃任务", 4, QuestData.TYPE.EXPLORE, nil)
+    QuestData.post(q2.id, 1.0)
+    q2.dispatched_ids = {adv2.id}; q2.equipment_ids = {}
+    QuestData.set_status(q2.id, QuestData.STATUS.DISPATCHED)
 
-    local r2 = Settlement.settle(q2.id, "wipe")
-    assert_eq("wipe adv lost count", #r2.lost_adv_ids, 1)
-    assert_eq("wipe equip lost count", #r2.lost_equip_ids, 1)
-    assert_eq("wipe adv removed", AdvData.get(adv2.id), nil)
-    assert_eq("wipe bystander morale -20", r2.loyalty_changes[bystander.id], -20)
+    local r2 = Settlement.settle(q2.id, "abort")
+    assert_eq("abort: outcome", r2.outcome, "abort")
+    assert_eq("abort: no gold", r2.gold_reward, 0)
+    assert_eq("abort: adv freed", AdvData.get(adv2.id).is_on_quest, false)
+    assert_eq("abort: no lost_adv_ids", #r2.lost_adv_ids, 0)
+    assert_eq("abort: status=ABORTED", QuestData.get(q2.id).status, QuestData.STATUS.ABORTED)
 
-    log.info("=== Task 6 Tests Done ===")
+    -- Test 3: wipe — all dispatched permanently removed, equip lost, bystander untouched
+    AdvData.reset(); QuestData.reset()
+    local adv3a = AdvData.create("Martyr1", "warrior", "C")
+    local adv3b = AdvData.create("Martyr2", "mage", "C")
+    local bystander = AdvData.create("Watcher", "ranger", "F")
+    adv3a.is_on_quest = true; adv3b.is_on_quest = true
+    local q3 = QuestData.create("全灭任务", 5, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q3.id, 1.0)
+    q3.dispatched_ids = {adv3a.id, adv3b.id}; q3.equipment_ids = {"eq_001"}
+    QuestData.set_status(q3.id, QuestData.STATUS.DISPATCHED)
+
+    local r3 = Settlement.settle(q3.id, "wipe")
+    assert_eq("wipe: 2 lost", #r3.lost_adv_ids, 2)
+    assert_eq("wipe: equip lost", #r3.lost_equip_ids, 1)
+    assert_eq("wipe: martyr1 removed", AdvData.get(adv3a.id), nil)
+    assert_eq("wipe: martyr2 removed", AdvData.get(adv3b.id), nil)
+    assert_eq("wipe: bystander alive", AdvData.get(bystander.id) ~= nil, true)
+    assert_eq("wipe: no loyalty_changes", r3.loyalty_changes, nil)
+
+    log.info("=== Settlement V2 Tests Done ===")
 end
 
 local function run_event_card_tests()
