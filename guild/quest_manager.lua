@@ -16,7 +16,7 @@ local GAME_DAY_SECONDS = 600
 --- 启动游戏日定时器，每 GAME_DAY_SECONDS 秒触发闲置惩罚
 function M.init()
     y3.timer.loop(GAME_DAY_SECONDS, function()
-        AdvData.tick_idle_penalty()
+        AdvData.tick_daily()
         log.info("[Guild] 游戏日结束，闲置惩罚已结算")
     end)
     log.info("[Guild] 冒险者公会任务系统已初始化")

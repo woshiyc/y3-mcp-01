@@ -67,6 +67,12 @@ local function run_adventurer_tests()
     adv_v2.is_on_quest = false
     assert_eq("v2: available when free", AdvData.is_available(adv_v2.id), true)
 
+    -- tick_daily: heartbroken_days_left decrements
+    local adv_hb = AdvData.create("HBTest", "warrior", "C")
+    adv_hb.heartbroken_days_left = 2
+    AdvData.tick_daily()
+    assert_eq("v2: heartbroken_days_left decrements", AdvData.get(adv_hb.id).heartbroken_days_left, 1)
+
     log.info("=== Task 1 Tests Done ===")
 end
 
