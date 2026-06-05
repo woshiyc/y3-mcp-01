@@ -174,45 +174,32 @@ def run_extraction(img_path, texture_grid, protocol_path, catalog_path,
         if raw.shape == (grid_h, grid_w):
             water_mask = raw.astype(bool)
 
-    # Per-type pixel lists
+    # Per-type pixel lists（不在此处过滤水域，改为聚类后按中心点过滤）
     type_pixels: dict = {k: [] for k in protocol['elements']}
     unknown_log = []
-    water_filtered = 0
+
+    # 非面状元素（点状/路径）仍在像素级过滤水域（它们不存在"水边合理"问题）
+    AREA_SHAPES = {'area'}
 
     for r in range(grid_h):
         for c in range(grid_w):
             R, G, B = int(img[r, c, 0]), int(img[r, c, 1]), int(img[r, c, 2])
             if is_gray(R, G, B, threshold):
                 continue
-            # 过滤水域格子（桥梁除外，桥梁本身就在水域）
-            if water_mask is not None and water_mask[r, c]:
-                water_filtered += 1
-                continue
             elem_type, dist = classify_pixel(R, G, B, protocol)
             if dist > unk_thresh:
                 unknown_log.append(f"({c},{r}) RGB=({R},{G},{B}) dist={dist:.1f}")
                 continue
+            shape = protocol['elements'].get(elem_type, {}).get('shape', 'point')
+            # 点状/路径元素：直接过滤水域像素
+            if shape not in AREA_SHAPES:
+                if water_mask is not None and water_mask[r, c]:
+                    # 桥梁例外：允许在水域
+                    if elem_type != 'bridge':
+                        continue
             type_pixels[elem_type].append((r, c))
 
-    # 桥梁单独处理：允许在浅水区域（water_type==2）
-    if water_mask is not None:
-        water_type_path = run_dir / 'water_type_grid.npy'
-        if water_type_path.exists():
-            wt = np.load(str(water_type_path)).astype(np.int8)
-            bridge_rgb = protocol['elements'].get('bridge', {}).get('rgb', [0, 60, 220])
-            for r in range(grid_h):
-                for c in range(grid_w):
-                    if not water_mask[r, c]:
-                        continue
-                    R, G, B = int(img[r, c, 0]), int(img[r, c, 1]), int(img[r, c, 2])
-                    if is_gray(R, G, B, threshold):
-                        continue
-                    elem_type, dist = classify_pixel(R, G, B, protocol)
-                    if elem_type == 'bridge' and dist <= unk_thresh:
-                        type_pixels['bridge'].append((r, c))
-
-    if water_filtered > 0:
-        print(f"  水域过滤: {water_filtered} 个装饰像素被过滤（位于水域格）")
+    print(f"  像素分类完成，面状元素保留水边像素参与聚类")
 
     # 加载高度网格，用于高度感知验证和密度分配
     height_grid = None

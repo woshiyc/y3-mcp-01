@@ -7,6 +7,7 @@ local Dispatch = require 'guild.quest_dispatch'
 local Execution = require 'guild.quest_execution'
 local Settlement = require 'guild.quest_settlement'
 local EventCards = require 'guild.event_cards'
+local TraitSystem = require 'guild.trait_system'
 
 local function assert_eq(label, a, b)
     if a ~= b then
@@ -286,6 +287,79 @@ local function run_event_card_tests()
     log.info("=== Task 8 Tests Done ===")
 end
 
+local function run_trait_system_tests()
+    log.info("=== TraitSystem Tests ===")
+
+    -- 1. add_trait and has_trait
+    AdvData.reset()
+    local adv = AdvData.create("TraitTester", "warrior", "C")
+    local ok = TraitSystem.add_trait(adv.id, "battle_veteran")
+    assert_eq("add_trait returns true", ok, true)
+    assert_eq("has_trait after add", TraitSystem.has_trait(adv.id, "battle_veteran"), true)
+
+    -- 2. duplicate prevention
+    local ok2 = TraitSystem.add_trait(adv.id, "battle_veteran")
+    assert_eq("duplicate blocked", ok2, false)
+
+    -- 3. cap=6, all non-removable → 7th blocked
+    AdvData.reset()
+    local adv2 = AdvData.create("CapTest", "mage", "B")
+    for _, tid in ipairs({"battle_veteran","brave","near_death_survivor","inspiring","tenacious","guardian_instinct"}) do
+        TraitSystem.add_trait(adv2.id, tid)
+    end
+    local ok3 = TraitSystem.add_trait(adv2.id, "explorer")
+    assert_eq("blocked when all 6 non-removable", ok3, false)
+
+    -- 4. cap=6 with removable traits → 7th evicts one removable
+    AdvData.reset()
+    local adv3 = AdvData.create("EvictTest", "ranger", "A")
+    for _, tid in ipairs({"traumatized","cowardly","alcoholic","suspicious","fragile","heartbroken"}) do
+        TraitSystem.add_trait(adv3.id, tid)
+    end
+    local adv3data = AdvData.get(adv3.id)
+    assert_eq("6 traits before eviction", #adv3data.traits, 6)
+    local ok4 = TraitSystem.add_trait(adv3.id, "proud")
+    assert_eq("add succeeds with eviction", ok4, true)
+    assert_eq("still 6 traits after eviction", #adv3data.traits, 6)
+
+    -- 5. get_level_min_offset: proud(+1) + greedy(-1) = 0
+    AdvData.reset()
+    local adv4 = AdvData.create("OffsetTest", "warrior", "S")
+    TraitSystem.add_trait(adv4.id, "proud")
+    TraitSystem.add_trait(adv4.id, "greedy")
+    assert_eq("net offset=0", TraitSystem.get_level_min_offset(adv4.id), 0)
+
+    -- 6. get_max_rank_cap: cowardly caps at own rank
+    AdvData.reset()
+    local adv5 = AdvData.create("CowardTest", "ranger", "C")
+    assert_eq("no cap without cowardly", TraitSystem.get_max_rank_cap(adv5.id), nil)
+    TraitSystem.add_trait(adv5.id, "cowardly")
+    assert_eq("cap=own rank with cowardly", TraitSystem.get_max_rank_cap(adv5.id), adv5.rank)
+
+    -- 7. rejects_quest_type: traumatized rejects hunt
+    AdvData.reset()
+    local adv6 = AdvData.create("PhobiaTest", "mage", "D")
+    TraitSystem.add_trait(adv6.id, "traumatized")
+    assert_eq("traumatized rejects hunt", TraitSystem.rejects_quest_type(adv6.id, "hunt"), true)
+    assert_eq("traumatized allows explore", TraitSystem.rejects_quest_type(adv6.id, "explore"), false)
+
+    -- 8. get_signup_weight: hunt_specialist gets bonus for hunt quest
+    AdvData.reset()
+    local adv7 = AdvData.create("SpecialistTest", "warrior", "B")
+    local base_weight = TraitSystem.get_signup_weight(adv7.id, "hunt", 1.0)
+    TraitSystem.add_trait(adv7.id, "hunt_specialist")
+    local spec_weight = TraitSystem.get_signup_weight(adv7.id, "hunt", 1.0)
+    assert_eq("hunt_specialist has higher hunt weight", spec_weight > base_weight, true)
+
+    -- 9. trigger rolls return boolean
+    AdvData.reset()
+    local adv8 = AdvData.create("RollTest", "warrior", "F")
+    assert_eq("neg roll returns bool", type(TraitSystem.trigger_negative_roll(adv8.id)) == "boolean", true)
+    assert_eq("pos roll returns bool", type(TraitSystem.trigger_positive_roll(adv8.id)) == "boolean", true)
+
+    log.info("=== TraitSystem Tests Done ===")
+end
+
 -- 绑定快捷键 T = 运行测试
 y3.game:event('游戏-初始化', function()
     y3.player.with_local(function(p)
@@ -293,6 +367,7 @@ y3.game:event('游戏-初始化', function()
         y3.game:event('按键-按下', function(_, key)
             if key == 'T' then
                 run_adventurer_tests()
+                run_trait_system_tests()
                 run_quest_data_tests()
                 run_quest_board_tests()
                 run_dispatch_tests()
