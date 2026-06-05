@@ -140,15 +140,16 @@ end
 function M.get_signup_weight(adv_id, quest_type, bounty_mult)
     local adv = AdvData.get(adv_id)
     if not adv then return 0 end
-    local weight = bounty_mult
+    local additive = bounty_mult
+    local mult = 1.0
     for _, t in ipairs(adv.traits) do
         local def = M.CATALOG[t]
         if def then
-            if def.prefer_quest_type == quest_type then weight = weight + 0.5 end
-            if def.signup_weight_mult then weight = weight * def.signup_weight_mult end
+            if def.prefer_quest_type == quest_type then additive = additive + 0.5 end
+            if def.signup_weight_mult then mult = mult * def.signup_weight_mult end
         end
     end
-    return weight
+    return additive * mult
 end
 
 function M.trigger_negative_roll(adv_id)

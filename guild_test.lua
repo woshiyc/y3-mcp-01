@@ -343,6 +343,17 @@ local function run_trait_system_tests()
     assert_eq("traumatized rejects hunt", TraitSystem.rejects_quest_type(adv6.id, "hunt"), true)
     assert_eq("traumatized allows explore", TraitSystem.rejects_quest_type(adv6.id, "explore"), false)
 
+    -- 7b. rejects_quest_type: heartbroken rejects all when days_left > 0
+    AdvData.reset()
+    local adv6b = AdvData.create("HeartbrokenTest", "mage", "C")
+    TraitSystem.add_trait(adv6b.id, "heartbroken")
+    -- heartbroken_days_left = 0 → should NOT reject
+    assert_eq("heartbroken no days left: allows hunt", TraitSystem.rejects_quest_type(adv6b.id, "hunt"), false)
+    -- heartbroken_days_left > 0 → should reject ALL quest types
+    adv6b.heartbroken_days_left = 2
+    assert_eq("heartbroken with days left: rejects hunt", TraitSystem.rejects_quest_type(adv6b.id, "hunt"), true)
+    assert_eq("heartbroken with days left: rejects explore", TraitSystem.rejects_quest_type(adv6b.id, "explore"), true)
+
     -- 8. get_signup_weight: hunt_specialist gets bonus for hunt quest
     AdvData.reset()
     local adv7 = AdvData.create("SpecialistTest", "warrior", "B")
@@ -356,6 +367,28 @@ local function run_trait_system_tests()
     local adv8 = AdvData.create("RollTest", "warrior", "F")
     assert_eq("neg roll returns bool", type(TraitSystem.trigger_negative_roll(adv8.id)) == "boolean", true)
     assert_eq("pos roll returns bool", type(TraitSystem.trigger_positive_roll(adv8.id)) == "boolean", true)
+
+    -- 10. get_stat_value: _bonus key returns sum, other keys return 1.0+sum
+    AdvData.reset()
+    local adv9 = AdvData.create("StatTest", "warrior", "C")
+    -- No traits: casualty_roll_bonus = 0.0, hp_mult = 1.0
+    assert_eq("no traits: casualty_roll_bonus=0", TraitSystem.get_stat_value(adv9.id, "casualty_roll_bonus"), 0.0)
+    assert_eq("no traits: hp_mult=1.0", TraitSystem.get_stat_value(adv9.id, "hp_mult"), 1.0)
+    -- Add near_death_survivor: casualty_roll_bonus +0.10, hp_mult +0.15
+    TraitSystem.add_trait(adv9.id, "near_death_survivor")
+    assert_eq("near_death_survivor: casualty_roll_bonus=0.10", TraitSystem.get_stat_value(adv9.id, "casualty_roll_bonus"), 0.10)
+    assert_eq("near_death_survivor: hp_mult=1.15", TraitSystem.get_stat_value(adv9.id, "hp_mult"), 1.15)
+
+    -- 11. trigger_negative_roll_at_rate: 100% rate must add a trait if pool not empty
+    AdvData.reset()
+    local adv10 = AdvData.create("RateTest", "warrior", "F")
+    local added = TraitSystem.trigger_negative_roll_at_rate(adv10.id, 1.0)  -- 100% guaranteed
+    assert_eq("rate=1.0 guarantees add (pool not empty)", added, true)
+    assert_eq("adv has 1 negative trait after 100% roll", #AdvData.get(adv10.id).traits, 1)
+    -- 0% rate must never add
+    local adv11 = AdvData.create("ZeroRateTest", "ranger", "F")
+    local not_added = TraitSystem.trigger_negative_roll_at_rate(adv11.id, 0.0)
+    assert_eq("rate=0.0 never adds", not_added, false)
 
     log.info("=== TraitSystem Tests Done ===")
 end
