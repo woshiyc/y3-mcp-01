@@ -101,40 +101,81 @@ local function run_quest_data_tests()
 end
 
 local function run_quest_board_tests()
-    log.info("=== Task 3: Quest Board Tests ===")
-    AdvData.reset()  -- 清除前面测试创建的冒险者，避免状态污染
+    log.info("=== Quest Board V2 Tests ===")
+    AdvData.reset()
+    QuestData.reset()
+    QuestBoard.set_difficulty(2)  -- 普通: tolerance=3
 
-    -- 准备：3个冒险者
-    local adv_high     = AdvData.create("Alice",  "warrior", "C")  -- rank=4
-    local adv_low      = AdvData.create("Bob",    "mage",    "D")  -- rank=3
-    local adv_wavering = AdvData.create("Carol",  "ranger",  "B")  -- rank=5
+    -- S-rank on normal: min=7-3=4(C), should accept C task
+    local adv_s = AdvData.create("SRank", "warrior", "S")
+    local q_c = QuestData.create("C任务", 4, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q_c.id, 1.0)
+    local pool = QuestBoard.collect_registrations(q_c.id)
+    local found = false; for _, id in ipairs(pool) do if id == adv_s.id then found = true end end
+    assert_eq("S accepts C on normal", found, true)
 
-    -- 任务：D级(3)，倍率1.0
-    local q = QuestData.create("D级讨伐", 3, QuestData.TYPE.HUNT, nil)
-    QuestData.post(q.id, 1.0)
+    -- S-rank on hell (tolerance=0): only S task
+    QuestBoard.set_difficulty(5)
+    pool = QuestBoard.collect_registrations(q_c.id)
+    found = false; for _, id in ipairs(pool) do if id == adv_s.id then found = true end end
+    assert_eq("S rejects C on hell", found, false)
 
-    local pool = QuestBoard.collect_registrations(q.id)
-    -- Alice(C≥D) → 报名, Bob(D≥D) → 报名, Carol(B≥D) → 报名
-    assert_eq("pool size at 1.0x", #pool, 3)
+    -- F-rank can accept S task (no upper limit)
+    QuestBoard.set_difficulty(2)
+    AdvData.reset(); QuestData.reset()
+    local adv_f = AdvData.create("FRank", "ranger", "F")
+    local q_s = QuestData.create("S任务", 7, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q_s.id, 1.0)
+    pool = QuestBoard.collect_registrations(q_s.id)
+    found = false; for _, id in ipairs(pool) do if id == adv_f.id then found = true end end
+    assert_eq("F accepts S (no upper cap)", found, true)
 
-    -- 换成1.5x，全员仍报名
-    q.bounty_mult = 1.5
-    local pool2 = QuestBoard.collect_registrations(q.id)
-    assert_eq("pool size at 1.5x", #pool2, 3)
+    -- cowardly: C-rank cannot accept S task
+    AdvData.reset(); QuestData.reset()
+    local adv_c = AdvData.create("Coward", "mage", "C")
+    TraitSystem.add_trait(adv_c.id, "cowardly")
+    local q_s2 = QuestData.create("S任务2", 7, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q_s2.id, 1.0)
+    pool = QuestBoard.collect_registrations(q_s2.id)
+    found = false; for _, id in ipairs(pool) do if id == adv_c.id then found = true end end
+    assert_eq("cowardly C rejects S", found, false)
 
-    -- F级冒险者不可接D级任务（等级不够）
-    local adv_f = AdvData.create("Newbie", "warrior", "F")  -- rank=1
-    q.bounty_mult = 1.5
-    local pool3 = QuestBoard.collect_registrations(q.id)
-    assert_eq("F-rank excluded from D quest", #pool3, 3)  -- Newbie 仍不在
+    -- traumatized rejects hunt
+    AdvData.reset(); QuestData.reset()
+    local adv_t = AdvData.create("Trauma", "warrior", "S")
+    TraitSystem.add_trait(adv_t.id, "traumatized")
+    local q_hunt = QuestData.create("讨伐", 5, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q_hunt.id, 1.0)
+    pool = QuestBoard.collect_registrations(q_hunt.id)
+    found = false; for _, id in ipairs(pool) do if id == adv_t.id then found = true end end
+    assert_eq("traumatized rejects hunt", found, false)
 
-    -- 在任务中的冒险者不报名
-    adv_high.is_on_quest = true
-    local pool4 = QuestBoard.collect_registrations(q.id)
-    assert_eq("on-quest adv excluded", #pool4, 2)
-    adv_high.is_on_quest = false  -- 恢复
+    -- resting adventurer cannot register
+    AdvData.reset(); QuestData.reset()
+    local adv_r = AdvData.create("Resting", "warrior", "C")
+    adv_r.resting_days = 2
+    local q_e = QuestData.create("探索", 3, QuestData.TYPE.EXPLORE, nil)
+    QuestData.post(q_e.id, 1.0)
+    pool = QuestBoard.collect_registrations(q_e.id)
+    found = false; for _, id in ipairs(pool) do if id == adv_r.id then found = true end end
+    assert_eq("resting cannot register", found, false)
 
-    log.info("=== Task 3 Tests Done ===")
+    -- Bounty weight: hunt_specialist gets higher pool priority for hunt quest
+    AdvData.reset(); QuestData.reset()
+    local adv_spec = AdvData.create("Spec", "warrior", "S")
+    TraitSystem.add_trait(adv_spec.id, "hunt_specialist")
+    local adv_norm = AdvData.create("Norm", "warrior", "S")
+    local q_h = QuestData.create("高赏金讨伐", 5, QuestData.TYPE.HUNT, nil)
+    QuestData.post(q_h.id, 1.5)
+    pool = QuestBoard.collect_registrations(q_h.id)
+    local spec_pos, norm_pos = nil, nil
+    for i, id in ipairs(pool) do
+        if id == adv_spec.id then spec_pos = i end
+        if id == adv_norm.id then norm_pos = i end
+    end
+    assert_eq("hunt_specialist ranked higher", spec_pos ~= nil and norm_pos ~= nil and spec_pos < norm_pos, true)
+
+    log.info("=== Quest Board V2 Tests Done ===")
 end
 
 local function run_dispatch_tests()
