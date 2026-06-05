@@ -1,5 +1,6 @@
 -- guild/quest_execution.lua
--- 任务执行模块：创建地图单位、监控死亡、处理召回、清理资源
+-- 任务执行模块 V2：创建地图单位、通过 casualty.lua 处理伤亡链、处理召回
+-- 注：V2 删除 mark_fail，伤亡由死亡事件实时驱动
 local AdvData    = require 'guild.adventurer_data'
 local QuestData  = require 'guild.quest_data'
 local EventCards = require 'guild.event_cards'
@@ -63,21 +64,37 @@ function M.start(quest_id, target_point, on_complete, on_event_card)
     _executions[quest_id] = ctx
 
     -- 监听单位死亡（⚠️ 必须存储句柄，在 _finish() 中 off()）
+    local Casualty = require 'guild.casualty'
+
     local death_handler = function(_, dead_unit)
         if not _executions[quest_id] then return end
-        -- 找到死亡的冒险者并从 ctx 中移除
+        -- Identify downed adventurer
+        local downed_id = nil
         for adv_id, u in pairs(ctx.adv_units) do
             if u == dead_unit then
+                downed_id = adv_id
                 ctx.adv_units[adv_id] = nil
                 break
             end
         end
-        -- 检查是否全灭
-        local any_alive = false
-        for _, u in pairs(ctx.adv_units) do
-            if u then any_alive = true; break end
+        if not downed_id then return end
+
+        -- Run casualty chain
+        local is_solo = (#quest.dispatched_ids == 1)
+        if is_solo then
+            local survived = Casualty.do_casualty_roll(downed_id, quest.rank)
+            if not survived then
+                M._finish(quest_id, "wipe")
+                return
+            end
+        else
+            Casualty.process_party_casualty(downed_id, quest.dispatched_ids, quest.rank)
         end
-        if not any_alive then
+
+        -- All-dead check
+        local any_active = false
+        for _, u in pairs(ctx.adv_units) do if u then any_active = true; break end end
+        if not any_active then
             M._finish(quest_id, "wipe")
         end
     end
@@ -160,13 +177,6 @@ end
 ---@param quest_id string
 function M.mark_success(quest_id)
     M._finish(quest_id, "success")
-end
-
---- 外部标记任务失败
----@param quest_id string
----@param is_heavy boolean  true=重度失败，false=轻度失败
-function M.mark_fail(quest_id, is_heavy)
-    M._finish(quest_id, is_heavy and "heavy_fail" or "light_fail")
 end
 
 return M

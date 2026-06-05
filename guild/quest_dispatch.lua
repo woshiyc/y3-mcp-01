@@ -1,5 +1,6 @@
 -- guild/quest_dispatch.lua
--- 派遣模块：队伍等级计算、失败概率计算（含装备修正）、执行派遣
+-- 派遣模块 V2：队伍平均等级计算、报名资格验证、执行派遣
+-- 注：V2 删除概率失败计算层，任务成败由实时执行和 casualty.lua 决定
 local AdvData   = require 'guild.adventurer_data'
 local QuestData = require 'guild.quest_data'
 
@@ -16,47 +17,6 @@ function M.calc_party_avg_rank(adv_ids)
         if adv then total = total + adv.rank end
     end
     return math.floor(total / #adv_ids + 0.5) -- 四舍五入
-end
-
---- 计算基础失败概率（重度失败 / 全灭）
---- 基于 (任务等级 − 队伍平均等级) 的差值
----@param task_rank_int integer
----@param party_avg_rank integer
----@return table { heavy: number, wipe: number }  值域 [0, 1]
-function M.calc_base_fail_prob(task_rank_int, party_avg_rank)
-    local diff = task_rank_int - party_avg_rank
-    if diff <= 0 then return { heavy=0.10, wipe=0.01 } end
-    if diff == 1 then return { heavy=0.25, wipe=0.05 } end
-    if diff == 2 then return { heavy=0.50, wipe=0.20 } end
-    return { heavy=0.80, wipe=0.50 } -- diff >= 3
-end
-
---- 计算装备修正量（正数=降低概率对玩家有利，负数=提高概率对玩家不利）
---- 基于 (装备平均等级 − 任务等级) 的差值
----@param equip_avg_rank integer  装备平均等级整数值（0 = 无装备）
----@param task_rank_int integer
----@return number delta
-function M.calc_equip_delta(equip_avg_rank, task_rank_int)
-    local diff = equip_avg_rank - task_rank_int
-    if diff >= 1  then return -0.10 end  -- 装备超出任务等级：降低10%
-    if diff == 0  then return  0.00 end  -- 同级：无修正
-    if diff == -1 then return  0.05 end  -- 低一级：提高5%
-    return 0.15                          -- 低两级以上：提高15%
-end
-
---- 计算最终失败概率（叠加装备修正，概率钳制在 [0, 0.95]）
----@param task_rank_int integer
----@param adv_ids string[]
----@param equip_avg_rank integer
----@return table { heavy: number, wipe: number }
-function M.calc_final_fail_prob(task_rank_int, adv_ids, equip_avg_rank)
-    local avg   = M.calc_party_avg_rank(adv_ids)
-    local base  = M.calc_base_fail_prob(task_rank_int, avg)
-    local delta = M.calc_equip_delta(equip_avg_rank, task_rank_int)
-    return {
-        heavy = math.max(0, math.min(0.95, base.heavy + delta)),
-        wipe  = math.max(0, math.min(0.95, base.wipe  + delta)),
-    }
 end
 
 --- 执行派遣：将选定冒险者标记为任务中，任务状态转为 DISPATCHED

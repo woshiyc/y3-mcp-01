@@ -190,28 +190,6 @@ local function run_dispatch_tests()
     local avg = Dispatch.calc_party_avg_rank({a1.id, a2.id, a3.id})
     assert_eq("party avg {D,B,C}=C", avg, 4)
 
-    -- 基础失败概率
-    local p1 = Dispatch.calc_base_fail_prob(3, 3)  -- diff=0
-    assert_eq("base_fail diff=0 heavy", p1.heavy, 0.10)
-    assert_eq("base_fail diff=0 wipe",  p1.wipe,  0.01)
-
-    local p2 = Dispatch.calc_base_fail_prob(5, 3)  -- diff=2
-    assert_eq("base_fail diff=2 heavy", p2.heavy, 0.50)
-
-    local p3 = Dispatch.calc_base_fail_prob(6, 3)  -- diff>=3
-    assert_eq("base_fail diff=3 heavy", p3.heavy, 0.80)
-
-    -- 装备修正
-    assert_eq("equip_delta +1 tier", Dispatch.calc_equip_delta(4, 3), -0.10)
-    assert_eq("equip_delta same",    Dispatch.calc_equip_delta(3, 3),  0.00)
-    assert_eq("equip_delta -1 tier", Dispatch.calc_equip_delta(2, 3),  0.05)
-    assert_eq("equip_delta -2 tier", Dispatch.calc_equip_delta(1, 3),  0.15)
-
-    -- 最终概率（钳制到0.95）
-    local p4 = Dispatch.calc_final_fail_prob(6, {a1.id}, 0)
-    -- diff=6-3=3→heavy=0.80, equip_delta(0,6)=0.15, final=0.95
-    assert_eq("final prob clamped to 0.95", p4.heavy, 0.95)
-
     -- 派遣流程
     local q = QuestData.create("测试派遣", 3, QuestData.TYPE.HUNT, nil)
     QuestData.post(q.id, 1.0)
@@ -230,6 +208,13 @@ local function run_dispatch_tests()
     local ok2 = Dispatch.dispatch(q2.id, {a3.id}, {})  -- a3 不在报名池
     assert_eq("dispatch fails for non-pool member", ok2, false)
 
+    -- V2: probability functions must not exist
+    assert_eq("calc_base_fail_prob removed", Dispatch.calc_base_fail_prob, nil)
+    assert_eq("calc_equip_delta removed", Dispatch.calc_equip_delta, nil)
+    assert_eq("calc_final_fail_prob removed", Dispatch.calc_final_fail_prob, nil)
+    -- Core functions still exist
+    assert_eq("dispatch still exists", type(Dispatch.dispatch) == "function", true)
+    assert_eq("calc_party_avg_rank still exists", type(Dispatch.calc_party_avg_rank) == "function", true)
     log.info("=== Task 4 Tests Done ===")
 end
 
@@ -240,6 +225,10 @@ local function run_execution_tests()
     log.info("  - 派遣后，冒险者单位出现在地图上并向目标移动")
     log.info("  - 按 R 键召回，单位消失，任务以 abort 结算")
     log.info("  - 单位全部死亡时，触发 wipe 结算")
+    -- V2 API checks
+    assert_eq("mark_success exists", type(Execution.mark_success) == "function", true)
+    assert_eq("recall exists", type(Execution.recall) == "function", true)
+    assert_eq("mark_fail removed in V2", Execution.mark_fail, nil)
     log.info("=== Task 5 Tests Done ===")
 end
 
