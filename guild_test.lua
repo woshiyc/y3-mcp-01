@@ -8,6 +8,7 @@ local Execution = require 'guild.quest_execution'
 local Settlement = require 'guild.quest_settlement'
 local EventCards = require 'guild.event_cards'
 local TraitSystem = require 'guild.trait_system'
+local Casualty = require 'guild.casualty'
 
 local function assert_eq(label, a, b)
     if a ~= b then
@@ -393,6 +394,77 @@ local function run_trait_system_tests()
     log.info("=== TraitSystem Tests Done ===")
 end
 
+local function run_casualty_tests()
+    log.info("=== Casualty Tests ===")
+    AdvData.reset()
+
+    -- 1. enter_rest sets resting_days in [2, 4]
+    local adv = AdvData.create("RestTest", "warrior", "C")
+    Casualty.enter_rest(adv.id)
+    local rd = AdvData.get(adv.id).resting_days
+    assert_eq("resting_days >= 2", rd >= 2, true)
+    assert_eq("resting_days <= 4", rd <= 4, true)
+    assert_eq("is_on_quest cleared", AdvData.get(adv.id).is_on_quest, false)
+
+    -- 2. trigger_vacation_check sets vacation_days 0 or 1-2
+    AdvData.reset()
+    local adv2 = AdvData.create("VacTest", "ranger", "B")
+    Casualty.trigger_vacation_check(adv2.id)
+    local vd = AdvData.get(adv2.id).vacation_days
+    assert_eq("vacation_days in [0,2]", vd >= 0 and vd <= 2, true)
+
+    -- 3. do_casualty_roll returns boolean
+    AdvData.reset()
+    local adv3 = AdvData.create("CasTest", "warrior", "C")
+    local survived = Casualty.do_casualty_roll(adv3.id, 4)
+    assert_eq("casualty_roll returns bool", type(survived) == "boolean", true)
+
+    -- 4. do_first_aid_roll returns boolean
+    AdvData.reset()
+    local cleric  = AdvData.create("Cleric", "priest", "C")
+    local patient = AdvData.create("Patient", "warrior", "C")
+    local aid_ok = Casualty.do_first_aid_roll(cleric.id, patient.id, 3)
+    assert_eq("first_aid_roll returns bool", type(aid_ok) == "boolean", true)
+
+    -- 5. process_party_casualty: no priest → direct casualty roll
+    AdvData.reset()
+    local warrior1 = AdvData.create("W1", "warrior", "C")
+    local warrior2 = AdvData.create("W2", "warrior", "C")
+    warrior1.is_on_quest = true
+    warrior2.is_on_quest = true
+    local result = Casualty.process_party_casualty(warrior1.id, {warrior1.id, warrior2.id}, 3)
+    assert_eq("party_casualty (no priest) returns bool", type(result) == "boolean", true)
+
+    -- 6. process_party_casualty: has priest → first-aid path
+    AdvData.reset()
+    local priest  = AdvData.create("Priest", "priest", "C")
+    local patient2= AdvData.create("P2", "warrior", "C")
+    priest.is_on_quest  = true
+    patient2.is_on_quest= true
+    local result2 = Casualty.process_party_casualty(patient2.id, {priest.id, patient2.id}, 3)
+    assert_eq("party_casualty (with priest) returns bool", type(result2) == "boolean", true)
+
+    -- 7. do_casualty_roll at rate=1.0 (guaranteed survival): enter_rest is called
+    AdvData.reset()
+    local adv_sure = AdvData.create("SureTest", "warrior", "S")
+    -- S-rank vs rank-1 task: survival rate = 0.60 + 6*0.05 = 0.90 + trait bonuses
+    -- Use a guaranteed approach: S-rank (7) vs F-task (1) → diff=6, rate=0.60+6*0.05=0.90
+    -- We can't force math.random, but we CAN verify that if survived, resting_days is set
+    -- Just verify the return type and that the adventurer is either resting or removed
+    local alive_before = AdvData.get(adv_sure.id) ~= nil
+    assert_eq("adv exists before roll", alive_before, true)
+    Casualty.do_casualty_roll(adv_sure.id, 1)
+    local adv_after = AdvData.get(adv_sure.id)
+    -- Either resting (survived) or removed (dead) — check the state is consistent
+    if adv_after then
+        assert_eq("survived: resting_days > 0", adv_after.resting_days > 0, true)
+        assert_eq("survived: is_on_quest=false", adv_after.is_on_quest, false)
+    end
+    -- (if adv_after is nil, the adventurer died — that's also valid)
+
+    log.info("=== Casualty Tests Done ===")
+end
+
 -- 绑定快捷键 T = 运行测试
 y3.game:event('游戏-初始化', function()
     y3.player.with_local(function(p)
@@ -401,6 +473,7 @@ y3.game:event('游戏-初始化', function()
             if key == 'T' then
                 run_adventurer_tests()
                 run_trait_system_tests()
+                run_casualty_tests()
                 run_quest_data_tests()
                 run_quest_board_tests()
                 run_dispatch_tests()
