@@ -22,30 +22,48 @@ local function run_adventurer_tests()
     -- 1. 创建冒险者
     local adv = AdvData.create("Aria", "ranger", "F")
     assert_eq("create.rank", adv.rank, 1)
-    assert_eq("create.loyalty", adv.loyalty, 60)
     assert_eq("create.xp", adv.xp, 0)
 
-    -- 2. 忠诚度变更与钳制
-    AdvData.change_loyalty(adv.id, 50)
-    assert_eq("loyalty+50 clamped", AdvData.get(adv.id).loyalty, 100)
-    AdvData.change_loyalty(adv.id, -200)
-    assert_eq("loyalty-200 clamped", AdvData.get(adv.id).loyalty, 0)
-
-    -- 3. 动摇判断
-    AdvData.change_loyalty(adv.id, 15) -- loyalty=15
-    assert_eq("wavering at 15", AdvData.is_wavering(adv.id), true)
-    AdvData.change_loyalty(adv.id, 10) -- loyalty=25
-    assert_eq("not wavering at 25", AdvData.is_wavering(adv.id), false)
-
-    -- 4. 经验升级 (F→E 需300)
+    -- 2. 经验升级 (F→E 需300)
     local ranked_up = AdvData.add_xp(adv.id, 300)
     assert_eq("rank_up to E", ranked_up, true)
     assert_eq("rank after up", AdvData.get(adv.id).rank, 2)
 
-    -- 5. 经验倍率
+    -- 3. 经验倍率
     assert_eq("xp_mult same rank", AdvData.xp_multiplier(3, 3), 1.0)
     assert_eq("xp_mult -1 rank",   AdvData.xp_multiplier(2, 3), 0.5)
     assert_eq("xp_mult -3 rank",   AdvData.xp_multiplier(1, 4), 0.1)
+
+    -- V2 field tests
+    local adv_v2 = AdvData.create("V2Test", "mage", "C")
+    assert_eq("v2: has traits list", type(adv_v2.traits) == "table", true)
+    assert_eq("v2: traits empty", #adv_v2.traits, 0)
+    assert_eq("v2: resting_days=0", adv_v2.resting_days, 0)
+    assert_eq("v2: vacation_days=0", adv_v2.vacation_days, 0)
+    assert_eq("v2: heartbroken_days_left=0", adv_v2.heartbroken_days_left, 0)
+    assert_eq("v2: no loyalty field", adv_v2.loyalty, nil)
+
+    -- tick_daily: resting decrements
+    adv_v2.resting_days = 3
+    AdvData.tick_daily()
+    assert_eq("v2: resting_days decrements", AdvData.get(adv_v2.id).resting_days, 2)
+
+    -- tick_daily: vacation decrements (only when not resting)
+    adv_v2.resting_days = 0
+    adv_v2.vacation_days = 2
+    AdvData.tick_daily()
+    assert_eq("v2: vacation_days decrements", AdvData.get(adv_v2.id).vacation_days, 1)
+
+    -- is_available
+    adv_v2.resting_days = 1
+    adv_v2.vacation_days = 0
+    assert_eq("v2: not available while resting", AdvData.is_available(adv_v2.id), false)
+    adv_v2.resting_days = 0
+    adv_v2.vacation_days = 1
+    assert_eq("v2: not available on vacation", AdvData.is_available(adv_v2.id), false)
+    adv_v2.vacation_days = 0
+    adv_v2.is_on_quest = false
+    assert_eq("v2: available when free", AdvData.is_available(adv_v2.id), true)
 
     log.info("=== Task 1 Tests Done ===")
 end
@@ -85,25 +103,22 @@ local function run_quest_board_tests()
     AdvData.reset()  -- 清除前面测试创建的冒险者，避免状态污染
 
     -- 准备：3个冒险者
-    local adv_high     = AdvData.create("Alice",  "warrior", "C")  -- rank=4, loyalty=60
-    local adv_low      = AdvData.create("Bob",    "mage",    "D")  -- rank=3, loyalty=60
-    local adv_wavering = AdvData.create("Carol",  "ranger",  "B")  -- rank=5, loyalty=60
-    AdvData.change_loyalty(adv_wavering.id, -45)                    -- loyalty→15（动摇）
+    local adv_high     = AdvData.create("Alice",  "warrior", "C")  -- rank=4
+    local adv_low      = AdvData.create("Bob",    "mage",    "D")  -- rank=3
+    local adv_wavering = AdvData.create("Carol",  "ranger",  "B")  -- rank=5
 
     -- 任务：D级(3)，倍率1.0
     local q = QuestData.create("D级讨伐", 3, QuestData.TYPE.HUNT, nil)
     QuestData.post(q.id, 1.0)
 
     local pool = QuestBoard.collect_registrations(q.id)
-    -- Alice(C≥D, loyal=60, min=0.75, 1.0≥0.75) → 报名
-    -- Bob  (D≥D, loyal=60, min=0.75, 1.0≥0.75) → 报名
-    -- Carol(B≥D, loyal=15, min=1.5,  1.0<1.5)  → 不报名
-    assert_eq("pool size at 1.0x", #pool, 2)
+    -- Alice(C≥D) → 报名, Bob(D≥D) → 报名, Carol(B≥D) → 报名
+    assert_eq("pool size at 1.0x", #pool, 3)
 
-    -- 换成1.5x，Carol也报名
+    -- 换成1.5x，全员仍报名
     q.bounty_mult = 1.5
     local pool2 = QuestBoard.collect_registrations(q.id)
-    assert_eq("pool size at 1.5x (Carol joins)", #pool2, 3)
+    assert_eq("pool size at 1.5x", #pool2, 3)
 
     -- F级冒险者不可接D级任务（等级不够）
     local adv_f = AdvData.create("Newbie", "warrior", "F")  -- rank=1

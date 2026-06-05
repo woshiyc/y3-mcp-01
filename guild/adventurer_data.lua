@@ -1,5 +1,5 @@
 -- guild/adventurer_data.lua
--- 冒险者数据模块：等级/忠诚度/经验/闲置惩罚逻辑
+-- 冒险者数据模块 V2：等级/经验/特质/修养/休假状态逻辑（V2 删除忠诚度系统）
 ---@class AdventurerData
 local M = {}
 
@@ -30,12 +30,14 @@ function M.create(name, profession, rank_str)
         name = name,
         rank = rank_val,
         xp = 0,
-        loyalty = 60,
+        traits = {},
+        resting_days = 0,
+        vacation_days = 0,
+        heartbroken_days_left = 0,
         profession = profession,
         skills = {},
         specialties = {},   -- 专长任务类型，例如 {"hunt"} 或 {"explore","escort"}
         is_on_quest = false,
-        idle_days = 0,
     }
     _adventurers[id] = adv
     return adv
@@ -56,39 +58,6 @@ function M.get_all()
         result[#result+1] = adv
     end
     return result
-end
-
---- 修改忠诚度，自动钳制在 [0, 100]
----@param id string
----@param delta integer
-function M.change_loyalty(id, delta)
-    local adv = _adventurers[id]
-    if not adv then return end
-    adv.loyalty = math.max(0, math.min(100, adv.loyalty + delta))
-end
-
---- 判断冒险者是否处于动摇状态
----@param id string
----@return boolean
-function M.is_wavering(id)
-    local adv = _adventurers[id]
-    return adv ~= nil and adv.loyalty <= 20
-end
-
---- 判断是否应该离队（仅在失败事件后调用，NOT 在成功时调用）
---- 规则：loyalty=0 必然离队；动摇状态(≤20)下有 30% 概率离队
---- ⚠️ 只在 settlement 的失败/abort 分支中调用，成功结算不触发
----@param id string
----@return boolean
-function M.check_departure(id)
-    local adv = _adventurers[id]
-    if not adv then return false end
-    if adv.loyalty == 0 then return true end   -- loyalty=0 必然离队
-    if M.is_wavering(id) then
-        -- 动摇状态下 30% 概率离队（仅失败路径触发）
-        return math.random(100) <= 30
-    end
-    return false
 end
 
 --- 移除冒险者（离队/阵亡）
@@ -133,25 +102,30 @@ function M.xp_multiplier(task_rank_int, adv_rank_int)
     return 0.1                            -- diff <= -3
 end
 
---- 处理闲置惩罚（每游戏日结束时对所有冒险者调用）
---- 规则：不在任务中的冒险者，每满1游戏日扣3忠诚度（第1天结束时开始）
---- 在任务中的冒险者 idle_days 不增加（结算时由 reset_idle 重置）
-function M.tick_idle_penalty()
-    for _, adv in pairs(_adventurers) do
-        if not adv.is_on_quest then
-            adv.idle_days = adv.idle_days + 1
-            -- 每满1游戏日扣3忠诚度（从第1天结束开始计）
-            M.change_loyalty(adv.id, -3)
-        end
-        -- is_on_quest=true 时不操作 idle_days，由 reset_idle 在结算时重置
-    end
+--- Returns true if adventurer can accept quests right now
+---@param id string
+---@return boolean
+function M.is_available(id)
+    local adv = _adventurers[id]
+    if not adv then return false end
+    if adv.is_on_quest then return false end
+    if adv.resting_days > 0 then return false end
+    if adv.vacation_days > 0 then return false end
+    return true
 end
 
---- 冒险者从任务归来时重置闲置计数（由 settlement 模块在解除 is_on_quest 前调用）
----@param id string
-function M.reset_idle(id)
-    local adv = _adventurers[id]
-    if adv then adv.idle_days = 0 end
+--- Called once per game day. Decrements rest/vacation counters for all adventurers.
+function M.tick_daily()
+    for _, adv in pairs(_adventurers) do
+        if adv.resting_days > 0 then
+            adv.resting_days = adv.resting_days - 1
+        elseif adv.vacation_days > 0 then
+            adv.vacation_days = adv.vacation_days - 1
+        end
+        if adv.heartbroken_days_left > 0 then
+            adv.heartbroken_days_left = adv.heartbroken_days_left - 1
+        end
+    end
 end
 
 --- 重置所有冒险者数据（仅用于测试隔离）
