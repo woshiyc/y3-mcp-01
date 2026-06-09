@@ -1,0 +1,4258 @@
+{
+  "meta": {
+    "generated_at": "2026-06-04T21:16:08.078103",
+    "grid_size": {
+      "w": 256,
+      "h": 256
+    },
+    "total_elements": 122,
+    "color_protocol_version": "1.0",
+    "theme": "default"
+  },
+  "elements": [
+    {
+      "id": "e_0000",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 234.3,
+        "z": 24.0
+      },
+      "radius": 13.5,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 213.55,
+        "y": 0.0,
+        "z": -207.0
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0001",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 71.6,
+        "z": 27.8
+      },
+      "radius": 7.0,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -111.88,
+        "y": 0.0,
+        "z": -199.5
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0002",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 57.4,
+        "z": 48.8
+      },
+      "radius": 25.7,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -140.13,
+        "y": 0.0,
+        "z": -157.36
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0003",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 148.1,
+        "z": 47.7
+      },
+      "radius": 6.1,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 41.1,
+        "y": 0.0,
+        "z": -159.6
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0004",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 186.4,
+        "z": 49.6
+      },
+      "radius": 8.7,
+      "density": "sparse",
+      "terrain_h": 4,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 117.82,
+        "y": 0.0,
+        "z": -155.82
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0005",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 215.9,
+        "z": 52.0
+      },
+      "radius": 7.9,
+      "density": "sparse",
+      "terrain_h": 4,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 176.9,
+        "y": 0.0,
+        "z": -151.1
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0006",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 41.3,
+        "z": 63.6
+      },
+      "radius": 10.9,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -172.45,
+        "y": 0.0,
+        "z": -127.85
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0007",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 23.2,
+        "z": 68.0
+      },
+      "radius": 11.9,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -208.64,
+        "y": 0.0,
+        "z": -118.96
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0008",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 161.9,
+        "z": 67.2
+      },
+      "radius": 6.2,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 68.88,
+        "y": 0.0,
+        "z": -120.65
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0009",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 233.4,
+        "z": 68.5
+      },
+      "radius": 10.0,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 211.88,
+        "y": 0.0,
+        "z": -118.04
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0010",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 216.2,
+        "z": 73.8
+      },
+      "radius": 11.7,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 177.38,
+        "y": 0.0,
+        "z": -107.49
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0011",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 100.7,
+        "z": 71.2
+      },
+      "radius": 7.3,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -53.57,
+        "y": 0.0,
+        "z": -112.62
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0012",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 87.4,
+        "z": 75.6
+      },
+      "radius": 6.4,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -80.11,
+        "y": 0.0,
+        "z": -103.78
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0013",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 109.7,
+        "z": 86.5
+      },
+      "radius": 15.0,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -35.55,
+        "y": 0.0,
+        "z": -81.92
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0014",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 139.4,
+        "z": 84.2
+      },
+      "radius": 9.8,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 23.89,
+        "y": 0.0,
+        "z": -86.56
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0015",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 24.5,
+        "z": 92.2
+      },
+      "radius": 5.7,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -205.9,
+        "y": 0.0,
+        "z": -70.7
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0016",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 240.9,
+        "z": 89.7
+      },
+      "radius": 6.1,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 226.78,
+        "y": 0.0,
+        "z": -75.67
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0017",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 189.8,
+        "z": 92.5
+      },
+      "radius": 9.0,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 124.63,
+        "y": 0.0,
+        "z": -70.04
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0018",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 44.8,
+        "z": 98.7
+      },
+      "radius": 8.7,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -165.32,
+        "y": 0.0,
+        "z": -57.53
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0019",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 71.3,
+        "z": 106.0
+      },
+      "radius": 17.1,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -112.45,
+        "y": 0.0,
+        "z": -43.08
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0020",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 207.0,
+        "z": 130.8
+      },
+      "radius": 35.5,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 158.93,
+        "y": 0.0,
+        "z": 6.59
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0021",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 44.2,
+        "z": 121.7
+      },
+      "radius": 10.2,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -166.64,
+        "y": 0.0,
+        "z": -11.51
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0022",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 64.5,
+        "z": 127.2
+      },
+      "radius": 9.4,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -126.1,
+        "y": 0.0,
+        "z": -0.62
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0023",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 125.9,
+        "z": 136.3
+      },
+      "radius": 8.3,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -3.29,
+        "y": 0.0,
+        "z": 17.59
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0024",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 19.4,
+        "z": 159.4
+      },
+      "radius": 19.6,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -216.3,
+        "y": 0.0,
+        "z": 63.78
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0025",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 87.7,
+        "z": 159.2
+      },
+      "radius": 7.6,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -79.55,
+        "y": 0.0,
+        "z": 63.48
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0026",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 189.0,
+        "z": 161.2
+      },
+      "radius": 10.5,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 123.07,
+        "y": 0.0,
+        "z": 67.41
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0027",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 169.9,
+        "z": 163.3
+      },
+      "radius": 6.0,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 84.75,
+        "y": 0.0,
+        "z": 71.62
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0028",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 232.3,
+        "z": 170.8
+      },
+      "radius": 10.9,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 209.62,
+        "y": 0.0,
+        "z": 86.56
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0029",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 134.9,
+        "z": 175.7
+      },
+      "radius": 16.1,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 14.82,
+        "y": 0.0,
+        "z": 96.33
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0030",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 79.9,
+        "z": 181.8
+      },
+      "radius": 11.1,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -95.29,
+        "y": 0.0,
+        "z": 108.57
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0031",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 59.5,
+        "z": 188.8
+      },
+      "radius": 16.1,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -136.02,
+        "y": 0.0,
+        "z": 122.58
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0032",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 118.6,
+        "z": 205.3
+      },
+      "radius": 7.4,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -17.77,
+        "y": 0.0,
+        "z": 155.62
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0033",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 23.0,
+        "z": 221.8
+      },
+      "radius": 18.7,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -209.0,
+        "y": 0.0,
+        "z": 188.55
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0034",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 189.8,
+        "z": 217.0
+      },
+      "radius": 7.3,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 124.56,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0035",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 57.2,
+        "z": 226.7
+      },
+      "radius": 21.3,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -140.6,
+        "y": 0.0,
+        "z": 198.39
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0036",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 176.2,
+        "z": 231.7
+      },
+      "radius": 14.6,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 97.34,
+        "y": 0.0,
+        "z": 208.31
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0037",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 231.9,
+        "z": 238.4
+      },
+      "radius": 9.9,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": 208.79,
+        "y": 0.0,
+        "z": 221.74
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0038",
+      "type": "forest_sparse",
+      "shape": "area",
+      "grid_pos": {
+        "x": 112.8,
+        "z": 241.8
+      },
+      "radius": 11.2,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201707
+      ],
+      "world_pos": {
+        "x": -29.32,
+        "y": 0.0,
+        "z": 228.6
+      },
+      "source_color": [
+        100,
+        210,
+        50
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0039",
+      "type": "forest_medium",
+      "shape": "area",
+      "grid_pos": {
+        "x": 140.1,
+        "z": 180.9
+      },
+      "radius": 11.2,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        201627
+      ],
+      "world_pos": {
+        "x": 25.22,
+        "y": 0.0,
+        "z": 106.85
+      },
+      "source_color": [
+        20,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0040",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 185.3,
+        "z": 12.2
+      },
+      "radius": 6.3,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 115.67,
+        "y": 0.0,
+        "z": -230.56
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0041",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 174.5,
+        "z": 18.5
+      },
+      "radius": 6.9,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 94.0,
+        "y": 0.0,
+        "z": -218.09
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0042",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 235.8,
+        "z": 27.7
+      },
+      "radius": 8.2,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 216.67,
+        "y": 0.0,
+        "z": -199.67
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0043",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 44.8,
+        "z": 36.0
+      },
+      "radius": 8.2,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -165.43,
+        "y": 0.0,
+        "z": -183.09
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0044",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 148.8,
+        "z": 43.3
+      },
+      "radius": 7.8,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 42.64,
+        "y": 0.0,
+        "z": -168.36
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0045",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 35.1,
+        "z": 62.2
+      },
+      "radius": 22.3,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -184.82,
+        "y": 0.0,
+        "z": -130.57
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0046",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 118.3,
+        "z": 70.8
+      },
+      "radius": 20.7,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -18.42,
+        "y": 0.0,
+        "z": -113.38
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0047",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 208.3,
+        "z": 62.4
+      },
+      "radius": 6.5,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 161.6,
+        "y": 0.0,
+        "z": -130.2
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0048",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 69.4,
+        "z": 63.5
+      },
+      "radius": 7.0,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -116.29,
+        "y": 0.0,
+        "z": -128.06
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0049",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 223.9,
+        "z": 70.8
+      },
+      "radius": 15.4,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 192.75,
+        "y": 0.0,
+        "z": -113.48
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0050",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 171.8,
+        "z": 67.6
+      },
+      "radius": 7.1,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 88.53,
+        "y": 0.0,
+        "z": -119.71
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0051",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 104.2,
+        "z": 73.8
+      },
+      "radius": 7.2,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -46.68,
+        "y": 0.0,
+        "z": -107.42
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0052",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 85.3,
+        "z": 76.0
+      },
+      "radius": 5.2,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -84.36,
+        "y": 0.0,
+        "z": -103.08
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0053",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 18.1,
+        "z": 84.9
+      },
+      "radius": 8.1,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -218.78,
+        "y": 0.0,
+        "z": -85.15
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0054",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 147.4,
+        "z": 84.2
+      },
+      "radius": 8.4,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 39.84,
+        "y": 0.0,
+        "z": -86.58
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0055",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 188.2,
+        "z": 94.9
+      },
+      "radius": 7.3,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 121.38,
+        "y": 0.0,
+        "z": -65.25
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0056",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 181.4,
+        "z": 105.9
+      },
+      "radius": 5.3,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 107.76,
+        "y": 0.0,
+        "z": -43.29
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0057",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 68.2,
+        "z": 115.7
+      },
+      "radius": 15.6,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -118.52,
+        "y": 0.0,
+        "z": -23.69
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0058",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 198.4,
+        "z": 113.5
+      },
+      "radius": 11.1,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 141.9,
+        "y": 0.0,
+        "z": -27.98
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0059",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 44.1,
+        "z": 119.5
+      },
+      "radius": 8.7,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -166.71,
+        "y": 0.0,
+        "z": -16.09
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0060",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 218.1,
+        "z": 129.1
+      },
+      "radius": 9.4,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 181.15,
+        "y": 0.0,
+        "z": 3.23
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0061",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 32.4,
+        "z": 131.1
+      },
+      "radius": 9.7,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -190.17,
+        "y": 0.0,
+        "z": 7.21
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0062",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 123.8,
+        "z": 142.6
+      },
+      "radius": 9.2,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -7.4,
+        "y": 0.0,
+        "z": 30.2
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0063",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 227.2,
+        "z": 159.2
+      },
+      "radius": 20.5,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 199.45,
+        "y": 0.0,
+        "z": 63.32
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0064",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 168.1,
+        "z": 163.4
+      },
+      "radius": 6.8,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 81.21,
+        "y": 0.0,
+        "z": 71.84
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0065",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 133.0,
+        "z": 169.1
+      },
+      "radius": 8.6,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 11.0,
+        "y": 0.0,
+        "z": 83.1
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0066",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 15.8,
+        "z": 174.9
+      },
+      "radius": 7.2,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -223.35,
+        "y": 0.0,
+        "z": 94.88
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0067",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 141.9,
+        "z": 180.0
+      },
+      "radius": 15.9,
+      "density": "sparse",
+      "terrain_h": 2,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 28.7,
+        "y": 0.0,
+        "z": 105.06
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0068",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 78.5,
+        "z": 182.8
+      },
+      "radius": 9.9,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -98.03,
+        "y": 0.0,
+        "z": 110.55
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0069",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 50.3,
+        "z": 193.4
+      },
+      "radius": 22.9,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -154.35,
+        "y": 0.0,
+        "z": 131.87
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0070",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 110.2,
+        "z": 195.3
+      },
+      "radius": 6.6,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -34.65,
+        "y": 0.0,
+        "z": 135.59
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0071",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 75.6,
+        "z": 197.6
+      },
+      "radius": 5.1,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -103.9,
+        "y": 0.0,
+        "z": 140.3
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0072",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 154.7,
+        "z": 202.0
+      },
+      "radius": 8.4,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 54.45,
+        "y": 0.0,
+        "z": 149.07
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0073",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 241.1,
+        "z": 208.8
+      },
+      "radius": 9.3,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 227.1,
+        "y": 0.0,
+        "z": 162.64
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0074",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 40.1,
+        "z": 224.1
+      },
+      "radius": 14.2,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -174.77,
+        "y": 0.0,
+        "z": 193.17
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0075",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 117.2,
+        "z": 220.9
+      },
+      "radius": 8.0,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -20.7,
+        "y": 0.0,
+        "z": 186.9
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0076",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 61.5,
+        "z": 228.0
+      },
+      "radius": 19.5,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -131.97,
+        "y": 0.0,
+        "z": 201.03
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0077",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 220.7,
+        "z": 227.4
+      },
+      "radius": 7.2,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 186.36,
+        "y": 0.0,
+        "z": 199.82
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0078",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 178.7,
+        "z": 231.3
+      },
+      "radius": 12.4,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 102.35,
+        "y": 0.0,
+        "z": 207.69
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0079",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 121.7,
+        "z": 231.4
+      },
+      "radius": 6.6,
+      "density": "medium",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -11.57,
+        "y": 0.0,
+        "z": 207.86
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0080",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 150.3,
+        "z": 234.3
+      },
+      "radius": 8.8,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": 45.56,
+        "y": 0.0,
+        "z": 213.56
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0081",
+      "type": "forest_dense",
+      "shape": "area",
+      "grid_pos": {
+        "x": 103.7,
+        "z": 241.6
+      },
+      "radius": 10.0,
+      "density": "dense",
+      "terrain_h": 0,
+      "model_group": "default",
+      "model_ids": [
+        200009,
+        103050,
+        103051,
+        201627
+      ],
+      "world_pos": {
+        "x": -47.68,
+        "y": 0.0,
+        "z": 228.14
+      },
+      "source_color": [
+        0,
+        90,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0082",
+      "type": "building_common",
+      "shape": "point",
+      "grid_pos": {
+        "x": 176.2,
+        "z": 82.8
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 97.4,
+        "y": 0.0,
+        "z": -89.4
+      },
+      "source_color": [
+        220,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0083",
+      "type": "building_common",
+      "shape": "point",
+      "grid_pos": {
+        "x": 178.8,
+        "z": 82.8
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 102.5,
+        "y": 0.0,
+        "z": -89.5
+      },
+      "source_color": [
+        220,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0084",
+      "type": "building_common",
+      "shape": "point",
+      "grid_pos": {
+        "x": 158.5,
+        "z": 114.7
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 62.0,
+        "y": 0.0,
+        "z": -25.67
+      },
+      "source_color": [
+        220,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0085",
+      "type": "building_common",
+      "shape": "point",
+      "grid_pos": {
+        "x": 112.9,
+        "z": 145.3
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -29.29,
+        "y": 0.0,
+        "z": 35.57
+      },
+      "source_color": [
+        220,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0086",
+      "type": "building_common",
+      "shape": "point",
+      "grid_pos": {
+        "x": 59.5,
+        "z": 199.0
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -136.0,
+        "y": 0.0,
+        "z": 143.0
+      },
+      "source_color": [
+        220,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0087",
+      "type": "building_common",
+      "shape": "point",
+      "grid_pos": {
+        "x": 28.4,
+        "z": 228.6
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -198.2,
+        "y": 0.0,
+        "z": 202.2
+      },
+      "source_color": [
+        220,
+        160,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0088",
+      "type": "resource_point",
+      "shape": "point",
+      "grid_pos": {
+        "x": 138.2,
+        "z": 40.2
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 21.5,
+        "y": 0.0,
+        "z": -174.5
+      },
+      "source_color": [
+        255,
+        210,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0089",
+      "type": "resource_point",
+      "shape": "point",
+      "grid_pos": {
+        "x": 21.5,
+        "z": 65.2
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -212.0,
+        "y": 0.0,
+        "z": -124.67
+      },
+      "source_color": [
+        255,
+        210,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0090",
+      "type": "resource_point",
+      "shape": "point",
+      "grid_pos": {
+        "x": 29.5,
+        "z": 110.2
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -196.0,
+        "y": 0.0,
+        "z": -34.67
+      },
+      "source_color": [
+        255,
+        210,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0091",
+      "type": "resource_point",
+      "shape": "point",
+      "grid_pos": {
+        "x": 218.5,
+        "z": 207.2
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 182.0,
+        "y": 0.0,
+        "z": 159.4
+      },
+      "source_color": [
+        255,
+        210,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0092",
+      "type": "resource_point",
+      "shape": "point",
+      "grid_pos": {
+        "x": 38.5,
+        "z": 211.2
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -178.08,
+        "y": 0.0,
+        "z": 167.46
+      },
+      "source_color": [
+        255,
+        210,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0093",
+      "type": "resource_point",
+      "shape": "point",
+      "grid_pos": {
+        "x": 41.5,
+        "z": 216.2
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -172.08,
+        "y": 0.0,
+        "z": 177.46
+      },
+      "source_color": [
+        255,
+        210,
+        0
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0094",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 97.6,
+        "z": 18.4
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -59.8,
+        "y": 0.0,
+        "z": -218.2
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0095",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 135.5,
+        "z": 17.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 16.0,
+        "y": 0.0,
+        "z": -220.0
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0096",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 236.5,
+        "z": 19.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 218.0,
+        "y": 0.0,
+        "z": -216.0
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0097",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 218.5,
+        "z": 30.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 182.0,
+        "y": 0.0,
+        "z": -194.0
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0098",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 210.5,
+        "z": 31.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 166.0,
+        "y": 0.0,
+        "z": -192.0
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0099",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 202.6,
+        "z": 34.4
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 150.2,
+        "y": 0.0,
+        "z": -186.2
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0100",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 216.6,
+        "z": 36.4
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 178.2,
+        "y": 0.0,
+        "z": -182.2
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0101",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 213.5,
+        "z": 44.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 172.0,
+        "y": 0.0,
+        "z": -166.0
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0102",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 239.6,
+        "z": 80.4
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 224.2,
+        "y": 0.0,
+        "z": -94.2
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0103",
+      "type": "monster_lair",
+      "shape": "point",
+      "grid_pos": {
+        "x": 37.5,
+        "z": 172.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -180.0,
+        "y": 0.0,
+        "z": 90.0
+      },
+      "source_color": [
+        150,
+        0,
+        200
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0104",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 124.5,
+        "z": 23.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -6.0,
+        "y": 0.0,
+        "z": -208.0
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0105",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 100.5,
+        "z": 31.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -54.0,
+        "y": 0.0,
+        "z": -192.0
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0106",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 144.2,
+        "z": 36.6
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 33.4,
+        "y": 0.0,
+        "z": -181.8
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0107",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 224.5,
+        "z": 40.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 194.0,
+        "y": 0.0,
+        "z": -174.0
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0108",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 231.5,
+        "z": 44.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 208.0,
+        "y": 0.0,
+        "z": -166.0
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0109",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 114.8,
+        "z": 60.2
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": -25.33,
+        "y": 0.0,
+        "z": -134.67
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0110",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 182.6,
+        "z": 59.3
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 110.14,
+        "y": 0.0,
+        "z": -136.43
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0111",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 134.0,
+        "z": 72.5
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 13.0,
+        "y": 0.0,
+        "z": -110.0
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0112",
+      "type": "dungeon_entrance",
+      "shape": "point",
+      "grid_pos": {
+        "x": 128.6,
+        "z": 72.8
+      },
+      "model_group": "default",
+      "model_ids": [
+        103261
+      ],
+      "world_pos": {
+        "x": 2.2,
+        "y": 0.0,
+        "z": -109.4
+      },
+      "source_color": [
+        70,
+        0,
+        150
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0113",
+      "type": "road_main",
+      "shape": "path",
+      "waypoints": [
+        {
+          "x": 237,
+          "z": 22
+        },
+        {
+          "x": 237,
+          "z": 25
+        },
+        {
+          "x": 237,
+          "z": 26
+        },
+        {
+          "x": 237,
+          "z": 27
+        },
+        {
+          "x": 130,
+          "z": 30
+        },
+        {
+          "x": 236,
+          "z": 32
+        },
+        {
+          "x": 236,
+          "z": 33
+        },
+        {
+          "x": 235,
+          "z": 34
+        },
+        {
+          "x": 140,
+          "z": 35
+        },
+        {
+          "x": 206,
+          "z": 35
+        },
+        {
+          "x": 138,
+          "z": 36
+        },
+        {
+          "x": 232,
+          "z": 36
+        },
+        {
+          "x": 227,
+          "z": 37
+        },
+        {
+          "x": 195,
+          "z": 39
+        },
+        {
+          "x": 192,
+          "z": 40
+        },
+        {
+          "x": 210,
+          "z": 40
+        },
+        {
+          "x": 191,
+          "z": 41
+        },
+        {
+          "x": 139,
+          "z": 43
+        },
+        {
+          "x": 187,
+          "z": 44
+        },
+        {
+          "x": 210,
+          "z": 47
+        },
+        {
+          "x": 209,
+          "z": 48
+        },
+        {
+          "x": 141,
+          "z": 51
+        },
+        {
+          "x": 208,
+          "z": 52
+        },
+        {
+          "x": 144,
+          "z": 54
+        },
+        {
+          "x": 146,
+          "z": 55
+        },
+        {
+          "x": 206,
+          "z": 56
+        },
+        {
+          "x": 150,
+          "z": 59
+        },
+        {
+          "x": 152,
+          "z": 61
+        },
+        {
+          "x": 182,
+          "z": 63
+        },
+        {
+          "x": 183,
+          "z": 64
+        },
+        {
+          "x": 185,
+          "z": 66
+        },
+        {
+          "x": 155,
+          "z": 67
+        },
+        {
+          "x": 51,
+          "z": 68
+        },
+        {
+          "x": 155,
+          "z": 68
+        },
+        {
+          "x": 29,
+          "z": 69
+        },
+        {
+          "x": 60,
+          "z": 69
+        },
+        {
+          "x": 23,
+          "z": 70
+        },
+        {
+          "x": 46,
+          "z": 70
+        },
+        {
+          "x": 63,
+          "z": 70
+        },
+        {
+          "x": 45,
+          "z": 71
+        },
+        {
+          "x": 23,
+          "z": 72
+        },
+        {
+          "x": 42,
+          "z": 72
+        },
+        {
+          "x": 105,
+          "z": 72
+        },
+        {
+          "x": 182,
+          "z": 72
+        },
+        {
+          "x": 110,
+          "z": 73
+        },
+        {
+          "x": 70,
+          "z": 74
+        },
+        {
+          "x": 126,
+          "z": 74
+        },
+        {
+          "x": 215,
+          "z": 74
+        },
+        {
+          "x": 71,
+          "z": 75
+        },
+        {
+          "x": 122,
+          "z": 75
+        },
+        {
+          "x": 225,
+          "z": 75
+        },
+        {
+          "x": 72,
+          "z": 76
+        },
+        {
+          "x": 116,
+          "z": 76
+        },
+        {
+          "x": 158,
+          "z": 76
+        },
+        {
+          "x": 181,
+          "z": 77
+        },
+        {
+          "x": 76,
+          "z": 78
+        },
+        {
+          "x": 27,
+          "z": 79
+        },
+        {
+          "x": 27,
+          "z": 80
+        },
+        {
+          "x": 91,
+          "z": 80
+        },
+        {
+          "x": 27,
+          "z": 81
+        },
+        {
+          "x": 89,
+          "z": 81
+        },
+        {
+          "x": 27,
+          "z": 82
+        },
+        {
+          "x": 28,
+          "z": 84
+        },
+        {
+          "x": 113,
+          "z": 85
+        },
+        {
+          "x": 113,
+          "z": 86
+        },
+        {
+          "x": 179,
+          "z": 87
+        },
+        {
+          "x": 210,
+          "z": 88
+        },
+        {
+          "x": 209,
+          "z": 89
+        },
+        {
+          "x": 178,
+          "z": 91
+        },
+        {
+          "x": 178,
+          "z": 92
+        },
+        {
+          "x": 204,
+          "z": 93
+        },
+        {
+          "x": 175,
+          "z": 95
+        },
+        {
+          "x": 27,
+          "z": 98
+        },
+        {
+          "x": 121,
+          "z": 101
+        },
+        {
+          "x": 119,
+          "z": 102
+        },
+        {
+          "x": 126,
+          "z": 102
+        },
+        {
+          "x": 112,
+          "z": 103
+        },
+        {
+          "x": 115,
+          "z": 103
+        },
+        {
+          "x": 170,
+          "z": 103
+        },
+        {
+          "x": 29,
+          "z": 106
+        },
+        {
+          "x": 169,
+          "z": 106
+        },
+        {
+          "x": 137,
+          "z": 108
+        },
+        {
+          "x": 144,
+          "z": 111
+        },
+        {
+          "x": 140,
+          "z": 112
+        },
+        {
+          "x": 147,
+          "z": 112
+        },
+        {
+          "x": 137,
+          "z": 113
+        },
+        {
+          "x": 150,
+          "z": 113
+        },
+        {
+          "x": 151,
+          "z": 114
+        },
+        {
+          "x": 162,
+          "z": 114
+        },
+        {
+          "x": 155,
+          "z": 115
+        },
+        {
+          "x": 133,
+          "z": 117
+        },
+        {
+          "x": 132,
+          "z": 119
+        },
+        {
+          "x": 130,
+          "z": 121
+        },
+        {
+          "x": 127,
+          "z": 122
+        },
+        {
+          "x": 123,
+          "z": 125
+        },
+        {
+          "x": 101,
+          "z": 126
+        },
+        {
+          "x": 157,
+          "z": 126
+        },
+        {
+          "x": 106,
+          "z": 127
+        },
+        {
+          "x": 94,
+          "z": 128
+        },
+        {
+          "x": 119,
+          "z": 128
+        },
+        {
+          "x": 116,
+          "z": 129
+        },
+        {
+          "x": 112,
+          "z": 130
+        },
+        {
+          "x": 115,
+          "z": 130
+        },
+        {
+          "x": 88,
+          "z": 131
+        },
+        {
+          "x": 85,
+          "z": 132
+        },
+        {
+          "x": 82,
+          "z": 134
+        },
+        {
+          "x": 78,
+          "z": 135
+        },
+        {
+          "x": 160,
+          "z": 136
+        },
+        {
+          "x": 74,
+          "z": 138
+        },
+        {
+          "x": 160,
+          "z": 139
+        },
+        {
+          "x": 70,
+          "z": 141
+        },
+        {
+          "x": 66,
+          "z": 145
+        },
+        {
+          "x": 157,
+          "z": 146
+        },
+        {
+          "x": 58,
+          "z": 149
+        },
+        {
+          "x": 156,
+          "z": 150
+        },
+        {
+          "x": 54,
+          "z": 153
+        },
+        {
+          "x": 48,
+          "z": 155
+        },
+        {
+          "x": 155,
+          "z": 156
+        },
+        {
+          "x": 153,
+          "z": 160
+        },
+        {
+          "x": 149,
+          "z": 163
+        },
+        {
+          "x": 147,
+          "z": 166
+        },
+        {
+          "x": 142,
+          "z": 171
+        },
+        {
+          "x": 138,
+          "z": 174
+        },
+        {
+          "x": 36,
+          "z": 176
+        },
+        {
+          "x": 125,
+          "z": 177
+        },
+        {
+          "x": 129,
+          "z": 178
+        },
+        {
+          "x": 31,
+          "z": 181
+        },
+        {
+          "x": 124,
+          "z": 183
+        },
+        {
+          "x": 28,
+          "z": 185
+        },
+        {
+          "x": 28,
+          "z": 187
+        },
+        {
+          "x": 27,
+          "z": 189
+        },
+        {
+          "x": 120,
+          "z": 190
+        },
+        {
+          "x": 119,
+          "z": 192
+        },
+        {
+          "x": 117,
+          "z": 195
+        },
+        {
+          "x": 62,
+          "z": 200
+        },
+        {
+          "x": 65,
+          "z": 201
+        },
+        {
+          "x": 111,
+          "z": 201
+        },
+        {
+          "x": 70,
+          "z": 202
+        },
+        {
+          "x": 56,
+          "z": 204
+        },
+        {
+          "x": 55,
+          "z": 205
+        },
+        {
+          "x": 77,
+          "z": 206
+        },
+        {
+          "x": 54,
+          "z": 207
+        },
+        {
+          "x": 93,
+          "z": 207
+        },
+        {
+          "x": 96,
+          "z": 207
+        },
+        {
+          "x": 98,
+          "z": 208
+        },
+        {
+          "x": 83,
+          "z": 209
+        },
+        {
+          "x": 87,
+          "z": 209
+        },
+        {
+          "x": 46,
+          "z": 210
+        },
+        {
+          "x": 49,
+          "z": 210
+        },
+        {
+          "x": 38,
+          "z": 214
+        },
+        {
+          "x": 37,
+          "z": 217
+        },
+        {
+          "x": 35,
+          "z": 221
+        },
+        {
+          "x": 31,
+          "z": 224
+        },
+        {
+          "x": 30,
+          "z": 227
+        }
+      ],
+      "width": 2,
+      "model_ids": [
+        205148
+      ],
+      "source_color": [
+        220,
+        50,
+        20
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0114",
+      "type": "bridge",
+      "shape": "point",
+      "grid_pos": {
+        "x": 144.8,
+        "z": 34.3
+      },
+      "model_group": "default",
+      "model_ids": [
+        100463
+      ],
+      "world_pos": {
+        "x": 34.5,
+        "y": 0.0,
+        "z": -186.33
+      },
+      "source_color": [
+        0,
+        60,
+        220
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0115",
+      "type": "bridge",
+      "shape": "point",
+      "grid_pos": {
+        "x": 237.6,
+        "z": 48.4
+      },
+      "model_group": "default",
+      "model_ids": [
+        100463
+      ],
+      "world_pos": {
+        "x": 220.14,
+        "y": 0.0,
+        "z": -158.14
+      },
+      "source_color": [
+        0,
+        60,
+        220
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0116",
+      "type": "bridge",
+      "shape": "point",
+      "grid_pos": {
+        "x": 102.5,
+        "z": 52.6
+      },
+      "model_group": "default",
+      "model_ids": [
+        100463
+      ],
+      "world_pos": {
+        "x": -50.06,
+        "y": 0.0,
+        "z": -149.71
+      },
+      "source_color": [
+        0,
+        60,
+        220
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0117",
+      "type": "bridge",
+      "shape": "point",
+      "grid_pos": {
+        "x": 237.0,
+        "z": 51.8
+      },
+      "model_group": "default",
+      "model_ids": [
+        100463
+      ],
+      "world_pos": {
+        "x": 219.0,
+        "y": 0.0,
+        "z": -151.5
+      },
+      "source_color": [
+        0,
+        60,
+        220
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0118",
+      "type": "bridge",
+      "shape": "point",
+      "grid_pos": {
+        "x": 114.5,
+        "z": 59.0
+      },
+      "model_group": "default",
+      "model_ids": [
+        100463
+      ],
+      "world_pos": {
+        "x": -26.0,
+        "y": 0.0,
+        "z": -137.0
+      },
+      "source_color": [
+        0,
+        60,
+        220
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0119",
+      "type": "bridge",
+      "shape": "point",
+      "grid_pos": {
+        "x": 179.7,
+        "z": 59.4
+      },
+      "model_group": "default",
+      "model_ids": [
+        100463
+      ],
+      "world_pos": {
+        "x": 104.38,
+        "y": 0.0,
+        "z": -136.23
+      },
+      "source_color": [
+        0,
+        60,
+        220
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0120",
+      "type": "bridge",
+      "shape": "point",
+      "grid_pos": {
+        "x": 131.0,
+        "z": 72.3
+      },
+      "model_group": "default",
+      "model_ids": [
+        100463
+      ],
+      "world_pos": {
+        "x": 7.0,
+        "y": 0.0,
+        "z": -110.43
+      },
+      "source_color": [
+        0,
+        60,
+        220
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    },
+    {
+      "id": "e_0121",
+      "type": "bridge",
+      "shape": "point",
+      "grid_pos": {
+        "x": 201.3,
+        "z": 95.8
+      },
+      "model_group": "default",
+      "model_ids": [
+        100463
+      ],
+      "world_pos": {
+        "x": 147.67,
+        "y": 0.0,
+        "z": -63.44
+      },
+      "source_color": [
+        0,
+        60,
+        220
+      ],
+      "status": "written",
+      "modified": false,
+      "modify_history": []
+    }
+  ],
+  "summary": {
+    "forest_sparse": 39,
+    "forest_medium": 1,
+    "forest_dense": 42,
+    "building_common": 6,
+    "resource_point": 6,
+    "monster_lair": 10,
+    "dungeon_entrance": 9,
+    "road_main": 1,
+    "bridge": 8
+  }
+}

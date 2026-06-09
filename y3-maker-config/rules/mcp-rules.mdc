@@ -1,0 +1,73 @@
+# MCP 调用规则
+
+> Y3 Editor MCP 和 Y3 Runtime MCP 的安全调用规范
+
+## 🔴 熔断规则（最高优先级）
+
+| 规则 | 说明 |
+|------|------|
+| **超时不重试** | MCP 调用超时后**绝不重试**，立即熔断 |
+| **失败不循环** | 连续失败 2 次后停止，立即熔断 |
+| **熔断 = 终止测试** | 熔断触发后**直接结束当前测试流程**，立即生成测试报告（TestReport.md），不再执行后续用例 |
+
+> ⚠️ MCP 熔断意味着基础工具链不可用（如无法获取坐标、无法点击、无法执行 Lua），继续测试毫无意义。因此熔断后必须立即终止并生成报告，报告中将已执行用例标注结果，未执行用例统一标记为 🚫 BLOCKED（MCP 熔断）。
+
+## 📋 热更+保存流程（必须遵守）
+
+```
+1. 热更（让编辑器读取新的 JSON）
+   └─ y3editor.hotfix_ui_editor 或 hotfix_object_editor
+
+2. 等待 3 秒（让编辑器完成内存同步）
+
+3. 保存（让编辑器将内存数据写入 GMP）
+   └─ y3editor.save_editor
+```
+
+### ❌ 错误做法（会导致内容丢失！）
+
+```
+# 错误：只保存不热更
+y3editor.save_editor  ← 直接保存，物编/UI 内容会丢失！
+
+# 错误：热更后立即保存
+y3editor.hotfix_ui_editor
+y3editor.save_editor  ← 没有等待，可能数据不完整！
+```
+
+## 🛠️ Y3 Editor MCP 工具
+
+| 工具 | 功能 | 注意事项 |
+|------|------|----------|
+| `hotfix_ui_editor` | 热更 UI | 修改 UI JSON 后调用 |
+| `hotfix_object_editor` | 热更物编 | 修改物编 JSON 后调用 |
+| `save_editor` | 保存 | 热更后等待 3 秒再调用 |
+| `get_editor_log` | 获取编辑器日志 | 调试用 |
+| `download_editor_*_resource` | 下载资源 | 模型/特效/图标/声音 |
+
+## 🔄 游戏启动后刷新 y3runtime MCP 连接
+
+> 详细规则见 `auto-test.mdc`「游戏启动后刷新 y3runtime MCP 连接」章节。
+
+**简要说明**：y3runtime MCP Server 运行在游戏进程内，启动游戏后需提醒用户刷新 MCP 连接。
+
+## 🖱️ UI 控件交互
+
+### y3runtime 直接事件触发
+
+```
+1. get_ui_canvas(可选)                        → 确认控件路径
+2. trigger_ui_touch_event_by_path(path, touch) → 直接触发点击事件
+```
+
+| 工具 | 服务 | 功能 |
+|------|------|------|
+| `get_ui_canvas` | helper | 获取 UI 控件树结构 |
+| `trigger_ui_touch_event_by_path` | y3runtime | **直接触发 UI 控件点击事件**（⚠️ 需游戏运行） |
+| `get_ui_center_by_path` | y3runtime | 获取 UI 控件中心点屏幕坐标（⚠️ 需游戏运行） |
+
+> **优势**：无需获取屏幕坐标，不受窗口位置/缩放/遮挡影响，1 步完成 UI 点击。
+
+## 📁 参考
+
+- Y3 Auto Test 技能：`../skills/y3-auto-test/SKILL.md`

@@ -1,0 +1,18 @@
+{
+  "deep_water_clusters": [
+    16,
+    0
+  ],
+  "shallow_water_clusters": [
+    17
+  ],
+  "plain_water_clusters": [
+    4
+  ],
+  "all_water_clusters": [
+    16,
+    0,
+    17,
+    4
+  ]
+}

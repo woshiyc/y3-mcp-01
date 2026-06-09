@@ -1,0 +1,2644 @@
+{
+  "game_style": "majesty",
+  "map_size": {
+    "width": 128,
+    "height": 128
+  },
+  "capital": {
+    "x": 64,
+    "z": 64
+  },
+  "nodes": [
+    {
+      "type": "capital",
+      "x": 64,
+      "z": 64,
+      "h": 0
+    },
+    {
+      "type": "resource",
+      "x": 14,
+      "z": 49,
+      "h": 2
+    },
+    {
+      "type": "resource",
+      "x": 68,
+      "z": 117,
+      "h": 0
+    },
+    {
+      "type": "resource",
+      "x": 23,
+      "z": 18,
+      "h": 0
+    },
+    {
+      "type": "resource",
+      "x": 12,
+      "z": 76,
+      "h": 0
+    },
+    {
+      "type": "resource",
+      "x": 11,
+      "z": 92,
+      "h": 0
+    },
+    {
+      "type": "resource",
+      "x": 82,
+      "z": 16,
+      "h": 2
+    },
+    {
+      "type": "lair",
+      "x": 44,
+      "z": 7,
+      "h": 0
+    },
+    {
+      "type": "lair",
+      "x": 95,
+      "z": 18,
+      "h": 4
+    },
+    {
+      "type": "lair",
+      "x": 89,
+      "z": 94,
+      "h": 2
+    },
+    {
+      "type": "lair",
+      "x": 108,
+      "z": 14,
+      "h": 2
+    },
+    {
+      "type": "lair",
+      "x": 21,
+      "z": 86,
+      "h": 4
+    },
+    {
+      "type": "lair",
+      "x": 31,
+      "z": 83,
+      "h": 2
+    },
+    {
+      "type": "lair",
+      "x": 95,
+      "z": 3,
+      "h": 0
+    },
+    {
+      "type": "lair",
+      "x": 26,
+      "z": 84,
+      "h": 4
+    },
+    {
+      "type": "lair",
+      "x": 98,
+      "z": 96,
+      "h": 2
+    },
+    {
+      "type": "lair",
+      "x": 90,
+      "z": 99,
+      "h": 2
+    },
+    {
+      "type": "lair",
+      "x": 30,
+      "z": 8,
+      "h": 0
+    },
+    {
+      "type": "lair",
+      "x": 111,
+      "z": 22,
+      "h": 4
+    },
+    {
+      "type": "lair",
+      "x": 121,
+      "z": 7,
+      "h": 0
+    },
+    {
+      "type": "lair",
+      "x": 117,
+      "z": 20,
+      "h": 0
+    },
+    {
+      "type": "dungeon",
+      "x": 52,
+      "z": 16,
+      "h": 6
+    },
+    {
+      "type": "dungeon",
+      "x": 45,
+      "z": 14,
+      "h": 6
+    },
+    {
+      "type": "dungeon",
+      "x": 101,
+      "z": 13,
+      "h": 4
+    },
+    {
+      "type": "dungeon",
+      "x": 65,
+      "z": 6,
+      "h": 2
+    },
+    {
+      "type": "dungeon",
+      "x": 58,
+      "z": 9,
+      "h": 6
+    },
+    {
+      "type": "dungeon",
+      "x": 53,
+      "z": 9,
+      "h": 6
+    },
+    {
+      "type": "ruin",
+      "x": 92,
+      "z": 30,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 34,
+      "z": 39,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 32,
+      "z": 104,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 31,
+      "z": 111,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 27,
+      "z": 99,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 115,
+      "z": 114,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 27,
+      "z": 53,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 96,
+      "z": 54,
+      "h": 2
+    },
+    {
+      "type": "ruin",
+      "x": 7,
+      "z": 44,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 21,
+      "z": 60,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 26,
+      "z": 109,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 17,
+      "z": 103,
+      "h": 0
+    },
+    {
+      "type": "ruin",
+      "x": 21,
+      "z": 35,
+      "h": 2
+    },
+    {
+      "type": "ruin",
+      "x": 49,
+      "z": 92,
+      "h": 0
+    }
+  ],
+  "road_tile_count": 1175,
+  "decorations": [
+    {
+      "type": "tree",
+      "x": 81,
+      "z": 6,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 90,
+      "z": 6,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 114,
+      "z": 7,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 79,
+      "z": 10,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 86,
+      "z": 9,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 32,
+      "z": 13,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 69,
+      "z": 12,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 79,
+      "z": 11,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 31,
+      "z": 15,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 34,
+      "z": 14,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 70,
+      "z": 16,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 76,
+      "z": 16,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 43,
+      "z": 17,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 60,
+      "z": 17,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 26,
+      "z": 22,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 33,
+      "z": 21,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 35,
+      "z": 22,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 66,
+      "z": 20,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 75,
+      "z": 21,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 78,
+      "z": 22,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 27,
+      "z": 25,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 33,
+      "z": 23,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 46,
+      "z": 23,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 50,
+      "z": 24,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 55,
+      "z": 23,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 57,
+      "z": 24,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 74,
+      "z": 25,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 77,
+      "z": 24,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 85,
+      "z": 23,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 87,
+      "z": 24,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 13,
+      "z": 26,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 29,
+      "z": 27,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 47,
+      "z": 27,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 59,
+      "z": 26,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 73,
+      "z": 27,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 82,
+      "z": 28,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 84,
+      "z": 28,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 95,
+      "z": 27,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 105,
+      "z": 28,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 6,
+      "z": 31,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 8,
+      "z": 31,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 12,
+      "z": 31,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 23,
+      "z": 31,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 26,
+      "z": 30,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 31,
+      "z": 31,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 37,
+      "z": 31,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 41,
+      "z": 29,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 44,
+      "z": 31,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 73,
+      "z": 30,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 83,
+      "z": 31,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 6,
+      "z": 34,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 8,
+      "z": 34,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 14,
+      "z": 32,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 43,
+      "z": 32,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 46,
+      "z": 33,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 52,
+      "z": 34,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 71,
+      "z": 34,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 107,
+      "z": 34,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 111,
+      "z": 32,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 10,
+      "z": 37,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 49,
+      "z": 37,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 50,
+      "z": 37,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 53,
+      "z": 36,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 60,
+      "z": 37,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 65,
+      "z": 36,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 69,
+      "z": 36,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 82,
+      "z": 36,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 83,
+      "z": 36,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 91,
+      "z": 37,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 106,
+      "z": 35,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 109,
+      "z": 36,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 110,
+      "z": 37,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 118,
+      "z": 35,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 10,
+      "z": 40,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 12,
+      "z": 38,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 25,
+      "z": 38,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 43,
+      "z": 40,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 55,
+      "z": 38,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 79,
+      "z": 40,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 90,
+      "z": 38,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 99,
+      "z": 40,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 120,
+      "z": 39,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 15,
+      "z": 43,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 24,
+      "z": 43,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 45,
+      "z": 42,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 54,
+      "z": 41,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 56,
+      "z": 43,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 59,
+      "z": 42,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 65,
+      "z": 43,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 68,
+      "z": 43,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 99,
+      "z": 41,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 27,
+      "z": 45,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 29,
+      "z": 45,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 32,
+      "z": 44,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 58,
+      "z": 45,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 63,
+      "z": 44,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 65,
+      "z": 44,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 71,
+      "z": 46,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 74,
+      "z": 44,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 77,
+      "z": 46,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 81,
+      "z": 44,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 93,
+      "z": 46,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 97,
+      "z": 45,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 100,
+      "z": 44,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 102,
+      "z": 46,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 22,
+      "z": 48,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 28,
+      "z": 47,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 31,
+      "z": 49,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 32,
+      "z": 48,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 36,
+      "z": 48,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 38,
+      "z": 47,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 46,
+      "z": 49,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 47,
+      "z": 48,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 59,
+      "z": 48,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 62,
+      "z": 49,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 76,
+      "z": 49,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 94,
+      "z": 47,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 98,
+      "z": 49,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 10,
+      "z": 50,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 22,
+      "z": 51,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 34,
+      "z": 50,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 36,
+      "z": 50,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 50,
+      "z": 50,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 60,
+      "z": 50,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 76,
+      "z": 50,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 86,
+      "z": 52,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 14,
+      "z": 53,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 21,
+      "z": 55,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 35,
+      "z": 53,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 41,
+      "z": 53,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 54,
+      "z": 53,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 58,
+      "z": 55,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 72,
+      "z": 53,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 85,
+      "z": 53,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 90,
+      "z": 54,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 30,
+      "z": 58,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 44,
+      "z": 57,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 51,
+      "z": 57,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 61,
+      "z": 57,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 79,
+      "z": 58,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 86,
+      "z": 57,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 89,
+      "z": 56,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 29,
+      "z": 59,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 37,
+      "z": 59,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 50,
+      "z": 59,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 56,
+      "z": 61,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 60,
+      "z": 60,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 82,
+      "z": 59,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 87,
+      "z": 61,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 91,
+      "z": 60,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 95,
+      "z": 60,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 31,
+      "z": 64,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 74,
+      "z": 64,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 77,
+      "z": 64,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 87,
+      "z": 63,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 90,
+      "z": 63,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 96,
+      "z": 64,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 98,
+      "z": 62,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 109,
+      "z": 62,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 110,
+      "z": 64,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 55,
+      "z": 67,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 72,
+      "z": 67,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 77,
+      "z": 67,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 82,
+      "z": 67,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 83,
+      "z": 65,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 90,
+      "z": 65,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 99,
+      "z": 66,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 102,
+      "z": 67,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 27,
+      "z": 70,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 34,
+      "z": 69,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 37,
+      "z": 68,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 40,
+      "z": 68,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 54,
+      "z": 69,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 61,
+      "z": 68,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 84,
+      "z": 68,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 91,
+      "z": 68,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 92,
+      "z": 69,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 107,
+      "z": 69,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 123,
+      "z": 68,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 9,
+      "z": 72,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 29,
+      "z": 72,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 39,
+      "z": 72,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 41,
+      "z": 73,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 44,
+      "z": 73,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 48,
+      "z": 73,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 52,
+      "z": 73,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 57,
+      "z": 71,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 60,
+      "z": 73,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 72,
+      "z": 73,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 77,
+      "z": 73,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 82,
+      "z": 71,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 83,
+      "z": 71,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 86,
+      "z": 72,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 90,
+      "z": 73,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 93,
+      "z": 73,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 96,
+      "z": 72,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 99,
+      "z": 71,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 102,
+      "z": 71,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 109,
+      "z": 73,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 20,
+      "z": 74,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 40,
+      "z": 74,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 42,
+      "z": 76,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 49,
+      "z": 74,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 50,
+      "z": 74,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 53,
+      "z": 74,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 61,
+      "z": 76,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 63,
+      "z": 74,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 80,
+      "z": 75,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 86,
+      "z": 76,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 90,
+      "z": 74,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 97,
+      "z": 75,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 107,
+      "z": 74,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 110,
+      "z": 76,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 22,
+      "z": 78,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 49,
+      "z": 79,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 51,
+      "z": 77,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 54,
+      "z": 79,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 56,
+      "z": 79,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 70,
+      "z": 78,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 75,
+      "z": 77,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 79,
+      "z": 79,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 84,
+      "z": 78,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 87,
+      "z": 78,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 89,
+      "z": 78,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 99,
+      "z": 79,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 104,
+      "z": 79,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 107,
+      "z": 77,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 111,
+      "z": 79,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 40,
+      "z": 80,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 41,
+      "z": 80,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 47,
+      "z": 80,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 53,
+      "z": 81,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 57,
+      "z": 82,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 70,
+      "z": 81,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 84,
+      "z": 81,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 96,
+      "z": 81,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 99,
+      "z": 80,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 105,
+      "z": 81,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 113,
+      "z": 80,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 51,
+      "z": 83,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 55,
+      "z": 83,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 57,
+      "z": 85,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 61,
+      "z": 83,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 78,
+      "z": 83,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 100,
+      "z": 83,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 114,
+      "z": 83,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 116,
+      "z": 84,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 119,
+      "z": 84,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 36,
+      "z": 87,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 43,
+      "z": 86,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 51,
+      "z": 88,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 53,
+      "z": 86,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 61,
+      "z": 86,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 70,
+      "z": 88,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 73,
+      "z": 86,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 95,
+      "z": 88,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 116,
+      "z": 88,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 7,
+      "z": 90,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 36,
+      "z": 90,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 38,
+      "z": 91,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 63,
+      "z": 89,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 67,
+      "z": 90,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 73,
+      "z": 89,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 75,
+      "z": 90,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 94,
+      "z": 89,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 30,
+      "z": 94,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 38,
+      "z": 93,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 42,
+      "z": 92,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 58,
+      "z": 93,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 64,
+      "z": 93,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 70,
+      "z": 93,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 72,
+      "z": 92,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 42,
+      "z": 97,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 44,
+      "z": 95,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 74,
+      "z": 96,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 32,
+      "z": 100,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 35,
+      "z": 100,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 46,
+      "z": 99,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 54,
+      "z": 100,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 61,
+      "z": 100,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 75,
+      "z": 98,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 109,
+      "z": 100,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 38,
+      "z": 102,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 43,
+      "z": 103,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 49,
+      "z": 102,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 53,
+      "z": 103,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 60,
+      "z": 103,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 77,
+      "z": 103,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 107,
+      "z": 102,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 120,
+      "z": 103,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 122,
+      "z": 102,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 40,
+      "z": 106,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 81,
+      "z": 104,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 102,
+      "z": 106,
+      "h": 2,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 104,
+      "z": 106,
+      "h": 2,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 121,
+      "z": 105,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 37,
+      "z": 107,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 64,
+      "z": 109,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 91,
+      "z": 108,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 13,
+      "z": 110,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 19,
+      "z": 112,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 21,
+      "z": 112,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 36,
+      "z": 112,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 9,
+      "z": 114,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 13,
+      "z": 114,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 6,
+      "z": 116,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 56,
+      "z": 117,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 59,
+      "z": 117,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 95,
+      "z": 117,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 99,
+      "z": 116,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 27,
+      "z": 120,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 49,
+      "z": 121,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 55,
+      "z": 120,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "tree",
+      "x": 89,
+      "z": 121,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 114,
+      "z": 120,
+      "h": 0,
+      "density": "sparse"
+    },
+    {
+      "type": "tree",
+      "x": 61,
+      "z": 122,
+      "h": 0,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 104,
+      "z": 8,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 108,
+      "z": 8,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 92,
+      "z": 12,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 44,
+      "z": 20,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 48,
+      "z": 20,
+      "h": 6,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 100,
+      "z": 20,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 36,
+      "z": 24,
+      "h": 6,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 40,
+      "z": 24,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 92,
+      "z": 24,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 96,
+      "z": 24,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 104,
+      "z": 24,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 36,
+      "z": 28,
+      "h": 6,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 16,
+      "z": 68,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 20,
+      "z": 68,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 24,
+      "z": 68,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 16,
+      "z": 72,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 20,
+      "z": 72,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 24,
+      "z": 72,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 20,
+      "z": 76,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 28,
+      "z": 76,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 16,
+      "z": 80,
+      "h": 4,
+      "density": "normal"
+    },
+    {
+      "type": "rock",
+      "x": 16,
+      "z": 84,
+      "h": 4,
+      "density": "normal"
+    }
+  ],
+  "buildable_zone": {
+    "dist_range": [
+      0.0,
+      0.38
+    ],
+    "tile_count": 5480
+  },
+  "summary": {
+    "total_nodes": 41,
+    "resources": 6,
+    "lairs": 14,
+    "dungeons": 6,
+    "ruins": 14,
+    "trees": 316,
+    "rocks": 22
+  }
+}
