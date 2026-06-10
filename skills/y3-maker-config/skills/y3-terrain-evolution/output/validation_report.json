@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "errors": [],
+  "warnings": [
+    "悬崖格子中有 26.5% 缺少相邻斜坡（allow_slopes 可能未开启）",
+    "存在孤立水体（1 格），可能无法到达",
+    "存在孤立水体（1 格），可能无法到达",
+    "存在孤立水体（271 格），可能无法到达",
+    "存在孤立水体（1 格），可能无法到达",
+    "存在孤立水体（21 格），可能无法到达",
+    "forest 生物群系植被密度过低 (0.00)",
+    "plain 生物群系植被密度过低 (0.00)"
+  ],
+  "summary": {
+    "terrain_errors": 0,
+    "terrain_warnings": 6,
+    "ecology_errors": 0,
+    "ecology_warnings": 2,
+    "civilization_errors": 0,
+    "civilization_warnings": 0
+  }
+}
