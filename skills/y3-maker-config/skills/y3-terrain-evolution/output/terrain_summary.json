@@ -1,0 +1,96 @@
+{
+  "width": 256,
+  "height": 256,
+  "era": "terrain",
+  "iteration": 4,
+  "stats": {
+    "total_cells": 65536,
+    "water_total_pct": 13.2,
+    "deep_water_pct": 0.3,
+    "shallow_water_pct": 6.5,
+    "plain_water_pct": 6.4,
+    "land_pct": 86.8,
+    "cliff_pct": 73.2,
+    "crack_pct": 0.1,
+    "slope_pct": 13.5
+  },
+  "biome_distribution": {
+    "mountain": 30.4,
+    "cliff": 16.8,
+    "hill": 21.0,
+    "forest": 13.0,
+    "plain": 3.8,
+    "wetland": 0.6,
+    "coastal": 1.2,
+    "water": 13.2
+  },
+  "height_stats": {
+    "mean": 0.676,
+    "max": 1.0,
+    "min": 0.0,
+    "std": 0.18
+  },
+  "water_bodies": [
+    {
+      "size_pct": 7.1,
+      "type": "lake",
+      "touches_edge": false,
+      "water_types": [
+        "deep",
+        "plain",
+        "shallow"
+      ]
+    },
+    {
+      "size_pct": 3.0,
+      "type": "lake",
+      "touches_edge": false,
+      "water_types": [
+        "plain",
+        "shallow"
+      ]
+    },
+    {
+      "size_pct": 0.7,
+      "type": "pond",
+      "touches_edge": false,
+      "water_types": [
+        "shallow"
+      ]
+    },
+    {
+      "size_pct": 0.7,
+      "type": "sea",
+      "touches_edge": true,
+      "water_types": [
+        "shallow"
+      ]
+    },
+    {
+      "size_pct": 0.7,
+      "type": "pond",
+      "touches_edge": false,
+      "water_types": [
+        "shallow"
+      ]
+    },
+    {
+      "size_pct": 0.6,
+      "type": "sea",
+      "touches_edge": true,
+      "water_types": [
+        "shallow"
+      ]
+    }
+  ],
+  "land_connectivity": {
+    "all_land_connected": true,
+    "land_regions": 1,
+    "isolated_islands": 0
+  },
+  "issues": [],
+  "mountain_chain_count": 173,
+  "mountain_chain_avg_length": 193.4,
+  "river_validity_ratio": 1.0,
+  "coastal_avg_width": 6.1
+}
