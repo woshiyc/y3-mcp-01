@@ -1,12 +1,19 @@
 ---
 name: y3-terrain-evolution
-description: 通过 LLM Loop + 程序化生成 + 分时代演化生成 Y3 地形地图。不需要图片输入，不读取已有地形，全程数据变换，最终 MCP 批量写入。触发词：地形演化、生成地形地图、terrain evolution、程序化地图生成、生成Y3地图。
+description: 通过 LLM Loop + 程序化生成 + 分时代演化生成 Y3 地形地图。支持 Voronoi 宏观布局（5主题）、fBm+Ridged+Domain Warping 噪声、A* 4-connectivity 道路规划、生态纪视觉评分、Pass A/B/C 分步 MCP 写入。不需要图片输入，不读取已有地形，全程数据变换。触发词：地形演化、生成地形地图、terrain evolution、程序化地图生成、生成Y3地图。
 ---
 
-# Y3 地形地图演化（y3-terrain-evolution）
+# Y3 地形地图演化（y3-terrain-evolution）v2
 
 通过 **分时代演化** 生成 Y3 地形地图：
-地质时代（地形骨架）→ 生态时代（生物群系 + 模型放置）→ 文明时代（聚落 + 道路）→ 稳定时代（验证冻结）→ MCP 写入
+地质时代（地形骨架）→ 生态时代（生物群系 + 模型放置 + 视觉评分）→ 文明时代（聚落 + 道路）→ 稳定时代（验证冻结）→ MCP 分步写入
+
+**v2 新增特性：**
+- **Voronoi 宏观布局**：5 种主题（forest_valley / lake_plain / mountain_village / swamp_ruins / arctic_peak）生成高度偏置场，使地形具有全局构图感
+- **多层噪声**：hill_map = fBm×0.5 + Ridged×0.3 + DomainWarped×0.2 + layout_bias×0.15
+- **A* 4-connectivity**：道路规划严格禁止对角线移动，悬崖 diff≥2→cost 100，水域→∞
+- **生态纪视觉评分**：`preview_server.py`（Three.js 预览）+ `visual_eval.py`（Claude API 截图评分），最多执行 `max_visual_iterations` 次
+- **Pass A/B/C 分步写入**：A=地形骨架、B=纹理、C=装饰物+斜坡+实体，每步独立进度文件
 
 每个时代内部运行 **双重 LLM 评估 Loop**：
 - **主评估**：程序化生成 → JSON 摘要 → LLM 评估结构/生态/文明 → Patch → 循环直到达标
@@ -48,17 +55,27 @@ python scripts/check_deps.py
 ```
 地图尺寸: {map_width} x {map_height}
 种子: {seed}
+主题: {theme}  ← v2 新增（forest_valley/lake_plain/mountain_village/swamp_ruins/arctic_peak）
 水域目标比例: {target_water_ratio * 100}%
 山地目标比例: {target_mountain_ratio * 100}%
 允许裂隙: {allow_cracks}
 允许斜坡: {allow_slopes}
+最大视觉迭代: {max_visual_iterations}  ← v2 新增（生态纪视觉评分次数上限）
 ```
 
 ### 0.3 检查资产配置（asset_profiles.json）
 
-询问用户是否有 `asset_profiles.json`（来自 y3-model-evaluator skill）：
-- 有 → 询问路径，复制到 `output/asset_profiles.json`
-- 没有 → 跳过模型放置，只生成群系标签
+优先使用 `config/asset_profiles.json`（内置模板，用户按需填写模型信息）：
+- `config/asset_profiles.json` 已填写 `model_id` → 直接使用，复制到 `output/asset_profiles.json`
+- `model_id` 未填写但用户有外部文件（来自 y3-model-evaluator skill）→ 询问路径，覆盖到 `output/asset_profiles.json`
+- 均无有效配置 → 跳过模型放置，只生成群系标签
+
+> **模板字段说明**（`config/asset_profiles.json`）：
+> - `model_id`：Y3 编辑器资产 ID（必填才能 MCP 写入）
+> - `native_size_units`：模型原始尺寸 [width, height]，单位 cm
+> - `target_size_units`：期望显示尺寸，单位 cm
+> - `scale_default`：缩放比例 = target_size / native_size，未知时填 [1.0, 1.0, 1.0]
+> - `footprint_cells`：占地格数（1格=50cm），用于 Poisson 采样间距
 
 > **格子尺寸说明（09-地形系统.md）**：Y3 默认地形格子 = 50×50cm。
 > 填写 `footprint_cells` 时：模型最大直径(cm) ÷ 50 = footprint_cells
@@ -110,7 +127,9 @@ python scripts/generate_terrain.py \
 ```
 
 产出 `output/world_state.json`，包含：
-- `hill_map`：FBM 连续高度（用于 `terrain_hill_lift_block`）
+- `theme`：当前地图主题（v2 新增）
+- `layout_map`：Voronoi 宏观高度偏置场（v2 新增）
+- `hill_map`：fBm×0.5 + Ridged×0.3 + DomainWarped×0.2 + layout_bias×0.15（v2 增强）
 - `cliff_map`：悬崖台阶层级（用于 `terrain_set_height_block`）
 - `water_map`：水域类型（deep/shallow/plain）
 - `slope_map`：斜坡方向（用于 `terrain_set_road_block`）
@@ -130,7 +149,7 @@ python scripts/analyze_terrain.py \
 
 **AI 读取 `output/terrain_summary.json`，参照 `prompts/terrain_era_eval_prompt.md` 输出评估结果。**
 
-评分维度：`composition`、`terrain_rhythm`、`water_system`、`connectivity`、`boundary_design`
+评分维度：`composition`、`terrain_rhythm`、`water_system`、`connectivity`、`boundary_design`、`mountain_linearity`、`river_validity`、`water_bank_transition`（v2 新增 3 项）
 
 ### 1.4 主评估分支
 
@@ -233,12 +252,43 @@ if 连续 5 轮仍未达标:
 
 ```
 if texture_overall >= 70:
-    → ✅ 纹理评估通过，进入 Stage 3
+    → ✅ 纹理评估通过，进入 2.6
 
 if texture_overall < 70:
     → 将 texture_patch_plan 追加写入 output/texture_issues.json
     → ⚠️ 提示用户（不阻断流程）
-    → 进入 Stage 3
+    → 进入 2.6
+```
+
+### 2.6 视觉评分（v2 新增，生态纪专属）
+
+视觉迭代上限由 `world_config.json` 中 `max_visual_iterations` 控制（默认 3）。
+需要预先启动 preview_server：
+
+```bash
+# 后台启动预览服务（需先上传截图到 POST /screenshot）
+python scripts/preview_server.py --output-dir output/ --port 9876
+```
+
+```bash
+python scripts/visual_eval.py \
+  --preview-url http://127.0.0.1:9876 \
+  --output output/visual_eval_ecology.json \
+  --iteration {current_visual_iter} \
+  --max-iterations {max_visual_iterations}
+```
+
+```
+if status == "skipped":
+    → 已达最大迭代次数，进入 Stage 3
+
+if score >= 65:
+    → ✅ 视觉评分通过，进入 Stage 3
+
+if score < 65:
+    → 执行生态层 Patch（针对视觉评分 issues）
+    → current_visual_iter += 1
+    → 回到 2.1（重新生成生态层）
 ```
 
 ---
@@ -266,7 +316,7 @@ python scripts/generate_civilization.py \
 
 **AI 参照 `prompts/civilization_era_eval_prompt.md` 评估文明层。**
 
-评分维度：`settlement_terrain_fit`、`road_design`、`gameplay_space`、`visual_readability`、`landmark_exploration`
+评分维度：`settlement_terrain_fit`、`road_design`、`gameplay_space`、`visual_readability`、`landmark_exploration`、`traversability`、`settlement_connectivity`、`path_ratio`（v2 新增 3 项）
 
 ### 3.3 主评估分支
 
@@ -365,30 +415,52 @@ AI 读取 `validation_report.json` 和 `output/texture_issues.json`，生成 `ou
 
 ## Stage 5：MCP 批量写入
 
+**v2 支持 Pass A/B/C 分步写入**（适合大地图或编辑器不稳定场景）：
+
 ```bash
-python scripts/mcp_writer.py \
-  --world-state output/world_state.json \
-  --ecology output/ecology_layer.json \
-  --civilization output/civilization_layer.json \
-  --texture-assignments output/texture_assignments.json \  # 可选
-  --single-batch 1
+# 推荐：分步写入（三次独立调用，每步完成后可验证编辑器状态）
+python scripts/mcp_writer.py --world-state output/world_state.json \
+  --ecology output/ecology_layer.json --civilization output/civilization_layer.json \
+  --pass A --single-batch 1   # Pass A: 地形骨架（Hill/Cliff/Crack/Water）
+
+python scripts/mcp_writer.py --world-state output/world_state.json \
+  --ecology output/ecology_layer.json --civilization output/civilization_layer.json \
+  --pass B --single-batch 1   # Pass B: 纹理
+
+python scripts/mcp_writer.py --world-state output/world_state.json \
+  --ecology output/ecology_layer.json --civilization output/civilization_layer.json \
+  --pass C --single-batch 1   # Pass C: 植被+斜坡+实体
 ```
 
-写入顺序（严格不可乱序，来源：terrain-adjacency-rules.md + y3-terrain-basics.md）：
-1. **Pass 1: Hill Lift** — `terrain_hill_lift_block`（FBM 连续地形起伏）
-2. **Pass 2: Cliff Height** — `terrain_set_height_block`（悬崖台阶，API height = 层数 × 2；相邻高差=2处引擎自动生成斜坡）
-3. **Pass 3: Crack** — `terrain_set_crack_block`（裂隙，terrain_height=-40）
-4. **Pass 4: Deep Water** — `terrain_set_deep_water_block`
-5. **Pass 5: Shallow Water** — `terrain_set_shallow_water_block`
-6. **Pass 6: Plain Water** — `terrain_set_plain_water_block`
-7. **Pass 7: Terrain Textures** — `terrain_cover_draw_block`（地形材质，格点坐标）
-8. **Pass 8: Vegetation** — `terrain_vegetation_draw_block`（地表贴片：草/花/芦苇，非 3D 模型）
-9. **Pass 9: Entities** — `entity_create_block`（3D 模型：树木/岩石/建筑/道路摆件，世界坐标）
+```bash
+# 或一次性全量写入（小地图）：
+python scripts/mcp_writer.py --world-state output/world_state.json \
+  --ecology output/ecology_layer.json --civilization output/civilization_layer.json \
+  --texture-assignments output/texture_assignments.json --single-batch 1
+```
 
-> **斜坡不主动写**（terrain-adjacency-rules.md §5.2）：引擎在 cliff_height 写入后自动在相邻高差=2处生成斜坡。
-> `slope_map` 仅保留在 `world_state.json` 中供分析和评估使用，不参与 MCP 写入。
+写入顺序（严格不可乱序，来源：y3-terrain-basics.md + terrain-adjacency-rules.md）：
 
-每批 100 格，循环直到 `status == "all_done"`。
+**Pass A（地形骨架）：**
+1.  **Hill Lift** — `terrain_hill_lift_block`（FBM+Ridged+Warped 连续地形起伏）
+2.  **Cliff Height** — `terrain_set_height_block`（悬崖台阶，API height = 层数 × 2）
+3.  **Crack** — `terrain_set_crack_block`（裂隙，terrain_height=-40）
+4.  **Deep Water** — `terrain_set_deep_water_block`
+5.  **Shallow Water** — `terrain_set_shallow_water_block`
+6.  **Plain Water** — `terrain_set_plain_water_block`
+
+**Pass B（纹理）：**
+7.  **Terrain Textures** — `terrain_cover_draw_block`（地形材质，格点坐标）
+
+**Pass C（装饰物）：**
+8.  **Vegetation** — `terrain_vegetation_draw_block`（地表贴片：草/花/芦苇，非 3D 模型）
+9.  **Slopes** — `terrain_set_road_block`（斜坡，必须在所有地形/水体/纹理操作后最后刷）
+10. **Entities** — `entity_create_block`（3D 模型：树木/岩石/建筑/道路摆件，世界坐标）
+
+> **斜坡需主动写入**（y3-terrain-basics.md §斜坡体系）：不依赖引擎自动生成。
+> 任何地形/水体/纹理操作都会覆盖已有斜坡，Slopes 必须严格在 Pass C 最后执行。
+
+每批 100 格，循环直到 `status == "all_done"`。Pass A/B/C 各有独立进度文件，支持断点续传。
 
 ---
 
@@ -423,26 +495,32 @@ python scripts/mcp_writer.py \
 y3-terrain-evolution/
 ├── SKILL.md
 ├── config/
-│   ├── world_config.json
+│   ├── world_config.json            ← 含 theme / max_visual_iterations（v2 新增）
 │   ├── era_weights.json
+│   ├── asset_profiles.json
 │   └── texture_profiles.json       ← 纹理预配置（用户填写 Y3 资产 ID）
 ├── prompts/
-│   ├── terrain_era_eval_prompt.md
+│   ├── terrain_era_eval_prompt.md  ← v2：新增 mountain_linearity/river_validity/water_bank_transition
 │   ├── ecology_era_eval_prompt.md
-│   ├── civilization_era_eval_prompt.md
-│   ├── texture_terrain_eval_prompt.md  ← 地形纹理评估
-│   ├── texture_special_eval_prompt.md  ← 特殊纹理评估
+│   ├── civilization_era_eval_prompt.md  ← v2：新增 traversability/settlement_connectivity/path_ratio
+│   ├── texture_terrain_eval_prompt.md
+│   ├── texture_special_eval_prompt.md
 │   └── patch_plan_format.md
 ├── scripts/
-│   ├── check_deps.py
-│   ├── generate_terrain.py
-│   ├── analyze_terrain.py
+│   ├── check_deps.py               ← v2：新增 anthropic 依赖检查
+│   ├── generate_terrain.py         ← v2：Voronoi + fBm + Ridged + DomainWarping
+│   ├── analyze_terrain.py          ← v2：新增 mountain_chain/river_validity/coastal_width 字段
 │   ├── apply_patch.py
 │   ├── generate_ecology.py
-│   ├── generate_civilization.py
+│   ├── generate_civilization.py    ← v2：A* 4-connectivity + cliff cost map
 │   ├── validate_world.py
-│   └── mcp_writer.py
+│   ├── mcp_writer.py               ← v2：--pass A/B/C 分步写入
+│   ├── preview_server.py           ← v2 新增：Three.js 预览 HTTP 服务（端口 9876）
+│   └── visual_eval.py              ← v2 新增：Claude API 视觉评分（生态纪专用）
+├── static/
+│   └── viewer.html                 ← v2 新增：Three.js 地形预览前端
 └── output/                          ← 运行时产出（gitignore）
     ├── texture_assignments.json
-    └── texture_issues.json
+    ├── texture_issues.json
+    └── visual_eval_ecology.json    ← v2 新增：视觉评分结果
 ```
