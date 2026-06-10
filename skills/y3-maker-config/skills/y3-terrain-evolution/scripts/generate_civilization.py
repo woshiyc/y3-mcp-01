@@ -131,16 +131,28 @@ def find_settlements(ws, eco, n_settlements, rng):
     return settlements
 
 
-def astar_road(start, goal, passable, H, W):
-    """A* 寻路生成道路路径。"""
+def astar_road(start, goal, passable, cost_map, H, W):
+    """A* 寻路（严格 4-connectivity），使用 cost_map 确定移动代价。
+
+    Args:
+        start, goal: (y, x) 坐标
+        passable: bool 矩阵，False = 不可通行（水域）
+        cost_map: float 矩阵，进入该格代价（cliff 差值越大越高）
+        H, W: 地图尺寸
+    Returns:
+        [(y,x), ...] 路径，或 None
+    """
     if not passable[start[0], start[1]] or not passable[goal[0], goal[1]]:
         return None
 
     def h(a, b): return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
-    open_set = [(h(start, goal), 0, start)]
+    open_set = [(h(start, goal), 0.0, start)]
     came_from = {}
-    g = {start: 0}
+    g = {start: 0.0}
+
+    # 严格 4-connectivity，不允许对角线（防止绕过悬崖角落）
+    DIRS = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
     while open_set:
         _, cost, cur = heapq.heappop(open_set)
@@ -151,13 +163,12 @@ def astar_road(start, goal, passable, H, W):
                 cur = came_from[cur]
             path.append(start)
             return path[::-1]
-        for dy, dx in ((-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)):
+        for dy, dx in DIRS:
             ny, nx = cur[0]+dy, cur[1]+dx
             nb = (ny, nx)
             if not (0 <= ny < H and 0 <= nx < W): continue
             if not passable[ny, nx]: continue
-            move_cost = 1 if (dy == 0 or dx == 0) else 1.4
-            ng = g[cur] + move_cost
+            ng = g[cur] + cost_map[ny, nx]
             if ng < g.get(nb, 1e18):
                 came_from[nb] = cur
                 g[nb] = ng
@@ -168,8 +179,29 @@ def astar_road(start, goal, passable, H, W):
 def generate_roads(settlements, ws):
     H, W = ws["height"], ws["width"]
     water = np.array(ws["water_map"], dtype=object)
-    # 可行走格子：非深水
-    passable = (water != "deep")
+    cliff = np.array(ws["cliff_map"], dtype=np.int32)
+
+    # 所有水域不可通行（含 deep/shallow/plain）
+    passable = (water == "none")
+
+    # cliff cost map：相邻格差值越大代价越高
+    cost_map = np.ones((H, W), dtype=np.float64)
+    for y in range(H):
+        for x in range(W):
+            max_diff = 0
+            for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                ny, nx = y+dy, x+dx
+                if 0 <= ny < H and 0 <= nx < W:
+                    diff = abs(int(cliff[y, x]) - int(cliff[ny, nx]))
+                    max_diff = max(max_diff, diff)
+            if max_diff >= 2:
+                cost_map[y, x] = 100.0  # 悬崖边界，极高代价
+            elif max_diff == 1:
+                cost_map[y, x] = 5.0   # 斜坡区，中等代价
+        # 水域设为不可通行（已由 passable 控制，cost 设高作双重保险）
+        for x in range(W):
+            if water[y, x] != "none":
+                cost_map[y, x] = 1e9
 
     roads = []
     road_cells = set()
@@ -192,10 +224,14 @@ def generate_roads(settlements, ws):
         if connected[i] and connected[j]:
             continue
         s1, s2 = settlements[i], settlements[j]
+        # 已有道路的格子 cost 减半（鼓励共线复用）
+        cm = cost_map.copy()
+        for ry, rx in road_cells:
+            cm[ry, rx] = max(0.5, cm[ry, rx] * 0.5)
         path = astar_road(
             (s1["grid_y"], s1["grid_x"]),
             (s2["grid_y"], s2["grid_x"]),
-            passable, H, W
+            passable, cm, H, W
         )
         if path:
             roads.append({

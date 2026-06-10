@@ -142,3 +142,34 @@ def test_analyze_has_coastal_avg_width():
     summary = analyze_terrain_layer(ws)
     assert "coastal_avg_width" in summary
     assert summary["coastal_avg_width"] >= 0.0
+
+
+# ---------------------------------------------------------------------------
+# Task 4: A* 4-connectivity
+# ---------------------------------------------------------------------------
+from generate_civilization import astar_road
+
+
+def test_astar_4connectivity_no_diagonal():
+    """A* 不走对角线——路径中相邻两格的行或列差必须为 0。"""
+    H, W = 20, 20
+    passable = np.ones((H, W), dtype=bool)
+    cost_map = np.ones((H, W), dtype=np.float64)
+    path = astar_road((0, 0), (5, 5), passable, cost_map, H, W)
+    assert path is not None
+    for (y1, x1), (y2, x2) in zip(path[:-1], path[1:]):
+        assert abs(y2-y1) + abs(x2-x1) == 1, f"Diagonal: ({y1},{x1})->({y2},{x2})"
+
+
+def test_astar_avoids_high_cliff_cost():
+    """A* 应绕过高 cost 单格，选择经过其他行的较长但总代价更低的路径。
+    直线路径代价 = 8 + 100 = 108；绕行路径代价约 11。A* 应选绕行。
+    """
+    H, W = 10, 10
+    passable = np.ones((H, W), dtype=bool)
+    cost_map = np.ones((H, W), dtype=np.float64)
+    cost_map[0, 5] = 100.0  # 单点高 cost（不是全列，有绕行路径）
+    path = astar_road((0, 0), (0, 9), passable, cost_map, H, W)
+    assert path is not None
+    # A* 应绕过 (0,5) 走其他行
+    assert (0, 5) not in path
