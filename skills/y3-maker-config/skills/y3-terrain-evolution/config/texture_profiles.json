@@ -1,0 +1,239 @@
+{
+  "_comment": "纹理配置文件 - terrain_textures 已预填 Y3 默认 ID，可根据项目风格替换。special_textures 已全部改为 terrain_texture 实现（Y3 有对应地形材质）。optional=true 的条目如无需要可将 y3_texture_id 置空跳过。",
+  "_texture_panel_limit": "Y3 每张地图纹理面板上限 32 个，生成前会自动调用 ensure_terrain_textures MCP 接口管理面板，超出时自动替换为最接近的已有纹理。",
+
+  "terrain_textures": [
+    {
+      "id": "grass",
+      "display_name": "草地",
+      "y3_texture_id": 170,
+      "y3_texture_name": "草地（最通用）",
+      "alternatives": [6, 103, 51],
+      "alternatives_desc": "粗草地(野外)/平原草地/平整草地",
+      "description": "缓坡平原、丘陵的基础地面材质",
+      "applies_to": {
+        "biomes": ["plain", "hill", "forest_edge"],
+        "slope_max_deg": 20,
+        "height_range": [0.05, 0.75],
+        "water_distance_min_cells": 3
+      },
+      "priority": 1,
+      "optional": false
+    },
+    {
+      "id": "forest_floor",
+      "display_name": "腐殖土/落叶地面",
+      "y3_texture_id": 69,
+      "y3_texture_name": "丛林叶子",
+      "alternatives": [159, 66],
+      "alternatives_desc": "苔藓地面(潮湿)/丛林泥土(热带)",
+      "description": "森林内部地面，落叶腐殖土质感，区分于平原草地",
+      "applies_to": {
+        "biomes": ["forest"],
+        "slope_max_deg": 20
+      },
+      "priority": 2,
+      "optional": false
+    },
+    {
+      "id": "rock",
+      "display_name": "岩石",
+      "y3_texture_id": 147,
+      "y3_texture_name": "岩石（通用）",
+      "alternatives": [18, 75, 164],
+      "alternatives_desc": "贫瘠岩石(荒芜山地)/深色岩石/岩石地面(平整)",
+      "description": "陡坡、悬崖、山地地面",
+      "applies_to": {
+        "biomes": ["mountain", "cliff"],
+        "slope_min_deg": 25
+      },
+      "priority": 2,
+      "optional": false
+    },
+    {
+      "id": "soil_bare",
+      "display_name": "裸土",
+      "y3_texture_id": 173,
+      "y3_texture_name": "普通土地（最通用）",
+      "alternatives": [2, 4, 101],
+      "alternatives_desc": "泥土(通用)/坑洼泥土/平原泥土",
+      "description": "中等坡度过渡区，草地到岩石之间的裸露土壤",
+      "applies_to": {
+        "biomes": ["hill", "mountain"],
+        "slope_range_deg": [20, 30]
+      },
+      "priority": 1,
+      "optional": false
+    },
+    {
+      "id": "mud_wet",
+      "display_name": "湿泥/苔藓地面",
+      "y3_texture_id": 159,
+      "y3_texture_name": "苔藓地面（潮湿）",
+      "alternatives": [66, 65],
+      "alternatives_desc": "丛林泥土(热带)/荒芜泥地",
+      "description": "水边浅滩、湿地、沿岸地面，潮湿感",
+      "applies_to": {
+        "biomes": ["coastal", "wetland"],
+        "water_distance_max_cells": 5
+      },
+      "priority": 2,
+      "optional": false
+    },
+    {
+      "id": "rubble",
+      "display_name": "碎石/坡积物",
+      "y3_texture_id": 171,
+      "y3_texture_name": "碎石地面",
+      "alternatives": [229, 205],
+      "alternatives_desc": "褐碎石地/岩裂地面",
+      "description": "山脚、悬崖底部积累的碎石地面",
+      "applies_to": {
+        "biomes": ["mountain", "cliff"],
+        "slope_range_deg": [10, 28],
+        "cliff_base_range_cells": 4
+      },
+      "priority": 3,
+      "optional": false
+    },
+    {
+      "id": "road_dirt",
+      "display_name": "压实泥土（村道/主路）",
+      "y3_texture_id": 177,
+      "y3_texture_name": "硬泥路（踩实的泥路）",
+      "alternatives": [144, 195, 186],
+      "alternatives_desc": "碎石土路(乡间)/黄色土路/农村路面",
+      "description": "主路/村道的地面材质，踩踏压实感",
+      "applies_to": {
+        "zone_types": ["main_road", "village_road"],
+        "road_width_cells": 2
+      },
+      "priority": 3,
+      "optional": false
+    },
+    {
+      "id": "road_stone",
+      "display_name": "石板路（遗迹/古道）",
+      "y3_texture_id": 81,
+      "y3_texture_name": "青石板路（古风）",
+      "alternatives": [136, 148],
+      "alternatives_desc": "遗迹地砖/石头路径",
+      "description": "遗迹道路、古老路径、废墟区域的石砖地面",
+      "applies_to": {
+        "zone_types": ["ancient_road", "ruin_road"]
+      },
+      "priority": 3,
+      "optional": true
+    },
+    {
+      "id": "snow",
+      "display_name": "雪地",
+      "y3_texture_id": 90,
+      "y3_texture_name": "雪地（积雪）",
+      "alternatives": [189, 193],
+      "alternatives_desc": "厚雪/薄雪覆盖",
+      "description": "高山雪地，仅高海拔区域",
+      "applies_to": {
+        "biomes": ["snow_mountain"],
+        "height_min": 0.75
+      },
+      "priority": 2,
+      "optional": true
+    },
+    {
+      "id": "sand",
+      "display_name": "沙地",
+      "y3_texture_id": 165,
+      "y3_texture_name": "沙地（通用）",
+      "alternatives": [11, 181],
+      "alternatives_desc": "沙漠/白沙地(海滩)",
+      "description": "沙漠/干燥地区地面",
+      "applies_to": {
+        "biomes": ["desert"],
+        "height_range": [0.0, 0.5]
+      },
+      "priority": 2,
+      "optional": true
+    }
+  ],
+
+  "special_textures": [
+    {
+      "id": "corruption_ground",
+      "display_name": "魔法污染地面",
+      "y3_implementation": "terrain_texture",
+      "y3_texture_id": 70,
+      "y3_texture_name": "污染地面",
+      "alternatives": [224, 225],
+      "alternatives_desc": "灰色腐地/墨绿腐地",
+      "description": "魔法腐蚀区域，Y3 有原生污染地面材质",
+      "narrative_contexts": ["magic_corruption", "boss_arena", "dark_altar"],
+      "optional": false
+    },
+    {
+      "id": "monster_nest_ground",
+      "display_name": "怪物巢穴地面",
+      "y3_implementation": "terrain_texture",
+      "y3_texture_id": 224,
+      "y3_texture_name": "灰色腐地",
+      "alternatives": [225, 168],
+      "alternatives_desc": "墨绿腐地/黑泥地面",
+      "description": "怪物聚居区地面，腐化/污染感",
+      "narrative_contexts": ["monster_nest", "orc_camp", "beast_lair"],
+      "optional": false
+    },
+    {
+      "id": "settlement_footprint",
+      "display_name": "聚落踩踏地面",
+      "y3_implementation": "terrain_texture",
+      "y3_texture_id": 143,
+      "y3_texture_name": "村庄泥土",
+      "alternatives": [177, 48],
+      "alternatives_desc": "硬泥路/城邦泥土",
+      "description": "村庄/营地周边踩踏泥地，生活痕迹感",
+      "narrative_contexts": ["settlement_surroundings", "market_area"],
+      "optional": true
+    },
+    {
+      "id": "ancient_stone_floor",
+      "display_name": "古老石板地面",
+      "y3_implementation": "terrain_texture",
+      "y3_texture_id": 136,
+      "y3_texture_name": "遗迹地砖",
+      "alternatives": [81, 162],
+      "alternatives_desc": "青石板路(古风)/遗迹地",
+      "description": "遗迹、废墟区域的古老石砖地面",
+      "narrative_contexts": ["ruin", "dungeon_entrance", "ancient_monument"],
+      "optional": true
+    },
+    {
+      "id": "battlefield_burn",
+      "display_name": "战场焦土",
+      "y3_implementation": "terrain_texture",
+      "y3_texture_id": 149,
+      "y3_texture_name": "焦土黑地",
+      "alternatives": [1, 168],
+      "alternatives_desc": "贫瘠之地/黑泥地面",
+      "description": "古战场/龙巢区域，焦黑地面",
+      "narrative_contexts": ["ancient_battlefield", "dragon_lair", "siege_site"],
+      "optional": true
+    }
+  ],
+
+  "mapping_rules": {
+    "_comment": "全局映射规则，generate_terrain.py 和 apply_patch.py 将参照这些阈值分配地形纹理",
+    "slope_rock_threshold_deg": 25,
+    "slope_soil_threshold_deg": 20,
+    "water_edge_texture_range_cells": 4,
+    "cliff_base_rubble_range_cells": 3,
+    "road_texture_half_width_cells": 1,
+    "enable_special_textures": true,
+    "default_fallback_texture_id": 170,
+    "biome_texture_priority_order": [
+      "road_stone", "road_dirt", "corruption_ground", "battlefield_burn",
+      "ancient_stone_floor", "mud_wet", "rock", "rubble",
+      "soil_bare", "monster_nest_ground", "settlement_footprint",
+      "forest_floor", "snow", "sand", "grass"
+    ]
+  }
+}

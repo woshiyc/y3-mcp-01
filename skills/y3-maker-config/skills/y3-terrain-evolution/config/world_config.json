@@ -1,0 +1,38 @@
+{
+  "_comment": "Y3 地形演化配置文件 - 修改此文件后重新运行 Skill",
+
+  "seed": 42,
+  "map_width": 128,
+  "map_height": 128,
+
+  "generation_rules": {
+    "fbm_octaves": 6,
+    "water_level": 0.32,
+    "shallow_threshold": 0.06,
+    "max_cliff_level": 5,
+    "island_mode": false,
+
+    "river_count": 3,
+    "crack_count": 4,
+    "crack_length": 25,
+
+    "allow_cracks": true,
+    "allow_slopes": true,
+
+    "target_water_ratio": 0.25,
+    "target_mountain_ratio": 0.20
+  },
+
+  "era_thresholds": {
+    "terrain_advance_score": 70,
+    "ecology_advance_score": 65,
+    "civilization_advance_score": 60,
+    "max_iterations_per_era": 8
+  },
+
+  "mcp": {
+    "server_url": "http://localhost:8765",
+    "timeout_seconds": 300,
+    "batch_size": 100
+  }
+}

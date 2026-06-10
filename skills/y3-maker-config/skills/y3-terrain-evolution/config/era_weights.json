@@ -1,0 +1,73 @@
+{
+  "_comment": "每个时代允许的变更权重。权重越高 = 该层可做更大幅度修改。apply_patch.py 据此限制 Patch Plan 的执行范围。",
+
+  "era_terrain": {
+    "terrain_change_weight": 0.80,
+    "texture_change_weight": 0.15,
+    "ecology_change_weight": 0.05,
+    "civilization_change_weight": 0.00,
+    "description": "地质时代：地形是主角。生态刚萌芽，不允许文明层修改。",
+    "allowed_patch_ops": [
+      "raise_height", "lower_height",
+      "add_water", "remove_water",
+      "add_river", "remove_river",
+      "add_cracks", "remove_cracks",
+      "add_slopes",
+      "smooth_terrain", "steepen_terrain"
+    ],
+    "forbidden_patch_ops": [
+      "add_settlement", "add_road", "add_building",
+      "add_boss_area", "add_dungeon"
+    ]
+  },
+
+  "era_ecology": {
+    "terrain_change_weight": 0.15,
+    "texture_change_weight": 0.35,
+    "ecology_change_weight": 0.45,
+    "civilization_change_weight": 0.05,
+    "description": "生态时代：生命填满地形。地形已定型，只允许小范围微调。",
+    "allowed_patch_ops": [
+      "adjust_biome", "increase_vegetation", "reduce_vegetation",
+      "add_monster_zone", "adjust_danger",
+      "raise_height", "lower_height",
+      "add_water", "remove_water"
+    ],
+    "forbidden_patch_ops": [
+      "add_settlement", "add_road", "add_building"
+    ],
+    "terrain_change_cap": 0.15
+  },
+
+  "era_civilization": {
+    "terrain_change_weight": 0.05,
+    "texture_change_weight": 0.20,
+    "ecology_change_weight": 0.25,
+    "civilization_change_weight": 0.50,
+    "description": "文明时代：智慧生物主导。地形几乎冻结，文明建设为主。",
+    "allowed_patch_ops": [
+      "add_settlement", "remove_settlement",
+      "add_road", "remove_road",
+      "add_building", "remove_building",
+      "adjust_biome", "adjust_danger"
+    ],
+    "forbidden_patch_ops": [],
+    "terrain_change_cap": 0.05
+  },
+
+  "era_stable": {
+    "terrain_change_weight": 0.00,
+    "texture_change_weight": 0.05,
+    "ecology_change_weight": 0.10,
+    "civilization_change_weight": 0.85,
+    "description": "稳定时代：世界成型，只做最终微调和验证。",
+    "allowed_patch_ops": [
+      "adjust_danger", "fix_connectivity", "adjust_density"
+    ],
+    "forbidden_patch_ops": [
+      "raise_height", "lower_height", "add_water", "remove_water",
+      "add_cracks", "add_river"
+    ],
+    "terrain_change_cap": 0.0
+  }
+}
