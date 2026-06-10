@@ -79,3 +79,66 @@ def test_world_state_has_theme_and_layout_map(tmp_path):
     assert ws["theme"] == "lake_plain"
     assert "layout_map" in ws
     assert len(ws["layout_map"]) == 32
+
+
+# ---------------------------------------------------------------------------
+# Task 3: analyze_terrain new fields
+# ---------------------------------------------------------------------------
+from analyze_terrain import analyze_terrain_layer
+
+
+def _make_ws(H=32, W=32, seed=42):
+    """Minimal world_state dict for testing."""
+    from generate_terrain import (
+        generate_fbm, apply_shaping, build_cliff_map, build_water_map,
+        generate_rivers, generate_cracks, build_slope_map, classify_biomes,
+    )
+    gen = {"fbm_octaves": 3, "water_level": 0.32, "shallow_threshold": 0.06,
+           "max_cliff_level": 3, "island_mode": False,
+           "river_count": 1, "crack_count": 1, "crack_length": 5,
+           "allow_cracks": True, "allow_slopes": True,
+           "target_water_ratio": 0.25, "target_mountain_ratio": 0.20}
+    hill = generate_fbm(W, H, seed)
+    hill = apply_shaping(hill, gen)
+    cliff = build_cliff_map(hill, gen)
+    water = build_water_map(hill, gen)
+    _, water = generate_rivers(hill, water, gen, seed)
+    crack = generate_cracks(hill, water, gen, seed)
+    slope = build_slope_map(cliff, water, gen)
+    biome = classify_biomes(hill, water, cliff, gen)
+    return {
+        "width": W, "height": H, "seed": seed, "era": "terrain", "iteration": 0,
+        "hill_map": hill.tolist(), "cliff_map": cliff.tolist(),
+        "water_map": water.tolist(), "slope_map": slope.tolist(),
+        "crack_map": crack.tolist(), "biome_map": biome.tolist(),
+    }
+
+
+def test_analyze_has_mountain_chain_count():
+    ws = _make_ws()
+    summary = analyze_terrain_layer(ws)
+    assert "mountain_chain_count" in summary
+    assert isinstance(summary["mountain_chain_count"], int)
+    assert summary["mountain_chain_count"] >= 0
+
+
+def test_analyze_has_mountain_chain_avg_length():
+    ws = _make_ws()
+    summary = analyze_terrain_layer(ws)
+    assert "mountain_chain_avg_length" in summary
+    assert summary["mountain_chain_avg_length"] >= 0.0
+
+
+def test_analyze_has_river_validity_ratio():
+    ws = _make_ws()
+    summary = analyze_terrain_layer(ws)
+    assert "river_validity_ratio" in summary
+    r = summary["river_validity_ratio"]
+    assert 0.0 <= r <= 1.0
+
+
+def test_analyze_has_coastal_avg_width():
+    ws = _make_ws()
+    summary = analyze_terrain_layer(ws)
+    assert "coastal_avg_width" in summary
+    assert summary["coastal_avg_width"] >= 0.0

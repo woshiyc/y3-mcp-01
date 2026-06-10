@@ -107,6 +107,48 @@ def analyze_terrain_layer(ws):
             "isolated_islands":   isolated,
         }
 
+    # ----- 新增字段：山脉连通链 -----
+    mountain_mask = (biome_map == "mountain") | (biome_map == "hill")
+    if mountain_mask.any():
+        labeled_m = _label_connected(mountain_mask)
+        unique_m, counts_m = np.unique(labeled_m[labeled_m > 0], return_counts=True)
+        chains = counts_m[counts_m >= 3]
+        mountain_chain_count   = int(len(chains))
+        mountain_chain_avg_len = float(chains.mean()) if len(chains) > 0 else 0.0
+    else:
+        mountain_chain_count   = 0
+        mountain_chain_avg_len = 0.0
+
+    # ----- 新增字段：河流合法性（river_validity_ratio）-----
+    river_mask = (water_map == "shallow")
+    if river_mask.sum() > 0:
+        valid_river = 0
+        total_river = 0
+        for ry in range(h):
+            for rx in range(w):
+                if not river_mask[ry, rx]:
+                    continue
+                total_river += 1
+                neighbors = []
+                for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                    ny, nx = ry + dy, rx + dx
+                    if 0 <= ny < h and 0 <= nx < w:
+                        neighbors.append(hill_map[ny, nx])
+                if neighbors and hill_map[ry, rx] <= max(neighbors):
+                    valid_river += 1
+        river_validity_ratio = valid_river / total_river if total_river > 0 else 1.0
+    else:
+        river_validity_ratio = 1.0
+
+    # ----- 新增字段：水岸平均宽度（coastal_avg_width）-----
+    coastal_mask = (biome_map == "coastal")
+    if coastal_mask.any():
+        labeled_c = _label_connected(coastal_mask)
+        _, counts_c = np.unique(labeled_c[labeled_c > 0], return_counts=True)
+        coastal_avg_width = float(counts_c.mean()) if len(counts_c) > 0 else 0.0
+    else:
+        coastal_avg_width = 0.0
+
     # ----- 自动问题检测 -----
     issues = []
     if stats["water_total_pct"] < 10:
@@ -141,8 +183,12 @@ def analyze_terrain_layer(ws):
         "biome_distribution":  biome_distribution,
         "height_stats":        height_stats,
         "water_bodies":        water_bodies,
-        "land_connectivity":   land_connectivity,
-        "issues":              issues,
+        "land_connectivity":          land_connectivity,
+        "issues":                     issues,
+        "mountain_chain_count":       mountain_chain_count,
+        "mountain_chain_avg_length":  round(mountain_chain_avg_len, 1),
+        "river_validity_ratio":       round(river_validity_ratio, 3),
+        "coastal_avg_width":          round(coastal_avg_width, 1),
     }
 
 
