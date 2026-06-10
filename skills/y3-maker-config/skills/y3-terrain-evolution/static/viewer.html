@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Y3 Terrain Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; color: #eee; font-family: monospace; overflow: hidden; }
+  #canvas { display: block; }
+  #hud {
+    position: fixed; top: 8px; left: 8px; background: rgba(0,0,0,.65);
+    padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.6;
+    pointer-events: none;
+  }
+  #err { position: fixed; bottom: 8px; left: 8px; color: #f66; font-size: 11px; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="hud">Y3 Terrain Preview — 加载中...</div>
+<div id="err"></div>
+
+<!-- Three.js r165 CDN -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const API = 'http://127.0.0.1:9876';
+const hud = document.getElementById('hud');
+const errEl = document.getElementById('err');
+
+// ---- scene setup ----
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setSize(innerWidth, innerHeight);
+window.addEventListener('resize', () => {
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1a2e);
+
+const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 5000);
+camera.position.set(0, 200, 300);
+camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const sun = new THREE.DirectionalLight(0xffd9a0, 1.2);
+sun.position.set(100, 200, 100);
+scene.add(sun);
+
+// ---- biome color map ----
+const BIOME_COLOR = {
+  mountain: 0xaaaaaa,
+  cliff:    0x888888,
+  hill:     0x8da87a,
+  forest:   0x3a7a3a,
+  plain:    0x9bc97e,
+  wetland:  0x5a8a6a,
+  coastal:  0xd4be82,
+  water:    0x3a6ea5,
+};
+const DEFAULT_COLOR = 0x777777;
+
+// ---- build terrain mesh ----
+let terrainMesh = null;
+let waterMesh   = null;
+let settlementMeshes = [];
+
+function buildTerrain(ws) {
+  const W = ws.width, H = ws.height;
+  const hill  = ws.hill_map;
+  const biome = ws.biome_map;
+  const water = ws.water_map;
+
+  // PlaneGeometry: W×H segments
+  const geo = new THREE.PlaneGeometry(W * 2, H * 2, W - 1, H - 1);
+  geo.rotateX(-Math.PI / 2);
+
+  const pos = geo.attributes.position;
+  const col = new Float32Array(pos.count * 3);
+
+  for (let i = 0; i < pos.count; i++) {
+    const gx = i % W;
+    const gy = Math.floor(i / W);
+    const h  = hill[gy][gx];
+    pos.setY(i, h * 80);   // scale height for visibility
+
+    const bname = biome[gy][gx];
+    const c = new THREE.Color(BIOME_COLOR[bname] ?? DEFAULT_COLOR);
+    col[i * 3]     = c.r;
+    col[i * 3 + 1] = c.g;
+    col[i * 3 + 2] = c.b;
+  }
+  pos.needsUpdate = true;
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  geo.computeVertexNormals();
+
+  const mat = new THREE.MeshLambertMaterial({ vertexColors: true });
+  if (terrainMesh) scene.remove(terrainMesh);
+  terrainMesh = new THREE.Mesh(geo, mat);
+  scene.add(terrainMesh);
+
+  // water plane overlay
+  const waterGeo = new THREE.PlaneGeometry(W * 2, H * 2);
+  waterGeo.rotateX(-Math.PI / 2);
+  const waterMat = new THREE.MeshLambertMaterial({
+    color: 0x2255aa, transparent: true, opacity: 0.55,
+  });
+  if (waterMesh) scene.remove(waterMesh);
+  waterMesh = new THREE.Mesh(waterGeo, waterMat);
+  waterMesh.position.y = 2;
+  scene.add(waterMesh);
+
+  return { W, H };
+}
+
+function buildSettlements(civ, dims) {
+  settlementMeshes.forEach(m => scene.remove(m));
+  settlementMeshes = [];
+  if (!civ || !civ.settlements) return;
+  const { W, H } = dims;
+  civ.settlements.forEach(s => {
+    const wx = (s.grid_x - W / 2) * 2;
+    const wz = (s.grid_y - H / 2) * 2;
+    const geo = new THREE.CylinderGeometry(3, 3, 12, 8);
+    const mat = new THREE.MeshLambertMaterial({ color: 0xff8800 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(wx, 12, wz);
+    scene.add(mesh);
+    settlementMeshes.push(mesh);
+  });
+}
+
+async function fetchJSON(path) {
+  const r = await fetch(API + path);
+  if (!r.ok) return null;
+  return r.json();
+}
+
+async function refresh() {
+  try {
+    const ws  = await fetchJSON('/world_state');
+    if (!ws) { errEl.textContent = '等待 world_state.json...'; return; }
+    errEl.textContent = '';
+
+    const dims = buildTerrain(ws);
+    const civ  = await fetchJSON('/civilization');
+    buildSettlements(civ, dims);
+
+    hud.innerHTML = [
+      `<b>Y3 Terrain Preview</b>`,
+      `尺寸: ${ws.width}×${ws.height}  主题: ${ws.theme ?? '-'}`,
+      `Era: ${ws.era ?? '-'}  Iter: ${ws.iteration ?? '-'}`,
+      `聚落: ${civ?.settlements?.length ?? 0}  道路: ${civ?.roads?.length ?? 0}`,
+      `<span style="color:#aaa">鼠标拖拽旋转 / 滚轮缩放</span>`,
+    ].join('<br>');
+  } catch (e) {
+    errEl.textContent = `Error: ${e.message}`;
+  }
+}
+
+// ---- render loop ----
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// initial load + auto-refresh every 5 s
+refresh();
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>

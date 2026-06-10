@@ -1,4 +1,5 @@
 """Tests for generate_terrain.py v2 additions."""
+import json
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
 
@@ -214,3 +215,70 @@ def test_pass_progress_files_are_independent(tmp_path):
     assert "A" in path_a
     assert "B" in path_b
     assert "C" in path_c
+
+
+# ---------------------------------------------------------------------------
+# Task 6: preview_server.py
+# ---------------------------------------------------------------------------
+import threading
+import urllib.request
+import urllib.error
+
+from preview_server import TerrainHandler, run as run_preview
+
+
+def _start_preview_server(output_dir, port):
+    """在后台线程启动预览服务器，返回线程。"""
+    t = threading.Thread(target=run_preview,
+                         kwargs={"output_dir": output_dir, "port": port},
+                         daemon=True)
+    t.start()
+    import time; time.sleep(0.3)  # 等待服务器就绪
+    return t
+
+
+def _get(url):
+    with urllib.request.urlopen(url, timeout=5) as r:
+        return r.status, json.loads(r.read().decode())
+
+
+def _post(url, payload):
+    data = json.dumps(payload).encode()
+    req = urllib.request.Request(url, data=data,
+                                 headers={"Content-Type": "application/json"},
+                                 method="POST")
+    with urllib.request.urlopen(req, timeout=5) as r:
+        return r.status, json.loads(r.read().decode())
+
+
+def test_preview_server_get_world_state(tmp_path):
+    """GET /world_state 返回 world_state.json 内容。"""
+    ws = {"width": 4, "height": 4, "seed": 1}
+    (tmp_path / "world_state.json").write_text(json.dumps(ws), encoding="utf-8")
+    _start_preview_server(str(tmp_path), 19877)
+    status, body = _get("http://127.0.0.1:19877/world_state")
+    assert status == 200
+    assert body["width"] == 4
+
+
+def test_preview_server_get_missing_file(tmp_path):
+    """GET /ecology 在文件不存在时返回 404。"""
+    _start_preview_server(str(tmp_path), 19878)
+    try:
+        _get("http://127.0.0.1:19878/ecology")
+        assert False, "应返回 404"
+    except urllib.error.HTTPError as e:
+        assert e.code == 404
+
+
+def test_preview_server_screenshot_roundtrip(tmp_path):
+    """POST /screenshot 存储 base64，GET /last_screenshot 取回同一值。"""
+    TerrainHandler._last_screenshot_b64 = None  # 确保初始干净
+    _start_preview_server(str(tmp_path), 19879)
+    # 先确认初始为 null
+    _, before = _get("http://127.0.0.1:19879/last_screenshot")
+    assert before["image_b64"] is None
+    # 上传截图
+    _post("http://127.0.0.1:19879/screenshot", {"image_b64": "abc123=="})
+    _, after = _get("http://127.0.0.1:19879/last_screenshot")
+    assert after["image_b64"] == "abc123=="
