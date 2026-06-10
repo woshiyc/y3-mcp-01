@@ -173,3 +173,44 @@ def test_astar_avoids_high_cliff_cost():
     assert path is not None
     # A* 应绕过 (0,5) 走其他行
     assert (0, 5) not in path
+
+
+# ---------------------------------------------------------------------------
+# Task 5: mcp_writer.py Pass A/B/C 分组
+# ---------------------------------------------------------------------------
+from mcp_writer import PASS_A, PASS_B, PASS_C, PASS_GROUP, PASS_NAMES, get_progress_file
+
+
+def test_pass_a_contains_only_terrain_passes():
+    """Pass A 只含地形骨架相关 pass，不含纹理、植被、斜坡、实体。"""
+    terrain_only = {"hill_lift", "cliff_height", "crack", "deep_water", "shallow_water", "plain_water"}
+    assert set(PASS_A) == terrain_only
+
+
+def test_pass_b_contains_only_textures():
+    assert PASS_B == ["textures"]
+
+
+def test_pass_c_order_vegetation_before_slopes_before_entities():
+    """Pass C 中 vegetation < slopes < entities（斜坡必须在植被和实体之间）。"""
+    assert PASS_C.index("vegetation") < PASS_C.index("slopes")
+    assert PASS_C.index("slopes") < PASS_C.index("entities")
+
+
+def test_pass_group_covers_all_pass_names():
+    """PASS_A + PASS_B + PASS_C 合并后等于 PASS_NAMES（无遗漏，无重复）。"""
+    combined = PASS_A + PASS_B + PASS_C
+    assert sorted(combined) == sorted(PASS_NAMES)
+    assert len(combined) == len(PASS_NAMES)
+
+
+def test_pass_progress_files_are_independent(tmp_path):
+    """不同 pass 的进度文件路径不同，互不干扰。"""
+    path_a = get_progress_file("A", str(tmp_path))
+    path_b = get_progress_file("B", str(tmp_path))
+    path_c = get_progress_file("C", str(tmp_path))
+    assert path_a != path_b
+    assert path_b != path_c
+    assert "A" in path_a
+    assert "B" in path_b
+    assert "C" in path_c

@@ -5,26 +5,28 @@ Y3 Terrain Evolution - MCP Batch Writer
 将 world_state.json + ecology_layer.json + civilization_layer.json
 批量写入 Y3 编辑器（通过 MCP HTTP 接口）。
 
-写入顺序（严格不可乱，基于 terrain-adjacency-rules.md）：
-  Pass 1: terrain_hill_lift_block        (hill_map，微调高度 < 0.1)
-  Pass 2: terrain_set_height_block       (cliff_map，悬崖整数高度)
-  Pass 3: terrain_set_crack_block        (crack_map，裂缝，terrain_height=-40)
-  Pass 4: terrain_set_deep_water_block
-  Pass 5: terrain_set_shallow_water_block
-  Pass 6: terrain_set_plain_water_block
-  Pass 7: terrain_cover_draw_block       (地形纹理，格点坐标)
-  Pass 8: terrain_set_road_block         (斜坡，必须在水体/纹理之后最后刷)
-  Pass 9: entity_create_block            (实体模型，世界坐标)
+写入顺序（严格不可乱，基于 y3-terrain-basics.md + terrain-adjacency-rules.md）：
+  Pass 1:  terrain_hill_lift_block        (hill_map，微调高度 < 0.1)
+  Pass 2:  terrain_set_height_block       (cliff_map，悬崖整数高度)
+  Pass 3:  terrain_set_crack_block        (crack_map，裂缝，terrain_height=-40)
+  Pass 4:  terrain_set_deep_water_block
+  Pass 5:  terrain_set_shallow_water_block
+  Pass 6:  terrain_set_plain_water_block
+  Pass 7:  terrain_cover_draw_block       (地形纹理，格点坐标)
+  Pass 8:  terrain_vegetation_draw_block  (植被贴片，非 3D 模型)
+  Pass 9:  terrain_set_road_block         (斜坡，必须在所有地形/纹理操作后最后刷)
+  Pass 10: entity_create_block            (实体模型，世界坐标)
 
 ⚠️ 坐标系说明（来源：y3-terrain-basics.md）：
-  - terrain API (Pass 1-8)：格点坐标，直接用 grid x, z
-  - entity_create (Pass 9)：世界坐标，公式：
+  - terrain API (Pass 1-9)：格点坐标，直接用 grid x, z
+  - entity_create (Pass 10)：世界坐标，公式：
       world_x = grid_x * 2 - (map_width - 1)
       world_z = grid_z * 2 - (map_height - 1)
 
-⚠️ 斜坡说明（来源：y3-terrain-basics.md + terrain-adjacency-rules.md）：
-  - 斜坡激活条件：相邻格高差 = 2（flat=1横向/flat=2纵向）
-  - 斜坡必须在所有地形/水体/纹理操作完成后最后刷
+⚠️ 斜坡说明（来源：y3-terrain-basics.md §斜坡体系）：
+  - 斜坡需主动写入（terrain_set_road_block），不依赖引擎自动生成
+  - 斜坡优先级最低，任何地形/水体/纹理操作均会覆盖已有斜坡，必须最后刷
+  - API 不需要传 flat 方向，引擎根据邻格高差自动判断
   - 道路 ≠ 斜坡，Y3 没有道路地形类型，道路通过实体摆件表现
 
 用法（单批循环模式）：
@@ -48,25 +50,50 @@ import urllib.error
 from pathlib import Path
 
 
-# Pass 顺序：斜坡在水体和纹理之后（terrain-adjacency-rules.md §5）
+# Pass 顺序：斜坡必须在所有地形/水体/纹理操作后最后刷（y3-terrain-basics.md §斜坡体系）
 PASS_NAMES = [
-    "hill_lift",      # Pass 1: terrain_hill_lift_block
-    "cliff_height",   # Pass 2: terrain_set_height_block（高度差=2处引擎自动生成斜坡）
-    "crack",          # Pass 3: terrain_set_crack_block
-    "deep_water",     # Pass 4: terrain_set_deep_water_block
-    "shallow_water",  # Pass 5: terrain_set_shallow_water_block
-    "plain_water",    # Pass 6: terrain_set_plain_water_block
-    "textures",       # Pass 7: terrain_cover_draw_block
-    "vegetation",     # Pass 8: terrain_vegetation_draw_block（植被贴片，非 3D 模型）
-    "entities",       # Pass 9: entity_create_block
-    # 斜坡不主动写（terrain-adjacency-rules.md §5.2）：
-    # 引擎在 cliff_height 写完后，自动在相邻高差=2处生成斜坡。
-    # slope_map 仅作为验证输出（terrain_summary），不参与 MCP 写入。
+    "hill_lift",      # Pass 1:  terrain_hill_lift_block
+    "cliff_height",   # Pass 2:  terrain_set_height_block
+    "crack",          # Pass 3:  terrain_set_crack_block
+    "deep_water",     # Pass 4:  terrain_set_deep_water_block
+    "shallow_water",  # Pass 5:  terrain_set_shallow_water_block
+    "plain_water",    # Pass 6:  terrain_set_plain_water_block
+    "textures",       # Pass 7:  terrain_cover_draw_block
+    "vegetation",     # Pass 8:  terrain_vegetation_draw_block（植被贴片，非 3D 模型）
+    "slopes",         # Pass 9:  terrain_set_road_block（斜坡，必须最后刷，不依赖引擎自动生成）
+    "entities",       # Pass 10: entity_create_block
 ]
 
 PROGRESS_FILE = "output/.mcp_progress.json"
 TILE_SIZE     = 100  # 每批格子数
 ENTITY_BATCH  = 50   # 每批实体数
+
+# ---------------------------------------------------------------------------
+# Pass A/B/C 分组（用于 --pass 参数分步写入）
+# ---------------------------------------------------------------------------
+PASS_A = [
+    "hill_lift",     # terrain_hill_lift_block
+    "cliff_height",  # terrain_set_height_block
+    "crack",         # terrain_set_crack_block
+    "deep_water",    # terrain_set_deep_water_block
+    "shallow_water", # terrain_set_shallow_water_block
+    "plain_water",   # terrain_set_plain_water_block
+]
+PASS_B = [
+    "textures",      # terrain_cover_draw_block
+]
+PASS_C = [
+    "vegetation",    # terrain_vegetation_draw_block
+    "slopes",        # terrain_set_road_block（必须在 vegetation 之后，entity 之前）
+    "entities",      # entity_create_block
+]
+PASS_GROUP = {"A": PASS_A, "B": PASS_B, "C": PASS_C}
+
+
+def get_progress_file(pass_letter: str, output_dir: str) -> str:
+    """每个 Pass 独立进度文件，--restart 只清当前 Pass 进度。"""
+    from pathlib import Path as _Path
+    return str(_Path(output_dir) / f".mcp_progress_{pass_letter}.json")
 
 
 # ---------------------------------------------------------------------------
@@ -276,9 +303,6 @@ def build_write_queue(ws, eco, civ, texture_profiles):
             elif wt == "plain":
                 passes["plain_water"].append(cell)
 
-            # slope 不主动写：引擎根据 cliff_height 写入后的高度差自动生成斜坡
-            # slope_map 已在 world_state.json 中保留，供 analyze_terrain 统计用
-
     # Pass 7: 纹理（格点坐标）
     passes["textures"] = build_texture_pass(ws, civ, texture_profiles)
 
@@ -296,9 +320,18 @@ def build_write_queue(ws, eco, civ, texture_profiles):
                 "density":         int(v.get("density", 80)),
             })
 
+    # Pass 9: 斜坡（格点坐标，terrain_set_road_block）
+    # slope_map != "none" 的格子主动写入，必须在所有地形/水体/纹理操作后执行
+    # API 不需要传 flat 方向，引擎自动根据邻格高差判断
+    # y=0 表示引擎自动读取当前地面高度；cliff_tex_id=0 使用默认悬崖材质
+    for y in range(H):
+        for x in range(W):
+            if str(slope_map[y, x]) != "none":
+                passes["slopes"].append({"x": int(x), "z": int(y), "y": 0})
+
     # Pass 10: 实体（world 坐标，entity_create_block）
     # 注意：道路通过实体摆件表现，不走 terrain_set_road_block
-    # （Y3 没有道路地形类型，terrain-adjacency-rules.md 道路体系）
+    # （Y3 没有道路地形类型，y3-terrain-basics.md §道路体系）
     entity_list = []
     if eco:
         for ent in eco.get("entities", []):
@@ -353,14 +386,16 @@ def build_write_queue(ws, eco, civ, texture_profiles):
 # 单批执行
 # ---------------------------------------------------------------------------
 
-def execute_single_batch(passes, progress, mcp_url, timeout, batch_size):
+def execute_single_batch(passes, progress, mcp_url, timeout, batch_size, pass_names=None):
+    if pass_names is None:
+        pass_names = PASS_NAMES
     current_pass_idx = progress["current_pass"]
     current_index    = progress["current_index"]
 
-    if current_pass_idx >= len(PASS_NAMES):
+    if current_pass_idx >= len(pass_names):
         return {"status": "all_done"}
 
-    pass_name = PASS_NAMES[current_pass_idx]
+    pass_name = pass_names[current_pass_idx]
     pass_data = passes[pass_name]
 
     if not pass_data:
@@ -372,8 +407,8 @@ def execute_single_batch(passes, progress, mcp_url, timeout, batch_size):
     if not chunk:
         progress["current_pass"] += 1
         progress["current_index"] = 0
-        total_done = sum(len(passes[n]) for n in PASS_NAMES[:current_pass_idx]) + current_index
-        total_all  = sum(len(passes[n]) for n in PASS_NAMES)
+        total_done = sum(len(passes[n]) for n in pass_names[:current_pass_idx]) + current_index
+        total_all  = sum(len(passes[n]) for n in pass_names)
         return {"status": "pass_complete", "pass": pass_name,
                 "progress": f"{total_done}/{total_all}"}
 
@@ -394,6 +429,8 @@ def execute_single_batch(passes, progress, mcp_url, timeout, batch_size):
             call_mcp("terrain_cover_draw_block",         {"cells": chunk}, mcp_url, timeout)
         elif pass_name == "vegetation":
             call_mcp("terrain_vegetation_draw_block",    {"cells": chunk}, mcp_url, timeout)
+        elif pass_name == "slopes":
+            call_mcp("terrain_set_road_block", {"cells": chunk, "cliff_tex_id": 0}, mcp_url, timeout)
         elif pass_name == "entities":
             for i in range(0, len(chunk), ENTITY_BATCH):
                 call_mcp("entity_create_block", {"entities_info": chunk[i:i + ENTITY_BATCH]},
@@ -404,13 +441,13 @@ def execute_single_batch(passes, progress, mcp_url, timeout, batch_size):
         sys.exit(1)
 
     progress["current_index"] += batch_size
-    total_done = sum(len(passes[n]) for n in PASS_NAMES[:current_pass_idx]) + progress["current_index"]
-    total_all  = sum(len(passes[n]) for n in PASS_NAMES)
+    total_done = sum(len(passes[n]) for n in pass_names[:current_pass_idx]) + progress["current_index"]
+    total_all  = sum(len(passes[n]) for n in pass_names)
 
     if progress["current_index"] >= len(pass_data):
         progress["current_pass"] += 1
         progress["current_index"] = 0
-        status = "pass_complete" if progress["current_pass"] < len(PASS_NAMES) else "all_done"
+        status = "pass_complete" if progress["current_pass"] < len(pass_names) else "all_done"
     else:
         status = "in_progress"
 
@@ -433,7 +470,19 @@ def main():
     parser.add_argument("--url",              default="http://localhost:8765")
     parser.add_argument("--timeout",          type=int, default=300)
     parser.add_argument("--progress-file",    default=PROGRESS_FILE)
+    parser.add_argument("--pass",             dest="pass_letter", choices=["A", "B", "C"],
+                        default=None,
+                        help="分步写入模式：A=地形骨架, B=纹理, C=装饰物+斜坡+实体")
     args = parser.parse_args()
+
+    # 根据 --pass 参数确定本次执行的 pass 范围和进度文件
+    if args.pass_letter:
+        active_passes = PASS_GROUP[args.pass_letter]
+        output_dir = str(Path(args.world_state).parent)
+        progress_file = get_progress_file(args.pass_letter, output_dir)
+    else:
+        active_passes = PASS_NAMES
+        progress_file = args.progress_file
 
     with open(args.world_state, "r", encoding="utf-8") as f:
         ws = json.load(f)
@@ -458,29 +507,31 @@ def main():
 
     print("[mcp_writer] 构建写入队列...")
     passes = build_write_queue(ws, eco, civ, texture_profiles)
-    total  = sum(len(passes[n]) for n in PASS_NAMES)
+    total  = sum(len(passes[n]) for n in active_passes)
 
     if args.dry_run:
-        print("[mcp_writer] Dry Run 统计:")
-        for n in PASS_NAMES:
-            print(f"  Pass {PASS_NAMES.index(n)+1} {n}: {len(passes[n])} 项")
+        label = f" (Pass {args.pass_letter})" if args.pass_letter else ""
+        print(f"[mcp_writer] Dry Run 统计{label}:")
+        for n in active_passes:
+            print(f"  {n}: {len(passes[n])} 项")
         print(f"  总计: {total} 项")
         print(json.dumps({"BATCH_RESULT": {"status": "dry_run", "total": total}}))
         return
 
-    if args.restart and Path(args.progress_file).exists():
-        Path(args.progress_file).unlink()
+    if args.restart and Path(progress_file).exists():
+        Path(progress_file).unlink()
 
-    progress    = load_progress(args.progress_file)
+    progress    = load_progress(progress_file)
     batch_count = args.single_batch if args.single_batch else 9999
 
     for _ in range(batch_count):
-        result = execute_single_batch(passes, progress, args.url, args.timeout, TILE_SIZE)
-        save_progress(progress, args.progress_file)
+        result = execute_single_batch(passes, progress, args.url, args.timeout, TILE_SIZE,
+                                      pass_names=active_passes)
+        save_progress(progress, progress_file)
         print(f"BATCH_RESULT: {json.dumps({'BATCH_RESULT': result})}")
         if result["status"] in ("all_done", "error"):
             if result["status"] == "all_done":
-                Path(args.progress_file).unlink(missing_ok=True)
+                Path(progress_file).unlink(missing_ok=True)
             break
 
 
