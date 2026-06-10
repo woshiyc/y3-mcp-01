@@ -46,6 +46,7 @@
     "total_settlements": 3,
     "total_road_segments": 4,
     "unconnected_settlements": 0,
+    "road_cells": [[12, 34], [12, 35]],
     "combat_zones": [
       {
         "type": "monster_camp",
@@ -143,14 +144,56 @@ Y3 中用坡度和高差数据作为视线通透性的代理指标。
 | 聚落类型单一（只有同一种 type） | -20 |
 | landmarks 列表为空（无任何地标或探索点） | -30 |
 
+### traversability（地形可通行性）0-100
+
+评估 A* 道路是否避开了高代价地形（悬崖边界、深水区），以及聚落是否可从任意方向进入。
+数据来源：roads[].passable、roads[].crosses_deep_water、unconnected_settlements。
+
+| 条件 | 分值 |
+|------|------|
+| 所有道路 passable = true（无不可通行道路段） | +35 |
+| 所有道路 crosses_deep_water = false | +25 |
+| unconnected_settlements = 0 | +25 |
+| 存在不可通行道路（passable = false） | -40 |
+| unconnected_settlements ≥ 1 | -20/个（上限 -40） |
+
+### settlement_connectivity（聚落连通质量）0-100
+
+评估聚落网络的整体连通性，是否形成有效交通体系而非孤岛。
+数据来源：total_settlements、total_road_segments、unconnected_settlements、roads[].length。
+
+| 条件 | 分值 |
+|------|------|
+| total_road_segments ≥ total_settlements - 1（形成最小生成树） | +30 |
+| 所有道路平均 length < 100（避免跨越整个地图的超长路段） | +25 |
+| unconnected_settlements = 0 | +25 |
+| 聚落数量 ≥ 3 且互联（网络有效） | +20 |
+| total_road_segments = 0（无任何道路） | -50 |
+| 存在 length > 200 的路段（地图折叠/绕行严重） | -15 |
+
+### path_ratio（道路-聚落比）0-100
+
+评估道路密度是否与聚落规模匹配，避免过疏（孤立聚落）或过密（无意义路网）。
+path_ratio = total_road_segments / max(total_settlements, 1)
+
+| 条件 | 分值 |
+|------|------|
+| path_ratio 在 0.8–2.5 之间（路网与聚落数量匹配） | +40 |
+| path_ratio 在 0.5–0.8 之间（略稀疏但可接受） | +20 |
+| path_ratio < 0.5（路网严重不足，聚落孤立） | -30 |
+| path_ratio > 3.0（路网过密，冗余路段多） | -20 |
+
 ### overall 加权公式
 
 ```
-overall = settlement_terrain_fit * 0.25
-        + road_design * 0.25
-        + gameplay_space * 0.25
-        + visual_readability * 0.15
+overall = settlement_terrain_fit * 0.20
+        + road_design * 0.20
+        + gameplay_space * 0.20
+        + visual_readability * 0.10
         + landmark_exploration * 0.10
+        + traversability * 0.10
+        + settlement_connectivity * 0.05
+        + path_ratio * 0.05
 ```
 
 ---
@@ -174,6 +217,9 @@ overall = settlement_terrain_fit * 0.25
     "gameplay_space": 0-100,
     "visual_readability": 0-100,
     "landmark_exploration": 0-100,
+    "traversability": 0-100,
+    "settlement_connectivity": 0-100,
+    "path_ratio": 0-100,
     "overall": 0-100
   },
   "ready_to_advance": true,

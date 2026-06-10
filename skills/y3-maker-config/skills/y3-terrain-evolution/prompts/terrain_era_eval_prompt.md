@@ -45,6 +45,10 @@
     "land_regions": 1,
     "isolated_islands": 0
   },
+  "mountain_chain_count": 3,
+  "mountain_chain_avg_length": 28.5,
+  "river_validity_ratio": 0.87,
+  "coastal_avg_width": 4.2,
   "issues": [...]
 }
 ```
@@ -123,14 +127,51 @@ Y3 中好的边界方式：高山阻挡、深海阻挡、悬崖断裂、裂隙�
 | 地图 biome 以 plain 为主（plain > 60%），四周开阔无边界感 | -40 |
 | 完全无 mountain 且无深水（边界无任何自然屏障） | -30 |
 
+### mountain_linearity（山脉线性连贯度）0-100
+
+评估山脉是否形成连贯链条，避免碎片化"土堆"分布。数据来源：`mountain_chain_count` 和 `mountain_chain_avg_length`。
+
+| 条件 | 分值 |
+|------|------|
+| mountain_chain_count ≥ 2 且 mountain_chain_avg_length ≥ 20（有明显连贯山脉） | +40 |
+| mountain_chain_avg_length 在 10–20 之间（有一定连贯性） | +20 |
+| mountain_chain_count ≥ 1（至少一条山脉） | +20 |
+| mountain_chain_count = 0（无任何山脉链，全是碎块） | -40 |
+| mountain_chain_avg_length < 5（山脉极度碎片化） | -20 |
+
+### river_validity（河流合理性）0-100
+
+评估浅水格是否顺应地形向低处流动（river_validity_ratio = 下流/总河流格数）。
+
+| 条件 | 分值 |
+|------|------|
+| river_validity_ratio ≥ 0.85（绝大多数河流方向合理） | +40 |
+| river_validity_ratio 在 0.65–0.85 之间 | +20 |
+| river_validity_ratio < 0.5（超过一半河流违反重力，水文混乱） | -30 |
+| 无浅水格（river_validity_ratio = 1.0 但 shallow_water_pct = 0） | +0（中性） |
+
+### water_bank_transition（水岸过渡带）0-100
+
+评估水体边缘是否有足够的 coastal 生物群落作为过渡带，避免水陆骤变。数据来源：`coastal_avg_width`。
+
+| 条件 | 分值 |
+|------|------|
+| coastal_avg_width ≥ 4.0（过渡带宽阔自然） | +40 |
+| coastal_avg_width 在 2.0–4.0 之间 | +20 |
+| coastal_avg_width < 1.0（几乎无过渡带，水陆骤变） | -30 |
+| biome_distribution["coastal"] = 0%（无海岸生物群落） | -20 |
+
 ### overall 加权公式
 
 ```
-overall = composition * 0.25
-        + terrain_rhythm * 0.25
-        + water_system * 0.20
-        + connectivity * 0.20
+overall = composition * 0.20
+        + terrain_rhythm * 0.20
+        + water_system * 0.15
+        + connectivity * 0.15
         + boundary_design * 0.10
+        + mountain_linearity * 0.10
+        + river_validity * 0.05
+        + water_bank_transition * 0.05
 ```
 
 ---
@@ -154,6 +195,9 @@ overall = composition * 0.25
     "water_system": 0-100,
     "connectivity": 0-100,
     "boundary_design": 0-100,
+    "mountain_linearity": 0-100,
+    "river_validity": 0-100,
+    "water_bank_transition": 0-100,
     "overall": 0-100
   },
   "ready_to_advance": true,
