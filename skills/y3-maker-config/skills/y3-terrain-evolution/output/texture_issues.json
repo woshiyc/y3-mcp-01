@@ -1,0 +1,20 @@
+[
+  {
+    "era": "terrain",
+    "iteration": 5,
+    "texture_overall": 79.3,
+    "passed": true,
+    "issues": [
+      "generate_terrain.py 未传入 --texture-profiles，texture_plan 字段缺失",
+      "道路纹理 road_dirt 在文明时代才激活，当前无法验证"
+    ],
+    "texture_patch_plan": null
+  },
+  {
+    "era": "civilization",
+    "texture_overall": "skipped",
+    "passed": true,
+    "reason": "enable_special_textures 未设为 true，y3_decal_id 未填写，跳过特殊纹理评估",
+    "notes": "4 个 settlement_footprint 区域已标记，使用 y3_texture_id=143（踩踏草地）"
+  }
+]
