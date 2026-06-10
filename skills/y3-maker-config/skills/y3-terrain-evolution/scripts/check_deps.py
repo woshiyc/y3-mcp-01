@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""检查并自动安装依赖（仅 numpy，其余均为标准库）。"""
+"""检查并自动安装依赖（numpy + anthropic，其余均为标准库）。"""
 import sys
 import json
 import subprocess
 
-REQUIRED = {"numpy": "numpy"}
+REQUIRED = {
+    "numpy":     "numpy",
+    "anthropic": "anthropic",
+}
 
 missing = []
 for pkg, import_name in REQUIRED.items():

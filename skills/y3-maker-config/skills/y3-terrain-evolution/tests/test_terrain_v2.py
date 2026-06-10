@@ -282,3 +282,72 @@ def test_preview_server_screenshot_roundtrip(tmp_path):
     _post("http://127.0.0.1:19879/screenshot", {"image_b64": "abc123=="})
     _, after = _get("http://127.0.0.1:19879/last_screenshot")
     assert after["image_b64"] == "abc123=="
+
+
+# ---------------------------------------------------------------------------
+# Task 7: visual_eval.py
+# ---------------------------------------------------------------------------
+import importlib
+from unittest.mock import MagicMock, patch
+
+import visual_eval as ve
+
+
+def test_parse_score_extracts_json():
+    """_parse_score 能从混合文本中提取 JSON 评分块。"""
+    text = '分析结果如下：\n{"score": 75, "issues": ["水体偏少"], "suggestions": ["增加湿地"]}\n请参考。'
+    result = ve._parse_score(text)
+    assert result["score"] == 75
+    assert result["issues"] == ["水体偏少"]
+
+
+def test_parse_score_fallback_on_invalid():
+    """_parse_score 在无法解析 JSON 时返回 raw 字段和 score=0。"""
+    result = ve._parse_score("这是一段没有 JSON 的文本")
+    assert result["score"] == 0
+    assert "raw" in result
+
+
+def test_visual_eval_skips_when_over_max(tmp_path):
+    """当 iteration > max_iterations 时输出 skipped 状态，不调用 Claude API。"""
+    out = tmp_path / "visual_eval_ecology.json"
+    with patch.object(ve, "_call_claude_vision", side_effect=AssertionError("不应被调用")):
+        import sys
+        sys.argv = [
+            "visual_eval.py",
+            "--preview-url", "http://127.0.0.1:9999",
+            "--output", str(out),
+            "--iteration", "4",
+            "--max-iterations", "3",
+            "--api-key", "fake-key",
+        ]
+        ve.main()
+    result = json.loads(out.read_text(encoding="utf-8"))
+    assert result["status"] == "skipped"
+
+
+def test_visual_eval_calls_claude_and_writes_output(tmp_path):
+    """正常流程：fetch_screenshot + _call_claude_vision → 写入评分 JSON。"""
+    out = tmp_path / "visual_eval_ecology.json"
+    fake_response = '{"score": 80, "issues": [], "suggestions": ["增加山脉"]}'
+
+    with (
+        patch.object(ve, "fetch_screenshot", return_value="iVBORw0KGgo="),
+        patch.object(ve, "_call_claude_vision", return_value=fake_response),
+    ):
+        sys.argv = [
+            "visual_eval.py",
+            "--preview-url", "http://127.0.0.1:9999",
+            "--output", str(out),
+            "--iteration", "1",
+            "--max-iterations", "3",
+            "--api-key", "fake-key",
+        ]
+        import os
+        os.environ["ANTHROPIC_API_KEY"] = "fake-key"
+        ve.main()
+
+    result = json.loads(out.read_text(encoding="utf-8"))
+    assert result["status"] == "ok"
+    assert result["score"] == 80
+    assert result["suggestions"] == ["增加山脉"]
