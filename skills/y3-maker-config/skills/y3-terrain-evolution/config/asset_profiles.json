@@ -1,0 +1,485 @@
+{
+  "_comment": [
+    "Y3 地形演化 - 资产配置模板（ARPG / 128×128 地图，1单位=1cm）",
+    "填写说明：",
+    "  id             : profile 唯一标识符（脚本和 patch_plan 内部引用，不可重复）",
+    "  model_id       : Y3 编辑器中的模型资产 ID（必填，填完后才能 MCP 写入）",
+    "  name           : 模型名称（自定义备注）",
+    "  style          : 美术风格，例如 '中式古风' / '奇幻写实' / '卡通'",
+    "  description    : 模型描述，例如 '枯枝老松，树冠展开，有苔藓感'",
+    "  native_size_units : 模型原始尺寸 [width_cm, height_cm]，从 Y3 编辑器量取",
+    "  target_size_units : 期望显示尺寸 [width_cm, height_cm]，ARPG 场景推荐值",
+    "  scale_default  : [x, y, z]，= target / native。native 未知时填 [1.0,1.0,1.0]",
+    "  scale_variance : 随机缩放幅度，0.15 = ±15%，避免同类模型单调",
+    "  footprint_cells: 占地格数（1格=50cm），= 模型最大直径cm ÷ 50，Poisson间距用",
+    "  placement.forbidden_biomes  : 禁止放置的群系",
+    "  placement.prefer_on_slope   : true=优先放在斜坡格（悬崖坠石类）",
+    "  placement.max_cliff_level   : 允许放置的最大悬崖层级（0=仅平地，null=无限制）",
+    "  placement.max_density_override: 覆盖该群系默认密度（0.0-1.0），null=用biome默认值",
+    "",
+    "群系：mountain / cliff / hill / forest / plain / wetland / coastal / water",
+    "地图：128×128格，每格200cm，总 25600×25600cm（256m×256m）",
+    "角色参考：身宽120cm ≈ footprint 2-3格"
+  ],
+
+  "profiles": [
+
+    {
+      "_section": "=== 植被 / VEGETATION (entity_create, Poisson采样) ===",
+      "id":              "small_shrub",
+      "system":          "entity_create",
+      "category":        "vegetation",
+      "model_id":        "",
+      "name":            "小灌木",
+      "style":           "",
+      "description":     "低矮灌木，丛生状，适合点缀平地和森林边缘",
+      "native_size_units": null,
+      "target_size_units": [80, 100],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.2,
+      "footprint_cells": 2,
+      "placement": {
+        "forbidden_biomes":       ["water", "cliff"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        1,
+        "max_density_override":   null
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "medium_tree",
+      "system":          "entity_create",
+      "category":        "vegetation",
+      "model_id":        "",
+      "name":            "中型树",
+      "style":           "",
+      "description":     "标准乔木，适合森林和丘陵主体植被",
+      "native_size_units": null,
+      "target_size_units": [280, 500],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.15,
+      "footprint_cells": 6,
+      "placement": {
+        "forbidden_biomes":       ["water", "cliff", "mountain", "coastal"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        0,
+        "max_density_override":   null
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "large_tree",
+      "system":          "entity_create",
+      "category":        "vegetation",
+      "model_id":        "",
+      "name":            "大型树",
+      "style":           "",
+      "description":     "高大乔木，树冠宽展，作为森林密集区主力",
+      "native_size_units": null,
+      "target_size_units": [480, 900],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.1,
+      "footprint_cells": 10,
+      "placement": {
+        "forbidden_biomes":       ["water", "cliff", "mountain", "plain", "coastal"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        0,
+        "max_density_override":   0.6
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "landmark_ancient_tree",
+      "system":          "entity_create",
+      "category":        "vegetation",
+      "model_id":        "",
+      "name":            "地标古树",
+      "style":           "",
+      "description":     "超大古树，作为区域地标，数量极少",
+      "native_size_units": null,
+      "target_size_units": [800, 1600],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.05,
+      "footprint_cells": 16,
+      "placement": {
+        "forbidden_biomes":       ["water", "cliff", "mountain", "coastal", "wetland"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        0,
+        "max_density_override":   0.05
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "mountain_sparse_veg",
+      "system":          "entity_create",
+      "category":        "vegetation",
+      "model_id":        "",
+      "name":            "山地稀疏植被",
+      "style":           "",
+      "description":     "耐寒矮木或枯枝，适合山地、悬崖边零星点缀",
+      "native_size_units": null,
+      "target_size_units": [120, 200],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.25,
+      "footprint_cells": 3,
+      "placement": {
+        "forbidden_biomes":       ["water", "plain", "forest", "wetland", "coastal"],
+        "prefer_on_slope":        true,
+        "max_cliff_level":        3,
+        "max_density_override":   null
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "wetland_veg",
+      "system":          "entity_create",
+      "category":        "vegetation",
+      "model_id":        "",
+      "name":            "湿地植被",
+      "style":           "",
+      "description":     "水边阔叶植物或蒲草，适合湿地和海岸过渡带",
+      "native_size_units": null,
+      "target_size_units": [150, 300],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.2,
+      "footprint_cells": 3,
+      "placement": {
+        "forbidden_biomes":       ["water", "mountain", "cliff", "plain", "forest"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        0,
+        "max_density_override":   null
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "_section": "=== 装饰物 / DECORATION (entity_create, Poisson采样) ===",
+      "id":              "small_rubble",
+      "system":          "entity_create",
+      "category":        "decoration",
+      "model_id":        "",
+      "name":            "碎石小石块",
+      "style":           "",
+      "description":     "散落碎石，山脚或路边点缀",
+      "native_size_units": null,
+      "target_size_units": [60, 40],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.3,
+      "footprint_cells": 1,
+      "placement": {
+        "forbidden_biomes":       ["water", "plain", "wetland"],
+        "prefer_on_slope":        true,
+        "max_cliff_level":        5,
+        "max_density_override":   null
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "medium_rock",
+      "system":          "entity_create",
+      "category":        "decoration",
+      "model_id":        "",
+      "name":            "中型岩石",
+      "style":           "",
+      "description":     "单块或两三块组合岩石，山地丘陵装饰主力",
+      "native_size_units": null,
+      "target_size_units": [200, 180],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.2,
+      "footprint_cells": 4,
+      "placement": {
+        "forbidden_biomes":       ["water", "wetland", "coastal"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        4,
+        "max_density_override":   null
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "large_rock_cluster",
+      "system":          "entity_create",
+      "category":        "decoration",
+      "model_id":        "",
+      "name":            "大型岩石组合",
+      "style":           "",
+      "description":     "多块岩石堆叠，悬崖边地标或山体装饰",
+      "native_size_units": null,
+      "target_size_units": [420, 380],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.1,
+      "footprint_cells": 8,
+      "placement": {
+        "forbidden_biomes":       ["water", "plain", "wetland", "coastal"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        5,
+        "max_density_override":   0.3
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "cliff_debris",
+      "system":          "entity_create",
+      "category":        "decoration",
+      "model_id":        "",
+      "name":            "悬崖坠石",
+      "style":           "",
+      "description":     "悬崖下特有的坡积碎石堆，强化地形感",
+      "native_size_units": null,
+      "target_size_units": [160, 80],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.25,
+      "footprint_cells": 3,
+      "placement": {
+        "forbidden_biomes":       ["water", "plain", "forest", "wetland"],
+        "prefer_on_slope":        true,
+        "max_cliff_level":        5,
+        "max_density_override":   null
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "coastal_driftwood",
+      "system":          "entity_create",
+      "category":        "decoration",
+      "model_id":        "",
+      "name":            "海岸枯木",
+      "style":           "",
+      "description":     "冲上岸的浮木，海岸和湿地边缘",
+      "native_size_units": null,
+      "target_size_units": [250, 60],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.2,
+      "footprint_cells": 3,
+      "placement": {
+        "forbidden_biomes":       ["water", "mountain", "cliff", "forest"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        0,
+        "max_density_override":   null
+      },
+      "mcp": {
+        "yaw_random":      true,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "id":              "ruin_pillar",
+      "system":          "entity_create",
+      "category":        "decoration",
+      "model_id":        "",
+      "name":            "遗迹残柱",
+      "style":           "",
+      "description":     "断裂石柱或废弃建筑残件，平地废墟感装饰",
+      "native_size_units": null,
+      "target_size_units": [120, 300],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.1,
+      "footprint_cells": 3,
+      "placement": {
+        "forbidden_biomes":       ["water", "mountain", "cliff", "wetland", "coastal"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        0,
+        "max_density_override":   0.1
+      },
+      "mcp": {
+        "yaw_random":      false,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "_section": "=== 建筑 / BUILDING (entity_create, 生态层平地探索点) ===",
+      "id":              "ruined_house",
+      "system":          "entity_create",
+      "category":        "building",
+      "model_id":        "",
+      "name":            "废弃小屋",
+      "style":           "",
+      "description":     "破旧木屋或石屋，平地废弃聚落感，探索点",
+      "native_size_units": null,
+      "target_size_units": [400, 360],
+      "scale_default":   [1.0, 1.0, 1.0],
+      "scale_variance":  0.0,
+      "footprint_cells": 8,
+      "placement": {
+        "forbidden_biomes":       ["water", "mountain", "cliff", "wetland", "coastal"],
+        "prefer_on_slope":        false,
+        "max_cliff_level":        0,
+        "max_density_override":   0.03
+      },
+      "mcp": {
+        "yaw_random":      false,
+        "stick_to_ground": true,
+        "entity_type":     16777216
+      }
+    },
+
+    {
+      "_section": "=== 地表植被贴片 / VEGETATION_DRAW (terrain_vegetation_draw_block, 面积铺设) ===",
+      "id":              "vd_grass",
+      "system":          "vegetation_draw",
+      "model_id":        "",
+      "name":            "草地",
+      "style":           "",
+      "description":     "普通草地面片，平地和丘陵底铺",
+      "vegetation_type": null,
+      "density":         80,
+      "applies_to_biomes": ["plain", "hill"]
+    },
+
+    {
+      "id":              "vd_wildflower",
+      "system":          "vegetation_draw",
+      "model_id":        "",
+      "name":            "野花",
+      "style":           "",
+      "description":     "彩色野花面片，平地点缀，密度较低",
+      "vegetation_type": null,
+      "density":         40,
+      "applies_to_biomes": ["plain"]
+    },
+
+    {
+      "id":              "vd_wetland_reed",
+      "system":          "vegetation_draw",
+      "model_id":        "",
+      "name":            "湿地芦苇",
+      "style":           "",
+      "description":     "芦苇/水草面片，湿地和海岸底铺",
+      "vegetation_type": null,
+      "density":         70,
+      "applies_to_biomes": ["wetland", "coastal"]
+    },
+
+    {
+      "id":              "vd_forest_undergrowth",
+      "system":          "vegetation_draw",
+      "model_id":        "",
+      "name":            "森林地被",
+      "style":           "",
+      "description":     "蕨类或苔藓面片，森林地面底铺",
+      "vegetation_type": null,
+      "density":         60,
+      "applies_to_biomes": ["forest"]
+    }
+
+  ],
+
+  "buildings": [
+    {
+      "id":               "civ_hamlet",
+      "settlement_type":  "hamlet",
+      "model_id":         "",
+      "name":             "荒野营地",
+      "style":            "",
+      "description":      "几顶帐篷或简陋木架，hamlet级聚落核心",
+      "native_size_units": null,
+      "target_size_units": [400, 300]
+    },
+    {
+      "id":               "civ_village",
+      "settlement_type":  "village",
+      "model_id":         "",
+      "name":             "村庄中心建筑",
+      "style":            "",
+      "description":      "村长屋或小市场，village级聚落核心",
+      "native_size_units": null,
+      "target_size_units": [600, 500]
+    },
+    {
+      "id":               "civ_town",
+      "settlement_type":  "town",
+      "model_id":         "",
+      "name":             "城镇主楼",
+      "style":            "",
+      "description":      "城镇核心建筑，有旗帜装饰",
+      "native_size_units": null,
+      "target_size_units": [1000, 800]
+    },
+    {
+      "id":               "civ_fortress",
+      "settlement_type":  "fortress",
+      "model_id":         "",
+      "name":             "要塞城堡",
+      "style":            "",
+      "description":      "坚固石造要塞，有塔楼",
+      "native_size_units": null,
+      "target_size_units": [1400, 1200]
+    }
+  ],
+
+  "decorations": [
+    {
+      "id":               "road_tile",
+      "category":         "road",
+      "model_id":         "",
+      "name":             "道路瓦片",
+      "style":            "",
+      "description":      "200cm×200cm路面方块，与地形格等大，A*路径逐格密铺",
+      "native_size_units": null,
+      "target_size_units": [200, 200]
+    }
+  ],
+
+  "_size_reference": {
+    "_note":                  "ARPG尺寸参考（1单位=1cm）",
+    "character_footprint_cm": 120,
+    "terrain_cell_cm":        200,
+    "footprint_cell_cm":      50,
+    "map_size_cells":         "128×128",
+    "map_size_cm":            "25600×25600",
+    "map_size_m":             "256m×256m",
+    "scale_formula":          "scale_default = target_size_units / native_size_units"
+  }
+}

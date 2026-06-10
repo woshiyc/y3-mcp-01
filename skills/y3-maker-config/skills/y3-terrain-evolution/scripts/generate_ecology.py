@@ -58,37 +58,76 @@ def poisson_sample(eligible_cells, min_dist, max_samples, rng):
     return samples
 
 
-def select_model_for_biome(biome, profiles, rng):
-    """从 asset_profiles 中为该群系选择合适模型。"""
-    if not profiles:
+def select_model_for_cell(biome, cy, cx, cliff_map, slope_map,
+                          entity_profiles, profile_counts, n_cells, rng):
+    """
+    为单个格子选择兼容的模型，考虑地形适配约束：
+    - max_cliff_level：格子悬崖层级不超过模型上限
+    - prefer_on_slope：斜坡格子优先选此类模型
+    - max_density_override：该模型在本群系的放置比例上限
+    """
+    if not entity_profiles:
         return None
-    affinity = BIOME_CATEGORY_AFFINITY.get(biome, [])
+
+    affinity    = BIOME_CATEGORY_AFFINITY.get(biome, [])
+    cliff_level = int(cliff_map[cy, cx])
+    on_slope    = str(slope_map[cy, cx]) != "none"
+
+    def terrain_ok(p):
+        pl  = p.get("placement", {})
+        if biome in pl.get("forbidden_biomes", []):
+            return False
+        mcl = pl.get("max_cliff_level")
+        if mcl is not None and cliff_level > mcl:
+            return False
+        # max_density_override：限制该模型在本群系的放置数量
+        override = pl.get("max_density_override")
+        if override is not None:
+            pid   = p.get("id", p.get("name", ""))
+            limit = max(1, int(n_cells * override))
+            if profile_counts.get(pid, 0) >= limit:
+                return False
+        return True
+
     candidates = [
-        p for p in profiles
-        if p.get("category") in affinity
-        and biome not in p.get("placement", {}).get("forbidden_biomes", [])
+        p for p in entity_profiles
+        if p.get("category") in affinity and terrain_ok(p)
     ]
     if not candidates:
-        candidates = [p for p in profiles if p.get("category") in ("vegetation", "decoration")]
+        candidates = [
+            p for p in entity_profiles
+            if p.get("category") in ("vegetation", "decoration") and terrain_ok(p)
+        ]
     if not candidates:
         return None
+
+    # 斜坡格子：prefer_on_slope 模型权重加倍
+    if on_slope:
+        slope_pref = [p for p in candidates
+                      if p.get("placement", {}).get("prefer_on_slope")]
+        if slope_pref:
+            candidates = slope_pref * 2 + [p for p in candidates
+                                            if not p.get("placement", {}).get("prefer_on_slope")]
+
     return candidates[rng.randint(len(candidates))]
 
 
 def generate_ecology(ws, profiles, seed):
     H, W = ws["height"], ws["width"]
-    biome_map = np.array(ws["biome_map"], dtype=object)
-    water_map = np.array(ws["water_map"], dtype=object)
+    biome_map  = np.array(ws["biome_map"],  dtype=object)
+    water_map  = np.array(ws["water_map"],  dtype=object)
+    cliff_map  = np.array(ws.get("cliff_map",  [[0]*W]*H), dtype=np.int32)
+    slope_map  = np.array(ws.get("slope_map",  [["none"]*W]*H), dtype=object)
     rng = np.random.RandomState(seed + 500)
 
     # 按系统类型分离 profiles
     # system="entity_create"（默认）：3D 模型，用 entity_create_block，按 footprint_cells 间距 Poisson 采样
     # system="vegetation_draw"：地表贴片（草/花/芦苇），用 terrain_vegetation_draw_block，区域整体铺设
-    entity_profiles = [p for p in profiles if p.get("system", "entity_create") == "entity_create"]
+    entity_profiles  = [p for p in profiles if p.get("system", "entity_create") == "entity_create"]
     veg_draw_profiles = [p for p in profiles if p.get("system") == "vegetation_draw"]
 
-    entities   = []
-    vegetation = []   # terrain_vegetation_draw_block 所需格子列表
+    entities    = []
+    vegetation  = []   # terrain_vegetation_draw_block 所需格子列表
     by_category = defaultdict(int)
     biome_coverage = {}
     issues = []
@@ -115,35 +154,48 @@ def generate_ecology(ws, profiles, seed):
         # 示例：树冠直径 3m → 300cm ÷ 50 = 6格；岩石直径 1m → 2格
         # ------------------------------------------------------------------
         affinity = BIOME_CATEGORY_AFFINITY.get(biome, [])
-        candidates = [
+        biome_candidates = [
             p for p in entity_profiles
             if p.get("category") in affinity
             and biome not in p.get("placement", {}).get("forbidden_biomes", [])
         ]
-        if not candidates:
-            candidates = [p for p in entity_profiles
-                          if p.get("category") in ("vegetation", "decoration")]
+        if not biome_candidates:
+            biome_candidates = [p for p in entity_profiles
+                                 if p.get("category") in ("vegetation", "decoration")]
 
-        max_footprint = max((p.get("footprint_cells", 2) for p in candidates), default=2)
+        max_footprint = max((p.get("footprint_cells", 2) for p in biome_candidates), default=2)
         max_veg       = max(1, int(n_cells * veg_density))
         veg_samples   = poisson_sample(biome_cells, max_footprint, max_veg, rng)
 
+        # 本群系内各 profile 的已放置计数（用于 max_density_override）
+        profile_counts: dict = {}
+
         for sy, sx in veg_samples:
-            model = select_model_for_biome(biome, entity_profiles, rng)
+            model = select_model_for_cell(
+                biome, sy, sx, cliff_map, slope_map,
+                entity_profiles, profile_counts, n_cells, rng
+            )
             if model is None:
                 continue
+
+            pid = model.get("id", model.get("name", ""))
+            profile_counts[pid] = profile_counts.get(pid, 0) + 1
+
             mcp   = model.get("mcp", {})
-            scale = mcp.get("scale_default", [1.0, 1.0, 1.0])
-            var   = mcp.get("scale_variance", 0.15)
+            scale = model.get("scale_default", mcp.get("scale_default", [1.0, 1.0, 1.0]))
+            var   = model.get("scale_variance", mcp.get("scale_variance", 0.15))
             s     = [round(v * (1 + rng.uniform(-var, var)), 3) for v in scale]
             yaw   = int(rng.uniform(0, 360)) if mcp.get("yaw_random", True) else 0
 
             entities.append({
                 "layer":           "ecology",
+                "profile_id":      pid,
                 "category":        model.get("category", "vegetation"),
                 "model_id":        model.get("model_id", ""),
                 "name":            model.get("name", ""),
                 "biome":           biome,
+                "on_slope":        bool(str(slope_map[sy, sx]) != "none"),
+                "cliff_level":     int(cliff_map[sy, sx]),
                 "grid_y":          sy,
                 "grid_x":          sx,
                 "yaw":             yaw,
