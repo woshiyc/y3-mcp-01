@@ -65,6 +65,99 @@ def generate_fbm(width, height, seed, octaves=6, base_scale=8):
     return result
 
 
+# ---------------------------------------------------------------------------
+# Voronoi Macro Layout
+# ---------------------------------------------------------------------------
+
+_THEME_CONFIGS = {
+    "forest_valley": {"mountain_weight": 0.8, "center_bias": -0.4, "water_weight": 0.3},
+    "lake_plain":    {"mountain_weight": 0.2, "center_bias":  0.0, "water_weight": 0.6},
+    "mountain_village": {"mountain_weight": 0.9, "center_bias": 0.1, "water_weight": 0.2},
+    "swamp_ruins":   {"mountain_weight": 0.1, "center_bias": -0.3, "water_weight": 0.7},
+    "arctic_peak":   {"mountain_weight": 1.0, "center_bias":  0.2, "water_weight": 0.15},
+}
+
+
+def generate_voronoi_layout(theme: str, seed: int, W: int, H: int) -> np.ndarray:
+    """Voronoi 宏观布局 bias map，值域 [-1, 1]。正值抬高，负值降低。"""
+    cfg = _THEME_CONFIGS.get(theme, _THEME_CONFIGS["forest_valley"])
+    rng = np.random.RandomState(seed + 1000)
+
+    n_mountain = max(2, int(6 * cfg["mountain_weight"]))
+    n_valley   = max(1, int(4 * (1 - cfg["mountain_weight"])))
+
+    mountain_pts = [(rng.randint(0, H), rng.randint(0, W)) for _ in range(n_mountain)]
+    valley_pts   = [(rng.randint(0, H), rng.randint(0, W)) for _ in range(n_valley)]
+
+    Y, X = np.mgrid[0:H, 0:W].astype(np.float64)
+
+    def min_dist(pts):
+        if not pts:
+            return np.full((H, W), np.inf)
+        dists = np.stack([np.sqrt((Y - py)**2 + (X - px)**2) for py, px in pts])
+        return dists.min(axis=0)
+
+    def norm(arr):
+        mn, mx = arr.min(), arr.max()
+        return (arr - mn) / (mx - mn + 1e-8) if mx > mn else arr * 0
+
+    mountain_bias = (1.0 - norm(min_dist(mountain_pts)))
+    valley_bias   = -(1.0 - norm(min_dist(valley_pts)))
+
+    cy, cx = H / 2.0, W / 2.0
+    dist_center = np.sqrt(((Y - cy) / cy)**2 + ((X - cx) / cx)**2)
+    # center_proximity is 1 at center, 0 at edges
+    center_proximity = 1.0 - norm(dist_center)
+    # positive center_bias raises center; negative center_bias lowers center
+    center_bias = center_proximity * cfg["center_bias"]
+
+    layout = mountain_bias * 0.5 + valley_bias * 0.3 + center_bias * 0.2
+    mx = max(abs(layout.min()), abs(layout.max()), 1e-8)
+    return (layout / mx).astype(np.float64)
+
+
+def generate_ridged_noise(W: int, H: int, seed: int, octaves: int = 4, base_scale: int = 8) -> np.ndarray:
+    """Ridged Noise = 1 - |fBm|，锋利山脊。值域 [0, 1]。"""
+    raw = generate_fbm(W, H, seed + 500, octaves=octaves, base_scale=base_scale)
+    raw2 = raw * 2.0 - 1.0
+    ridged = 1.0 - np.abs(raw2)
+    mn, mx = ridged.min(), ridged.max()
+    if mx > mn:
+        ridged = (ridged - mn) / (mx - mn)
+    return ridged
+
+
+def apply_domain_warping(W: int, H: int, seed: int, octaves: int = 4, base_scale: int = 8) -> np.ndarray:
+    """Domain Warping：扰动采样坐标使山脉自然蜿蜒。值域 [0, 1]。"""
+    warp_x = generate_fbm(W, H, seed + 600, octaves=octaves, base_scale=base_scale)
+    warp_y = generate_fbm(W, H, seed + 700, octaves=octaves, base_scale=base_scale)
+    warp_strength = max(W, H) * 0.12
+    warp_x = (warp_x - 0.5) * 2.0 * warp_strength
+    warp_y = (warp_y - 0.5) * 2.0 * warp_strength
+
+    Y, X = np.mgrid[0:H, 0:W].astype(np.float64)
+    new_y = np.clip(Y + warp_y, 0, H - 1)
+    new_x = np.clip(X + warp_x, 0, W - 1)
+
+    base = generate_fbm(W, H, seed + 800, octaves=octaves, base_scale=base_scale)
+    y0 = new_y.astype(int)
+    x0 = new_x.astype(int)
+    y1 = np.minimum(y0 + 1, H - 1)
+    x1 = np.minimum(x0 + 1, W - 1)
+    fy = new_y - y0
+    fx = new_x - x0
+
+    result = (base[y0, x0] * (1 - fy) * (1 - fx)
+            + base[y0, x1] * (1 - fy) * fx
+            + base[y1, x0] * fy * (1 - fx)
+            + base[y1, x1] * fy * fx)
+
+    mn, mx = result.min(), result.max()
+    if mx > mn:
+        result = (result - mn) / (mx - mn)
+    return result
+
+
 def apply_shaping(height_map, gen_cfg):
     """地形塑形：岛屿模式 / 大陆模式。"""
     h, w = height_map.shape
@@ -396,8 +489,16 @@ def main():
 
     print(f"[generate_terrain] {W}x{H} seed={seed}")
 
-    print("  [1/7] FBM 高度图...")
-    hill_map = generate_fbm(W, H, seed, octaves=gen.get("fbm_octaves", 6))
+    theme = config.get("theme", "forest_valley")
+    print(f"  [0/7] Voronoi 宏观布局（主题: {theme}）...")
+    layout_mask = generate_voronoi_layout(theme, seed, W, H)
+
+    print("  [1/7] fBm + Ridged + Domain Warping 高度图...")
+    fbm_map    = generate_fbm(W, H, seed, octaves=gen.get("fbm_octaves", 6))
+    ridged_map = generate_ridged_noise(W, H, seed, octaves=gen.get("fbm_octaves", 6))
+    warped_map = apply_domain_warping(W, H, seed, octaves=gen.get("fbm_octaves", 6))
+    hill_map = fbm_map * 0.5 + ridged_map * 0.3 + warped_map * 0.2
+    hill_map = hill_map + layout_mask * 0.15
     hill_map = apply_shaping(hill_map, gen)
 
     print("  [2/7] 悬崖台阶...")
@@ -424,6 +525,8 @@ def main():
         "seed":       seed,
         "era":        "terrain",
         "iteration":  0,
+        "theme":      theme,
+        "layout_map": layout_mask,
         "hill_map":   hill_map,
         "cliff_map":  cliff_map,
         "water_map":  water_map,
