@@ -264,11 +264,12 @@ def generate_cracks(height_map, water_map, gen_cfg, seed):
 def build_slope_map(cliff_map, water_map, gen_cfg):
     """悬崖边缘检测 → 斜坡 flat 值（'none'/'1'/'2'/'3'）。
 
-    Y3 斜坡系统（terrain-adjacency-rules.md §规则2）：
-      flat='1'：X 轴横向斜坡（E/W 方向相邻高差 >= 2）
-      flat='2'：Z 轴纵向斜坡（N/S 方向相邻高差 >= 2）
+    Y3 斜坡系统（y3-terrain-basics.md §斜坡体系）：
+      flat='1'：X 轴横向斜坡（E/W 方向相邻高差 = 1 个内部 level = API height 差 2）
+      flat='2'：Z 轴纵向斜坡（N/S 方向相邻高差 = 1 个内部 level）
       flat='3'：角落斜坡（X 轴和 Z 轴均满足）
-    激活条件：cliff_map 相邻格差值 >= 2（整数台阶层级）
+    激活条件：cliff_map 相邻格差值 >= 1（对应 API terrain_height 差 2，Y3 斜坡触发条件）
+    斜坡需主动写入（terrain_set_road_block），不依赖引擎自动生成。
     """
     if not gen_cfg.get("allow_slopes", True):
         h, w = cliff_map.shape
@@ -297,7 +298,7 @@ def build_slope_map(cliff_map, water_map, gen_cfg):
             nbr   = np.pad(cliff_map,            ((0,0),(1,0)), mode='edge'    )[:, :-1]
             nbr_l = np.pad(land.astype(np.int8), ((0,0),(1,0)), mode='constant')[:, :-1]
 
-        cond = land & (nbr_l == 1) & ((cliff_map - nbr) >= 2)
+        cond = land & (nbr_l == 1) & ((cliff_map - nbr) >= 1)
         if axis == "x":
             has_x |= cond
         else:
@@ -412,8 +413,6 @@ def main():
     crack_map = generate_cracks(hill_map, water_map, gen, seed)
 
     print("  [6/7] 斜坡检测...")
-    # slope_map 标注出 cliff_map 中相邻高差=2的格子（引擎会在这些位置自动生成斜坡）
-    # 仅作参考和评估输出，不参与 MCP 写入（terrain-adjacency-rules.md §5.2）
     slope_map = build_slope_map(cliff_map, water_map, gen)
 
     print("  [7/7] 生物群系...")

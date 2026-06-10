@@ -2,8 +2,9 @@
   "_comment": "Y3 地形演化配置文件 - 修改此文件后重新运行 Skill",
 
   "seed": 42,
-  "map_width": 128,
-  "map_height": 128,
+  "map_width": 256,
+  "map_height": 256,
+  "theme": "forest_valley",
 
   "generation_rules": {
     "fbm_octaves": 6,
@@ -27,7 +28,8 @@
     "terrain_advance_score": 70,
     "ecology_advance_score": 65,
     "civilization_advance_score": 60,
-    "max_iterations_per_era": 8
+    "max_iterations_per_era": 8,
+    "max_visual_iterations": 3
   },
 
   "mcp": {
